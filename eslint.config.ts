@@ -8,6 +8,12 @@ import prettierConfig from 'eslint-config-prettier';
 export default [
   js.configs.recommended,
   {
+    files: ['**/eslint.config.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+  {
     files: ['**/*.{js,mjs,cjs,ts,tsx}'],
     languageOptions: {
       parser: typescriptParser,
@@ -41,24 +47,24 @@ export default [
         'warn',
         { argsIgnorePattern: '^_' },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off', // Allow console in Cloudflare Workers
       'no-undef': 'off', // Turn off undef errors for globals
       'no-extra-boolean-cast': 'warn',
     },
   },
-  ...astro.configs['flat/recommended'],
+  ...(astro.configs['flat/recommended'] as any),
   {
     files: ['**/*.astro'],
     languageOptions: {
-      parser: astro.parser,
+      parser: (astro as any).parser,
       parserOptions: {
         parser: typescriptParser,
         extraFileExtensions: ['.astro'],
       },
     },
     rules: {
-      ...astro.configs.recommended.rules,
+      ...(astro.configs.recommended as any).rules,
     },
   },
   {

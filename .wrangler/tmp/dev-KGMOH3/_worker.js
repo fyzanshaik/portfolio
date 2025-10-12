@@ -26504,13 +26504,13 @@ var init_astro_internal_middleware = __esm({
   },
 });
 
-// .wrangler/tmp/bundle-CWn3m7/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-1Ewsva/middleware-loader.entry.ts
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
 init_performance2();
 
-// .wrangler/tmp/bundle-CWn3m7/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-1Ewsva/middleware-insertion-facade.js
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
@@ -27818,7 +27818,7 @@ var serverEntrypointModule = /* @__PURE__ */ Object.freeze(
   )
 );
 
-// dist/_worker.js/manifest_DDPU3qTK.mjs
+// dist/_worker.js/manifest_BYLMiM-f.mjs
 init_modules_watch_stub();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_process();
 init_virtual_unenv_global_polyfill_cloudflare_unenv_preset_node_console();
@@ -28059,7 +28059,7 @@ var manifest = deserializeManifest({
     '\0@astro-page:node_modules/@astrojs/cloudflare/dist/entrypoints/image-endpoint@_@js':
       'pages/_image.astro.mjs',
     '\0@astrojs-ssr-adapter': '_@astrojs-ssr-adapter.mjs',
-    '\0@astrojs-manifest': 'manifest_DDPU3qTK.mjs',
+    '\0@astrojs-manifest': 'manifest_BYLMiM-f.mjs',
     '/home/fyzanshaik/workspace/github.com/fyzanshaik/portfolio/node_modules/unstorage/drivers/cloudflare-kv-binding.mjs':
       'chunks/cloudflare-kv-binding_DMly_2Gl.mjs',
     '/home/fyzanshaik/workspace/github.com/fyzanshaik/portfolio/node_modules/astro/dist/assets/services/sharp.js':
@@ -28080,8 +28080,6 @@ var manifest = deserializeManifest({
     '/_worker.js/_astro/astro.Dm8K3lV8.svg',
     '/_worker.js/_astro/background.BPKAcmfN.svg',
     '/_worker.js/_astro/index.BWgBNN9_.css',
-    '/_worker.js/pages/_image.astro.mjs',
-    '/_worker.js/pages/index.astro.mjs',
     '/_worker.js/chunks/_@astrojs-ssr-adapter_BDDzsYbP.mjs',
     '/_worker.js/chunks/astro-designed-error-pages_UPOMHnI2.mjs',
     '/_worker.js/chunks/astro_BB3eanud.mjs',
@@ -28092,13 +28090,15 @@ var manifest = deserializeManifest({
     '/_worker.js/chunks/path_CH3auf61.mjs',
     '/_worker.js/chunks/remote_BC1y8RCW.mjs',
     '/_worker.js/chunks/sharp_mkqJXftC.mjs',
+    '/_worker.js/pages/_image.astro.mjs',
+    '/_worker.js/pages/index.astro.mjs',
     '/_worker.js/chunks/astro/server_D9uiX3ei.mjs',
   ],
   buildFormat: 'directory',
   checkOrigin: true,
   allowedDomains: [],
   serverIslandNameMap: [],
-  key: '9PGjVcoTx9JGaLl5UTsUtZFAIjmGmSm4lahRKAa4fqU=',
+  key: 'qlhnguM6uO938s+3rn0RmZarrQ0lc+BCqzGAFFwAn+A=',
   sessionConfig: {
     driver: 'cloudflare-kv-binding',
     options: { binding: 'SESSION' },
@@ -28214,7 +28214,7 @@ var jsonError = /* @__PURE__ */ __name(
 );
 var middleware_miniflare3_json_error_default = jsonError;
 
-// .wrangler/tmp/bundle-CWn3m7/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-1Ewsva/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default,
@@ -28250,7 +28250,7 @@ function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, '__facade_invoke__');
 
-// .wrangler/tmp/bundle-CWn3m7/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-1Ewsva/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
