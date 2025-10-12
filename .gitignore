@@ -22,3 +22,18 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# ESLint cache
+.eslintcache
+
+# Prettier cache
+.prettiercache
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Lock files (keep bun.lock but ignore others)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

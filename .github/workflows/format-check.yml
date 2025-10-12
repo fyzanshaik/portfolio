@@ -1,0 +1,33 @@
+name: Format Check
+
+on:
+    pull_request:
+        branches: [main, develop]
+
+jobs:
+    format-check:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Bun
+              uses: oven-sh/setup-bun@v1
+              with:
+                  bun-version: latest
+
+            - name: Install dependencies
+              run: bun install
+
+            - name: Check code formatting
+              run: bun run format:check
+
+            - name: Auto-fix formatting issues
+              run: |
+                  bun run format
+                  if [ -n "$(git status --porcelain)" ]; then
+                    echo "Code formatting issues found. Please run 'bun run format' locally and commit the changes."
+                    git diff
+                    exit 1
+                  fi
