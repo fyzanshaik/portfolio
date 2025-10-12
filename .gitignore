@@ -40,12 +40,6 @@ coverage/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
-<<<<<<< Updated upstream
-
-# Wrangler temporary files
-.wrangler/
-
-
-=======
->>>>>>> Stashed changes
 resume.txt
+.claude/
+.wrangler/
