@@ -20,7 +20,7 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,ts,astro,json,md,css}": [
+    "*.{js,ts,json,md,css}": [
       "prettier --write"
     ],
     "*.{js,ts,astro}": [
