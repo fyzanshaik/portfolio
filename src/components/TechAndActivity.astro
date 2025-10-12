@@ -1,0 +1,106 @@
+---
+const GITHUB_USERNAME = 'fyzanshaik';
+const languages = ['Go', 'C++', 'Python', 'TypeScript', 'Java', 'SQL'];
+const tools = ['React', 'Next.js', 'Spring Boot', 'PostgreSQL', 'Redis', 'Docker', 'Kubernetes', 'AWS', 'Elasticsearch'];
+---
+
+<section class="py-8">
+  <div class="max-w-[1100px] mx-auto px-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h2 class="text-xl font-bold mb-6 space-mono-bold">Tech I Love</h2>
+        <div class="space-y-4">
+          <div>
+            <p class="text-xs text-[var(--text-secondary)] mb-2 uppercase tracking-wider">Languages</p>
+            <div class="flex flex-wrap gap-2">
+              {languages.map((lang) => (
+                <span class="text-sm px-3 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border)]">
+                  {lang}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p class="text-xs text-[var(--text-secondary)] mb-2 uppercase tracking-wider">Tools & Frameworks</p>
+            <div class="flex flex-wrap gap-2">
+              {tools.map((tool) => (
+                <span class="text-sm px-3 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border)]">
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold space-mono-bold">My Activity</h2>
+          <a
+            href={`https://github.com/${GITHUB_USERNAME}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs px-2 py-1 rounded border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+          >
+            View Profile →
+          </a>
+        </div>
+
+        <div class="border border-[var(--border)] rounded-lg p-4 bg-[var(--bg-surface)] h-[180px] flex flex-col">
+          <p class="text-xs text-[var(--text-secondary)] mb-3 uppercase tracking-wider">Last 10 Merged PRs</p>
+          <div id="github-prs" class="space-y-1 overflow-y-auto flex-1 pr-2">
+            <p class="text-xs text-[var(--text-secondary)]">Loading...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ GITHUB_USERNAME }}>
+  async function loadGitHubPRs() {
+    try {
+      const prsResponse = await fetch(`https://api.github.com/search/issues?q=author:${GITHUB_USERNAME}+type:pr+is:merged&sort=updated&per_page=10`);
+      if (prsResponse.ok) {
+        const prsData = await prsResponse.json();
+        const prsEl = document.getElementById('github-prs');
+        if (prsEl && prsData.items.length > 0) {
+          prsEl.innerHTML = prsData.items.map(pr => {
+            const repo = pr.repository_url.split('/').slice(-2).join('/');
+            const date = new Date(pr.closed_at);
+            const diffDays = Math.ceil(Math.abs(new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+            let timeAgo = 'today';
+            if (diffDays === 1) timeAgo = 'yesterday';
+            else if (diffDays < 7) timeAgo = `${diffDays}d ago`;
+            else if (diffDays < 30) timeAgo = `${Math.floor(diffDays / 7)}w ago`;
+            else timeAgo = `${Math.floor(diffDays / 30)}mo ago`;
+
+            return `
+              <a href="${pr.html_url}" target="_blank" rel="noopener" class="flex flex-col p-2 rounded hover:bg-[var(--bg-primary)] transition-colors group gap-1">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate flex-1">${pr.title}</p>
+                  <p class="text-xs text-[var(--text-secondary)] ml-2 whitespace-nowrap">${timeAgo}</p>
+                </div>
+                <p class="text-xs text-[var(--text-secondary)]">${repo}</p>
+              </a>
+            `;
+          }).join('');
+        } else if (prsEl) {
+          prsEl.innerHTML = '<p class="text-xs text-[var(--text-secondary)]">No recent PRs</p>';
+        }
+      }
+    } catch (error) {
+      console.error('Error loading GitHub PRs:', error);
+      const prsEl = document.getElementById('github-prs');
+      if (prsEl) {
+        prsEl.innerHTML = '<p class="text-xs text-[var(--text-secondary)]">Unable to load PRs</p>';
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadGitHubPRs);
+  } else {
+    loadGitHubPRs();
+  }
+</script>

@@ -1,11 +1,39 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-import "../styles/global.css"
-
+import NavBar from '../components/NavBar.astro';
+import Hero from '../components/Hero.astro';
+import TechAndActivity from '../components/TechAndActivity.astro';
+import Timeline from '../components/Timeline.astro';
+import Projects from '../components/Projects.astro';
+import '../styles/global.css';
 ---
 
 <Layout>
-	<Welcome />
-	
+	<NavBar />
+	<main>
+		<Hero />
+		<TechAndActivity />
+		<Timeline />
+		<Projects />
+	</main>
+	<footer class="border-t border-[var(--border)] py-8">
+		<div class="max-w-[1100px] mx-auto px-6">
+			<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+				<p class="text-xs text-[var(--text-secondary)]">
+					© 2025 Faizan Shaik · Built with Astro, deployed on Cloudflare
+				</p>
+				<div class="flex items-center gap-3 text-xs space-mono-regular">
+					<a href="https://github.com/fyzanshaik" target="_blank" rel="noopener noreferrer" class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">
+						GitHub
+					</a>
+					<a href="https://linkedin.com/in/fyzanshaik" target="_blank" rel="noopener noreferrer" class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">
+						LinkedIn
+					</a>
+					<a href="mailto:shaik.s@northeastern.edu" class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors">
+						Email
+					</a>
+				</div>
+			</div>
+		</div>
+	</footer>
 </Layout>

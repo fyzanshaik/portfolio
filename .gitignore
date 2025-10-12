@@ -4,6 +4,9 @@ dist/
 # generated types
 .astro/
 
+# Wrangler temporary files
+.wrangler/
+
 # dependencies
 node_modules/
 
@@ -37,9 +40,12 @@ coverage/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+<<<<<<< Updated upstream
 
 # Wrangler temporary files
 .wrangler/
 
 
+=======
+>>>>>>> Stashed changes
 resume.txt

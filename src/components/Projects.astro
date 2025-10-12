@@ -1,0 +1,75 @@
+---
+const projects = [
+  {
+    title: 'BookMyEvent',
+    description: 'High-performance event booking platform with zero overselling, optimistic locking, and real-time search.',
+    tech: ['Go', 'PostgreSQL', 'Redis', 'Elasticsearch'],
+    github: 'https://github.com/fyzanshaik/BookMyEvent',
+    live: null,
+  },
+  {
+    title: 'Gork CLI',
+    description: 'AI-powered CLI agent for natural language file operations using Gemini API.',
+    tech: ['Python', 'Gemini API'],
+    github: 'https://github.com/fyzanshaik/Gork-cli',
+    live: null,
+  },
+  {
+    title: 'mini-git',
+    description: 'Git implementation from scratch with core commands: init, add, commit, log, status.',
+    tech: ['Python', 'OOP'],
+    github: 'https://github.com/fyzanshaik/mini-git',
+    live: null,
+  },
+];
+---
+
+<section class="py-8">
+  <div class="max-w-[1100px] mx-auto px-6">
+    <h2 class="text-xl font-bold mb-6 space-mono-bold">Projects</h2>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {projects.map((project) => (
+        <div class="border border-[var(--border)] rounded-lg p-5 bg-[var(--bg-surface)] hover:border-[var(--accent)] transition-all">
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="text-lg font-bold text-[var(--text-primary)]">{project.title}</h3>
+            <div class="flex items-center gap-2">
+              {project.live && (
+                <a
+                  href={project.live}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-xs px-2 py-1 rounded bg-[var(--accent)] text-white hover:opacity-80 transition-opacity"
+                  title="Live Demo"
+                >
+                  Live
+                </a>
+              )}
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-xs px-2 py-1 rounded border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+                title="View on GitHub"
+              >
+                Repo
+              </a>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--text-secondary)] mb-3 leading-relaxed">
+            {project.description}
+          </p>
+
+          <div class="flex flex-wrap gap-1.5">
+            {project.tech.map((tech) => (
+              <span class="text-xs px-2 py-0.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)]">
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

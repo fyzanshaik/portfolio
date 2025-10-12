@@ -1,0 +1,58 @@
+---
+const allPosts = await Astro.glob('../pages/posts/*.md');
+const recentPosts = allPosts
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
+  .slice(0, 2);
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+  }).format(date);
+}
+---
+
+<section class="pt-12 pb-8">
+  <div class="max-w-[1100px] mx-auto px-6">
+    <div class="grid md:grid-cols-2 gap-12 items-start">
+      <div>
+        <div class="text-sm text-[var(--text-secondary)] mb-2 space-mono-regular">tl;dr</div>
+        <h1 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+          Hi, I'm <span class="text-[var(--accent)]">Faizan Shaik</span>
+        </h1>
+        <p class="text-lg text-[var(--text-secondary)] mb-6 leading-relaxed">
+          I love AI engineering, infra and backend! Building scalable systems, optimizing performance, and shipping reliable software.
+        </p>
+        <p class="text-sm text-[var(--text-secondary)]">
+          Based in <span class="text-[var(--accent)] font-medium">Hyderabad</span> · Open to opportunities
+        </p>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm font-bold space-mono-regular text-[var(--text-secondary)]">LATEST ARTICLES</h2>
+          <a href="/blog" class="text-xs text-[var(--accent)] hover:underline">view all →</a>
+        </div>
+        <div class="space-y-3">
+          {recentPosts.map((post) => (
+            <a
+              href={post.url}
+              class="block p-4 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] hover:border-[var(--accent)] transition-all group"
+            >
+              <div class="flex items-start justify-between gap-2 mb-1">
+                <h3 class="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors line-clamp-1">
+                  {post.frontmatter.title}
+                </h3>
+                <span class="text-xs text-[var(--text-secondary)] whitespace-nowrap">
+                  {formatDate(post.frontmatter.date)}
+                </span>
+              </div>
+              <p class="text-xs text-[var(--text-secondary)] line-clamp-2">{post.frontmatter.description}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
