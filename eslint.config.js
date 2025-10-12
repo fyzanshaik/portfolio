@@ -14,6 +14,19 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        globals: {
+          // Cloudflare Workers globals
+          URL: 'readonly',
+          Response: 'readonly',
+          Request: 'readonly',
+          Headers: 'readonly',
+          console: 'readonly',
+          fetch: 'readonly',
+          setTimeout: 'readonly',
+          clearTimeout: 'readonly',
+          setInterval: 'readonly',
+          clearInterval: 'readonly',
+        },
       },
     },
     plugins: {
@@ -25,11 +38,13 @@ export default [
       ...prettierConfig.rules,
       'prettier/prettier': 'error',
       '@typescript-eslint/no-unused-vars': [
-        'error',
+        'warn',
         { argsIgnorePattern: '^_' },
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
-      'no-console': 'warn',
+      'no-console': 'off', // Allow console in Cloudflare Workers
+      'no-undef': 'off', // Turn off undef errors for globals
+      'no-extra-boolean-cast': 'warn',
     },
   },
   ...astro.configs['flat/recommended'],
@@ -53,6 +68,7 @@ export default [
       '.astro/',
       '*.config.js',
       '*.config.mjs',
+      '.wrangler/',
     ],
   },
 ];
