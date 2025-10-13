@@ -100,10 +100,13 @@ import ThemeToggle from './ThemeToggle.astro';
   const notification = document.getElementById('email-notification');
 
   function showNotification() {
+    if (!notification) return;
+
     notification.classList.remove('opacity-0', 'translate-x-full');
     notification.classList.add('opacity-100', 'translate-x-0');
 
     setTimeout(() => {
+      if (!notification) return;
       notification.classList.remove('opacity-100', 'translate-x-0');
       notification.classList.add('opacity-0', 'translate-x-full');
     }, 2000);
@@ -117,16 +120,24 @@ import ThemeToggle from './ThemeToggle.astro';
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = email;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
       document.body.appendChild(textArea);
+      textArea.focus();
       textArea.select();
-      document.execCommand('copy');
+      try {
+        document.execCommand('copy');
+        showNotification();
+      } catch (fallbackErr) {
+        console.warn('Could not copy email to clipboard:', fallbackErr);
+      }
       document.body.removeChild(textArea);
-      showNotification();
     }
   }
 
   // NavBar email button - both open mail client and copy
-  document.getElementById('copy-email-nav')?.addEventListener('click', e => {
+  document.getElementById('copy-email-nav')?.addEventListener('click', () => {
     // Let the default mailto behavior happen, but also copy
     setTimeout(() => {
       copyEmail();
@@ -134,15 +145,17 @@ import ThemeToggle from './ThemeToggle.astro';
   });
 
   // Footer email link - both open mail client and copy
-  document.getElementById('copy-email-footer')?.addEventListener('click', e => {
-    // Let the default mailto behavior happen, but also copy
-    setTimeout(() => {
-      copyEmail();
-    }, 100);
-  });
+  document
+    .getElementById('copy-email-footer')
+    ?.addEventListener('click', () => {
+      // Let the default mailto behavior happen, but also copy
+      setTimeout(() => {
+        copyEmail();
+      }, 100);
+    });
 
   // Hero reach out button - both open mail client and copy
-  document.getElementById('copy-email-hero')?.addEventListener('click', e => {
+  document.getElementById('copy-email-hero')?.addEventListener('click', () => {
     // Let the default mailto behavior happen, but also copy
     setTimeout(() => {
       copyEmail();
