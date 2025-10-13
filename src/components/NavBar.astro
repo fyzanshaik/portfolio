@@ -46,7 +46,16 @@ import ThemeToggle from './ThemeToggle.astro';
       [GitHub]
     </a>
     <a
+      href="https://www.x.com/fyzanshaik"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
+    >
+      [X]
+    </a>
+    <a
       href="mailto:fyzanshaik.work@gmail.com"
+      id="copy-email-nav"
       class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
     >
       [Email]
@@ -63,3 +72,80 @@ import ThemeToggle from './ThemeToggle.astro';
 <div class="md:hidden fixed top-4 right-4 z-50">
   <ThemeToggle />
 </div>
+
+<!-- Email Copy Notification -->
+<div
+  id="email-notification"
+  class="fixed top-4 right-4 bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] px-4 py-2 rounded-lg shadow-lg z-50 opacity-0 pointer-events-none transition-all duration-300 transform translate-x-full"
+>
+  <div class="flex items-center gap-2">
+    <svg
+      class="w-4 h-4 text-[var(--accent)]"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M5 13l4 4L19 7"></path>
+    </svg>
+    <span class="text-sm font-medium">Email copied!</span>
+  </div>
+</div>
+
+<script>
+  const email = 'fyzanshaik.work@gmail.com';
+  const notification = document.getElementById('email-notification');
+
+  function showNotification() {
+    notification.classList.remove('opacity-0', 'translate-x-full');
+    notification.classList.add('opacity-100', 'translate-x-0');
+
+    setTimeout(() => {
+      notification.classList.remove('opacity-100', 'translate-x-0');
+      notification.classList.add('opacity-0', 'translate-x-full');
+    }, 2000);
+  }
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(email);
+      showNotification();
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = email;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      showNotification();
+    }
+  }
+
+  // NavBar email button - both open mail client and copy
+  document.getElementById('copy-email-nav')?.addEventListener('click', e => {
+    // Let the default mailto behavior happen, but also copy
+    setTimeout(() => {
+      copyEmail();
+    }, 100);
+  });
+
+  // Footer email link - both open mail client and copy
+  document.getElementById('copy-email-footer')?.addEventListener('click', e => {
+    // Let the default mailto behavior happen, but also copy
+    setTimeout(() => {
+      copyEmail();
+    }, 100);
+  });
+
+  // Hero reach out button - both open mail client and copy
+  document.getElementById('copy-email-hero')?.addEventListener('click', e => {
+    // Let the default mailto behavior happen, but also copy
+    setTimeout(() => {
+      copyEmail();
+    }, 100);
+  });
+</script>
