@@ -1,0 +1,147 @@
+# Faizan Shaik - Software Engineer Portfolio
+
+> Personal website and technical blog of Faizan Shaik, a software engineer specializing in backend development, DevOps, and AI/ML
+
+## Owner
+- Name: Faizan Shaik
+- Role: Software Engineer
+- Location: Hyderabad, India
+- Email: fyzanshaik.work@gmail.com
+- GitHub: https://github.com/fyzanshaik
+- LinkedIn: https://linkedin.com/in/fyzanshaik
+
+## Site URLs
+- Homepage: https://personal-site.fyzan-shaik.workers.dev/
+- Blog: https://personal-site.fyzan-shaik.workers.dev/blog/
+- Sitemap: https://personal-site.fyzan-shaik.workers.dev/sitemap-index.xml
+- Robots: https://personal-site.fyzan-shaik.workers.dev/robots.txt
+
+## Technical Stack
+- Framework: Astro v5.14.4
+- Styling: Tailwind CSS
+- Deployment: Cloudflare Workers
+- Fonts: Space Mono (monospace)
+- Languages: TypeScript, JavaScript
+
+## Content Structure
+
+### Work Experience
+1. Rare Labs - Software Developer Intern (Oct 2024 – Apr 2025)
+   - Built AI-powered Legal Research Platform with 98% accuracy
+   - Reduced query time by 90% using GPT and search optimization
+   - Technologies: Next.js, TypeScript, Firebase, Python
+
+2. Encapz Technologies - Full Stack Intern (Apr 2024 – Aug 2024)
+   - Optimized backend services with Spring Boot and JPA
+   - Implemented Redis caching, reduced latency by 60%
+   - Technologies: Java, Spring Boot, Redis, PostgreSQL
+
+3. United Network Of Professionals - Software Engineer Intern (Sep 2023 – Apr 2024)
+   - Built RESTful APIs and Quiz UI
+   - Technologies: React, Node.js, Express, MongoDB
+
+### Projects
+1. BookMyEvent
+   - High-performance event booking platform
+   - Zero overselling with optimistic locking
+   - Technologies: Go, PostgreSQL, Redis, Elasticsearch
+   - Repository: https://github.com/fyzanshaik/BookMyEvent
+
+2. Gork CLI
+   - AI-powered CLI agent for natural language file operations
+   - Technologies: Python, Gemini API
+   - Repository: https://github.com/fyzanshaik/Gork-cli
+
+3. mini-git
+   - Git implementation from scratch
+   - Core commands: init, add, commit, log, status
+   - Technologies: Python, OOP
+   - Repository: https://github.com/fyzanshaik/mini-git
+
+### Blog Posts
+All blog posts available at: https://personal-site.fyzan-shaik.workers.dev/blog/
+
+1. "Redis Caching Strategies for High-Traffic Applications"
+   - URL: https://personal-site.fyzan-shaik.workers.dev/posts/redis-caching-strategies/
+   - Topics: Redis, Backend, Caching, Performance
+   - Date: February 28, 2025
+
+2. "Building High-Performance Systems with Go"
+   - URL: https://personal-site.fyzan-shaik.workers.dev/posts/building-bookmyevent/
+   - Topics: Go, Backend, Systems Design
+   - Date: March 15, 2025
+
+3. "Elasticsearch Deep Dive"
+   - URL: https://personal-site.fyzan-shaik.workers.dev/posts/elasticsearch-deep-dive/
+   - Topics: Elasticsearch, Search, Backend
+   - Date: (Check sitemap for date)
+
+## Skills & Technologies
+### Languages
+- Go (Golang)
+- TypeScript
+- Python
+- JavaScript
+- Java
+- SQL
+
+### Backend & Databases
+- PostgreSQL
+- Redis
+- MongoDB
+- Elasticsearch
+- Spring Boot
+- Node.js
+- Express
+
+### Frontend
+- React
+- Next.js
+- Astro
+- Vaadin
+
+### DevOps & Tools
+- Docker
+- Kubernetes
+- AWS
+- Cloudflare Workers
+- Git
+
+### AI/ML
+- GPT Integration
+- Gemini API
+- Natural Language Processing
+- AI-powered Search
+
+## Professional Focus
+- Backend Development
+- Distributed Systems
+- Database Optimization
+- Caching Strategies
+- API Design
+- Performance Engineering
+- DevOps & Infrastructure
+- AI/ML Integration
+
+## Site Features
+- Dark/Light mode toggle with system preference detection
+- Responsive design (mobile-first)
+- Real-time GitHub activity feed
+- Blog with search functionality
+- Reading time calculation
+- Progress indicator for blog posts
+- SEO optimized with Open Graph and Twitter Cards
+- Structured data (JSON-LD) for search engines
+- Sitemap for crawler discovery
+
+## Contact
+For collaboration, questions, or opportunities:
+- Email: fyzanshaik.work@gmail.com
+- GitHub: https://github.com/fyzanshaik
+- LinkedIn: https://linkedin.com/in/fyzanshaik
+
+## License & Usage
+This is a personal portfolio website. Content and code are created by Faizan Shaik.
+
+## Last Updated
+This file was last updated to reflect the site structure as of October 2025.

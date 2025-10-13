@@ -1,67 +1,165 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Faizan Shaik - Software Engineer</title>
-		<meta name="description" content="Software engineer specializing in backend, DevOps, and AI/ML. Building scalable systems with Go, TypeScript, and Python." />
-		<script is:inline>
-			(function() {
-				const theme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-				if (theme === 'dark') {
-					document.documentElement.classList.add('dark');
-				}
-			})();
-		</script>
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-			rel="stylesheet"
-		/>
-	</head>
-	<body>
-		<slot />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="canonical"
+      href="https://personal-site.fyzan-shaik.workers.dev/"
+    />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt" />
 
-		<button
-			id="back-to-top"
-			class="fixed bottom-6 right-6 w-11 h-11 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] transition-all opacity-0 pointer-events-none z-50 shadow-lg hover:shadow-xl backdrop-blur-sm hover:scale-110"
-			style="box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);"
-			aria-label="Back to top"
-		>
-			<svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-			</svg>
-		</button>
+    <title>Faizan Shaik - Software Engineer | Backend, DevOps & AI/ML</title>
+    <meta
+      name="description"
+      content="Software engineer specializing in backend, DevOps, and AI/ML. Building scalable systems with Go, TypeScript, and Python. Expert in Redis, PostgreSQL, Kubernetes, and cloud infrastructure."
+    />
+    <meta
+      name="keywords"
+      content="software engineer, backend developer, DevOps, AI/ML, Go, TypeScript, Python, Redis, PostgreSQL, Kubernetes, cloud infrastructure, scalable systems"
+    />
+    <meta name="author" content="Faizan Shaik" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="generator" content={Astro.generator} />
 
-		<script is:inline>
-			(function() {
-				const backToTopButton = document.getElementById('back-to-top');
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://personal-site.fyzan-shaik.workers.dev/"
+    />
+    <meta
+      property="og:title"
+      content="Faizan Shaik - Software Engineer | Backend, DevOps & AI/ML"
+    />
+    <meta
+      property="og:description"
+      content="Software engineer specializing in backend, DevOps, and AI/ML. Building scalable systems with Go, TypeScript, and Python."
+    />
+    <meta property="og:site_name" content="Faizan Shaik Portfolio" />
+    <meta property="og:locale" content="en_US" />
 
-				function toggleBackToTop() {
-					if (window.scrollY > 300) {
-						backToTopButton.style.opacity = '1';
-						backToTopButton.style.pointerEvents = 'auto';
-					} else {
-						backToTopButton.style.opacity = '0';
-						backToTopButton.style.pointerEvents = 'none';
-					}
-				}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:url"
+      content="https://personal-site.fyzan-shaik.workers.dev/"
+    />
+    <meta
+      name="twitter:title"
+      content="Faizan Shaik - Software Engineer | Backend, DevOps & AI/ML"
+    />
+    <meta
+      name="twitter:description"
+      content="Software engineer specializing in backend, DevOps, and AI/ML. Building scalable systems with Go, TypeScript, and Python."
+    />
 
-				function scrollToTop() {
-					window.scrollTo({
-						top: 0,
-						behavior: 'smooth'
-					});
-				}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Faizan Shaik",
+        "url": "https://personal-site.fyzan-shaik.workers.dev",
+        "jobTitle": "Software Engineer",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Encapz Technologies"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Hyderabad",
+          "addressCountry": "IN"
+        },
+        "sameAs": [
+          "https://github.com/fyzanshaik",
+          "https://linkedin.com/in/fyzanshaik"
+        ],
+        "knowsAbout": [
+          "Backend Development",
+          "DevOps",
+          "AI/ML",
+          "Go",
+          "TypeScript",
+          "Python",
+          "Redis",
+          "PostgreSQL",
+          "Kubernetes"
+        ],
+        "email": "fyzanshaik.work@gmail.com"
+      }
+    </script>
 
-				window.addEventListener('scroll', toggleBackToTop, { passive: true });
-				backToTopButton.addEventListener('click', scrollToTop);
+    <script is:inline>
+      (function () {
+        const theme =
+          localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
 
-				toggleBackToTop();
-			})();
-		</script>
-	</body>
+    <button
+      id="back-to-top"
+      class="fixed bottom-6 right-6 w-11 h-11 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] transition-all opacity-0 pointer-events-none z-50 shadow-lg hover:shadow-xl backdrop-blur-sm hover:scale-110"
+      style="box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);"
+      aria-label="Back to top"
+    >
+      <svg
+        class="w-5 h-5 mx-auto"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2.5"
+          d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+      </svg>
+    </button>
+
+    <script is:inline>
+      (function () {
+        const backToTopButton = document.getElementById('back-to-top');
+
+        function toggleBackToTop() {
+          if (window.scrollY > 300) {
+            backToTopButton.style.opacity = '1';
+            backToTopButton.style.pointerEvents = 'auto';
+          } else {
+            backToTopButton.style.opacity = '0';
+            backToTopButton.style.pointerEvents = 'none';
+          }
+        }
+
+        function scrollToTop() {
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+          });
+        }
+
+        window.addEventListener('scroll', toggleBackToTop, { passive: true });
+        backToTopButton.addEventListener('click', scrollToTop);
+
+        toggleBackToTop();
+      })();
+    </script>
+  </body>
 </html>
