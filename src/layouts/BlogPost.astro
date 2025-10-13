@@ -17,6 +17,11 @@ function formatDate(dateString: string): string {
 
 <Layout>
   <NavBar />
+
+  <div id="progress-bar-mobile" class="md:hidden fixed top-0 left-0 w-full h-1 bg-[var(--border)] z-40">
+    <div id="progress-fill-mobile" class="h-full bg-[var(--accent)] transition-all duration-150" style="width: 0%"></div>
+  </div>
+
   <main class="pt-12 pb-20">
     <div class="max-w-[1000px] mx-auto px-6">
       <a href="/blog" class="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent)] mb-12 transition-colors">
@@ -34,6 +39,7 @@ function formatDate(dateString: string): string {
           <p class="text-lg text-[var(--text-secondary)] mb-6 leading-relaxed">{frontmatter.description}</p>
           <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-[var(--text-secondary)]">
             <time>{formatDate(frontmatter.date)}</time>
+            <span id="reading-time" class="text-[var(--text-secondary)]">• calculating...</span>
             {frontmatter.tags && frontmatter.tags.length > 0 && (
               <div class="flex flex-wrap gap-2">
                 {frontmatter.tags.map((tag: string) => (
@@ -46,13 +52,53 @@ function formatDate(dateString: string): string {
           </div>
         </header>
 
-        <div class="prose prose-invert max-w-none">
+        <div id="blog-content" class="prose prose-invert max-w-none">
           <slot />
         </div>
       </article>
     </div>
   </main>
 </Layout>
+
+<script>
+  function calculateReadingTime() {
+    const content = document.getElementById('blog-content');
+    if (content) {
+      const text = content.innerText || content.textContent || '';
+      const wordCount = text.trim().split(/\s+/).length;
+      const wordsPerMinute = 200;
+      const minutes = Math.ceil(wordCount / wordsPerMinute);
+      const readingTimeEl = document.getElementById('reading-time');
+      if (readingTimeEl) {
+        readingTimeEl.textContent = `• ${minutes} min read`;
+      }
+    }
+  }
+
+  function updateProgressBar() {
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollPercent = (scrollTop / (documentHeight - windowHeight)) * 100;
+
+    const progressFillMobile = document.getElementById('progress-fill-mobile');
+    if (progressFillMobile) {
+      progressFillMobile.style.width = `${Math.min(100, Math.max(0, scrollPercent))}%`;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      calculateReadingTime();
+      updateProgressBar();
+    });
+  } else {
+    calculateReadingTime();
+    updateProgressBar();
+  }
+
+  window.addEventListener('scroll', updateProgressBar, { passive: true });
+</script>
 
 <style is:global>
   .prose {

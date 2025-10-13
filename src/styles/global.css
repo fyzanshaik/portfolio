@@ -86,3 +86,68 @@ body {
   scrollbar-width: thin;
   scrollbar-color: var(--border) var(--bg-surface);
 }
+
+.gradient-text {
+  background: linear-gradient(135deg, #22c55e 0%, #6ee7b7 50%, #4ade80 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.bg-gradient-radial {
+  background: radial-gradient(
+    ellipse at top,
+    var(--tw-gradient-from),
+    var(--tw-gradient-via),
+    var(--tw-gradient-to)
+  );
+}
+
+.bg-gradient-to-r {
+  background: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-\[\#22c55e\] {
+  --tw-gradient-from: #22c55e;
+  --tw-gradient-stops:
+    var(--tw-gradient-from), var(--tw-gradient-to, rgba(34, 197, 94, 0));
+}
+
+.to-\[\#10b981\] {
+  --tw-gradient-to: #10b981;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.spinning-border {
+  background: conic-gradient(
+    var(--accent) 0deg,
+    var(--accent) 252deg,
+    transparent 252deg,
+    transparent 360deg
+  );
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
