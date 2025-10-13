@@ -3,17 +3,129 @@ const projects = [
   {
     title: 'BookMyEvent',
     description:
-      'High-performance event booking platform with zero overselling, optimistic locking, and real-time search.',
-    tech: ['Go', 'PostgreSQL', 'Redis', 'Elasticsearch'],
-    github: 'https://github.com/fyzanshaik/BookMyEvent',
+      'Scalable microservices platform for high-concurrency event booking with zero overselling. Features optimistic locking, two-phase booking, smart waitlisting, and real-time search powered by Elasticsearch.',
+    tech: ['Go', 'PostgreSQL', 'Redis', 'Elasticsearch', 'Docker', 'React'],
+    github: 'https://github.com/fyzanshaik/bookmyevent-ily',
     live: null,
+  },
+  {
+    title: 'Crisp AI Interview Platform',
+    description:
+      'Full-stack technical interview platform with dual roles for recruiters and candidates. Features AI integration, resume uploads, timed coding sessions, role-based authentication, and real-time interview management. Built with Bun, Hono, React, and PostgreSQL.',
+    tech: [
+      'TypeScript',
+      'Bun',
+      'Hono',
+      'React',
+      'PostgreSQL',
+      'AI Integration',
+    ],
+    github: 'https://github.com/fyzanshaik/crisp-swipe',
+    live: 'https://crisp-swipe-app.onrender.com',
+  },
+  {
+    title: 'Garbage Collection Simulator',
+    description:
+      'Interactive mark-and-sweep garbage collector implementation for the Snek programming language. Features three-phase algorithm (mark, trace, sweep), tricolor abstraction, object lifecycle visualization, and educational demo with color-coded output showing memory management in action.',
+    tech: [
+      'C',
+      'Memory Management',
+      'Garbage Collection',
+      'Systems Programming',
+      'Virtual Machine',
+    ],
+    github: 'https://github.com/fyzanshaik/mark-sweep-trace-garbage-collector',
+    live: null,
+  },
+  {
+    title: 'Phoenix Crawler',
+    description:
+      'High-performance web crawler that generates CSV reports of internal links, content, and images. Features concurrent crawling, URL normalization, and structured data extraction for SEO analysis and AI training.',
+    tech: ['Go', 'Concurrency', 'Web Scraping', 'CSV Export'],
+    github: 'https://github.com/fyzanshaik/phoenix-crawler',
+    live: null,
+  },
+  {
+    title: 'LinkLens Extension',
+    description:
+      'Chrome extension for instant link previews with Ctrl+Click or Long-Press. Features privacy-first design, customizable themes, dark mode, and works on X-Frame-Options protected sites. Available on Chrome Web Store.',
+    tech: ['JavaScript', 'Chrome Extension', 'CSS', 'HTML'],
+    github: 'https://github.com/fyzanshaik/linklens-extension',
+    live: 'https://chromewebstore.google.com/detail/linklens/gpbempopkomagldobkjildebaendgonn',
   },
   {
     title: 'Gork CLI',
     description:
-      'AI-powered CLI agent for natural language file operations using Gemini API.',
-    tech: ['Python', 'Gemini API'],
-    github: 'https://github.com/fyzanshaik/Gork-cli',
+      'AI-powered coding agent CLI that performs file operations and executes Python scripts using natural language commands. Features function calling with Gemini API, file system interaction, code execution, and modular architecture for extensible AI agent capabilities.',
+    tech: ['Python', 'Gemini API', 'Function Calling', 'CLI', 'AI Agent'],
+    github: 'https://github.com/fyzanshaik/gork-code',
+    live: null,
+  },
+  {
+    title: 'LeetStats',
+    description:
+      'Social LeetCode statistics tracker that enables users to add friends and compare competitive programming progress. Features comprehensive statistics tracking, group comparisons, progress visualization, and integration with LeetCode data for engaging competitive programming experiences.',
+    tech: [
+      'Next.js',
+      'TypeScript',
+      'Tailwind CSS',
+      'LeetCode API',
+      'Data Visualization',
+    ],
+    github: 'https://github.com/fyzanshaik/leetstats',
+    live: 'https://leetstats-gamma.vercel.app',
+  },
+  {
+    title: 'LeetFetch',
+    description:
+      "Interactive LeetCode API explorer that lets developers query and test LeetCode's GraphQL API. Features real-time data exploration, code snippet generation, theme switching, and ready-to-use API examples for building LeetCode-related applications.",
+    tech: ['Next.js', 'TypeScript', 'GraphQL', 'Tailwind CSS', 'Shadcn/ui'],
+    github: 'https://github.com/fyzanshaik/leetfetch',
+    live: 'https://leetfetch.vercel.app',
+  },
+  {
+    title: 'Fetch Links',
+    description:
+      'Next.js web app for extracting YouTube playlist links and titles with one-click copying. Features server-side processing, YouTube Data API integration with fallback scraping, responsive bubblegum-themed UI, copy toasts, and multiple output formats for easy playlist sharing.',
+    tech: [
+      'Next.js',
+      'TypeScript',
+      'Bun',
+      'YouTube API',
+      'Server Actions',
+      'Web Scraping',
+    ],
+    github: 'https://github.com/fyzanshaik/fetch-links',
+    live: 'https://fetch-links.vercel.app',
+  },
+  {
+    title: 'Gator RSS Aggregator',
+    description:
+      'CLI-based RSS feed aggregator that collects posts from multiple sources into PostgreSQL. Features user management, feed following, continuous aggregation, and terminal-based browsing with configurable intervals.',
+    tech: ['Go', 'PostgreSQL', 'RSS', 'CLI', 'Database'],
+    github: 'https://github.com/fyzanshaik/gator-fetch-rss-feeds',
+    live: null,
+  },
+  {
+    title: 'Pluto SSG',
+    description:
+      'Custom static site generator built in Python that converts Markdown to HTML using a template system. Features recursive HTML node tree parsing, inline markdown processing, block-level element support, and a complete build pipeline similar to popular SSGs like Hugo and Astro.',
+    tech: [
+      'Python',
+      'Markdown',
+      'HTML Parsing',
+      'Template Engine',
+      'Static Site Generation',
+    ],
+    github: 'https://github.com/fyzanshaik/pluto',
+    live: 'https://fyzanshaik.github.io/pluto',
+  },
+  {
+    title: 'Pokedex CLI',
+    description:
+      'Interactive command-line Pokédex application with location exploration, Pokémon catching mechanics, and collection management. Features command history, tab completion, caching system, and realistic catch rates based on Pokémon strength using PokéAPI.',
+    tech: ['Go', 'CLI', 'API Integration', 'PokéAPI', 'Caching'],
+    github: 'https://github.com/fyzanshaik/pokedex',
     live: null,
   },
   {
@@ -31,12 +143,12 @@ const projects = [
   <div class="max-w-[1100px] mx-auto px-6">
     <h2 class="text-xl font-bold mb-6 space-mono-bold">Projects</h2>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       {
         projects.map(project => (
-          <div class="border border-[var(--border)] rounded-lg p-5 bg-[var(--bg-surface)] hover:border-[var(--accent)] transition-all">
+          <div class="group border border-[var(--border)] rounded-xl p-4 bg-[var(--bg-surface)] hover:border-[var(--accent)] hover:shadow-lg hover:shadow-[var(--accent)]/10 transition-all duration-300 hover:-translate-y-1">
             <div class="flex items-start justify-between mb-3">
-              <h3 class="text-lg font-bold text-[var(--text-primary)]">
+              <h3 class="text-xl font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors duration-300">
                 {project.title}
               </h3>
               <div class="flex items-center gap-2">
@@ -45,9 +157,18 @@ const projects = [
                     href={project.live}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-xs px-2 py-1 rounded bg-gradient-to-r from-[#22c55e] to-[#10b981] text-white hover:opacity-90 transition-opacity shadow-sm"
+                    class="text-xs px-2 py-1 rounded border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors flex items-center gap-1"
                     title="Live Demo"
                   >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="w-3.5 h-3.5"
+                    >
+                      <path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.982 2.982 0 0 0 0-4.24 2.982 2.982 0 0 0-4.24 0l-3.53 3.53a2.982 2.982 0 0 0 0 4.24zm2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.42l-.47.48a2.982 2.982 0 0 0 0 4.24 2.982 2.982 0 0 0 4.24 0l3.53-3.53a2.982 2.982 0 0 0 0-4.24z" />
+                    </svg>
                     Live
                   </a>
                 )}
@@ -55,21 +176,30 @@ const projects = [
                   href={project.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-xs px-2 py-1 rounded border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+                  class="text-xs px-2 py-1 rounded border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors flex items-center gap-1"
                   title="View on GitHub"
                 >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="w-3.5 h-3.5"
+                  >
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                  </svg>
                   Repo
                 </a>
               </div>
             </div>
 
-            <p class="text-sm text-[var(--text-secondary)] mb-3 leading-relaxed">
+            <p class="text-sm text-[var(--text-secondary)] mb-3 leading-relaxed group-hover:text-[var(--text-primary)] transition-colors duration-300">
               {project.description}
             </p>
 
-            <div class="flex flex-wrap gap-1.5">
+            <div class="flex flex-wrap gap-2">
               {project.tech.map(tech => (
-                <span class="text-xs px-2 py-0.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)]">
+                <span class="text-xs px-3 py-1.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all duration-200 font-medium">
                   {tech}
                 </span>
               ))}
