@@ -211,12 +211,10 @@
           if (localStorage.getItem('audio-muted') === 'true') return;
           const sound = sounds[soundType];
           if (!sound) return;
-          // Fallback: if pool isn't ready yet, play a one-off sound and seed pool
           if (sound.pool.length === 0) {
             const temp = new Audio(sound.path);
             temp.preload = 'auto';
             temp.volume = volume;
-            // seed first element so subsequent plays rotate
             sound.pool.push(temp);
             sound.idx = 0;
             temp.currentTime = 0;
