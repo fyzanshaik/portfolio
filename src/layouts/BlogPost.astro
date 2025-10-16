@@ -101,25 +101,40 @@ function formatDate(dateString: string): string {
   <body>
     <NavBar />
 
-    <button
-      id="back-to-top"
-      class="fixed bottom-6 right-6 w-11 h-11 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] transition-all opacity-0 pointer-events-none z-50 shadow-lg hover:shadow-xl backdrop-blur-sm hover:scale-110"
-      style="box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);"
-      aria-label="Back to top"
-    >
-      <svg
-        class="w-5 h-5 mx-auto"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+    <div id="fixed-buttons" class="fixed bottom-6 right-6 z-50 flex gap-2">
+      <button
+        id="back-to-top"
+        class="w-11 h-11 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] transition-all opacity-0 pointer-events-none shadow-lg hover:shadow-xl backdrop-blur-sm hover:scale-110"
+        style="box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);"
+        aria-label="Back to top"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2.5"
-          d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-      </svg>
-    </button>
+        <svg
+          class="w-5 h-5 mx-auto"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2.5"
+            d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+      </button>
+
+      <a
+        href="https://www.buymeacoffee.com/fyzanshaikg"
+        target="_blank"
+        id="buy-coffee"
+        class="rounded-full"
+        style="display: flex; align-items: center; justify-content: center; padding: 2px;"
+        ><img
+          src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png"
+          alt="Buy Me A Coffee"
+          style="height: 40px !important; width: auto !important;"
+        /></a
+      >
+    </div>
 
     <div
       id="progress-bar-mobile"
@@ -154,7 +169,7 @@ function formatDate(dateString: string): string {
           Back to Blog
         </a>
 
-        <article class="border-l border-[var(--border)] pl-8 md:pl-12">
+        <article class="md:border-l md:border-[var(--border)] pl-0 md:pl-12">
           <header class="mb-12 text-center">
             <h1
               class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 space-mono-bold leading-tight"
@@ -197,14 +212,19 @@ function formatDate(dateString: string): string {
     <script is:inline>
       (function () {
         const backToTopButton = document.getElementById('back-to-top');
+        const buyCoffeeButton = document.getElementById('buy-coffee');
 
         function toggleBackToTop() {
           if (window.scrollY > 300) {
             backToTopButton.style.opacity = '1';
             backToTopButton.style.pointerEvents = 'auto';
+            buyCoffeeButton.style.opacity = '1';
+            buyCoffeeButton.style.pointerEvents = 'auto';
           } else {
             backToTopButton.style.opacity = '0';
             backToTopButton.style.pointerEvents = 'none';
+            buyCoffeeButton.style.opacity = '0';
+            buyCoffeeButton.style.pointerEvents = 'none';
           }
         }
 

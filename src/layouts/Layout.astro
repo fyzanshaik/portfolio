@@ -66,7 +66,7 @@
         "jobTitle": "Software Engineer",
         "worksFor": {
           "@type": "Organization",
-          "name": "Encapz Technologies"
+          "name": "Open Source Contributor"
         },
         "address": {
           "@type": "PostalAddress",
@@ -111,7 +111,6 @@
       rel="stylesheet"
     />
 
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFKQC37HGP"
     ></script>
     <script is:inline>
@@ -171,6 +170,77 @@
         backToTopButton.addEventListener('click', scrollToTop);
 
         toggleBackToTop();
+      })();
+    </script>
+    <script is:inline>
+      (function () {
+        const volume = 0.18;
+        const poolSize = 3;
+        const sounds = {
+          hover: { path: '/tap_05.wav', pool: [], idx: 0 },
+          click: { path: '/tap_03.wav', pool: [], idx: 0 },
+          theme: { path: '/tap_05.wav', pool: [], idx: 0 },
+        };
+
+        for (const sound of Object.values(sounds)) {
+          for (let i = 0; i < poolSize; i++) {
+            const a = new Audio(sound.path);
+            a.volume = volume;
+            sound.pool.push(a);
+          }
+        }
+
+        function playSound(soundType) {
+          if (localStorage.getItem('audio-muted') === 'true') return;
+          const sound = sounds[soundType];
+          if (!sound) return;
+          const a = sound.pool[sound.idx];
+          sound.idx = (sound.idx + 1) % sound.pool.length;
+          try {
+            a.currentTime = 0;
+            a.play().catch(() => {});
+          } catch (e) {
+            void e;
+          }
+        }
+
+        let lastHoverTs = 0;
+        const HOVER_THROTTLE_MS = 220;
+
+        document.addEventListener(
+          'click',
+          () => {
+            playSound('click');
+          },
+          { passive: true, capture: true }
+        );
+
+        const navElements = document.querySelectorAll('nav a, nav button');
+        navElements.forEach(el => {
+          el.addEventListener(
+            'mouseover',
+            () => {
+              const now = performance.now();
+              if (now - lastHoverTs < HOVER_THROTTLE_MS) return;
+              lastHoverTs = now;
+              playSound('hover');
+            },
+            { passive: true }
+          );
+        });
+
+        const prefersReduced = window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches;
+        if (prefersReduced && localStorage.getItem('audio-muted') == null) {
+          localStorage.setItem('audio-muted', 'true');
+        }
+        window['AudioUX'] = {
+          mute: () => localStorage.setItem('audio-muted', 'true'),
+          unmute: () => localStorage.setItem('audio-muted', 'false'),
+          isMuted: () => localStorage.getItem('audio-muted') === 'true',
+          playTheme: () => playSound('theme'),
+        };
       })();
     </script>
   </body>
