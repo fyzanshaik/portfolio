@@ -107,9 +107,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-      rel="stylesheet"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFKQC37HGP"
     ></script>
@@ -182,11 +190,20 @@
           theme: { path: '/tap_05.wav', pool: [], idx: 0 },
         };
 
-        for (const sound of Object.values(sounds)) {
-          for (let i = 0; i < poolSize; i++) {
-            const a = new Audio(sound.path);
-            a.volume = volume;
-            sound.pool.push(a);
+        let audioInitialized = false;
+
+        function initAudioPools() {
+          if (audioInitialized) return;
+          audioInitialized = true;
+          if (localStorage.getItem('audio-muted') === 'true') return;
+          for (const sound of Object.values(sounds)) {
+            for (let i = 0; i < poolSize; i++) {
+              const a = new Audio();
+              a.src = sound.path;
+              a.preload = 'auto';
+              a.volume = volume;
+              sound.pool.push(a);
+            }
           }
         }
 
@@ -194,15 +211,37 @@
           if (localStorage.getItem('audio-muted') === 'true') return;
           const sound = sounds[soundType];
           if (!sound) return;
+          // Fallback: if pool isn't ready yet, play a one-off sound and seed pool
+          if (sound.pool.length === 0) {
+            const temp = new Audio(sound.path);
+            temp.preload = 'auto';
+            temp.volume = volume;
+            // seed first element so subsequent plays rotate
+            sound.pool.push(temp);
+            sound.idx = 0;
+            temp.currentTime = 0;
+            temp.play().catch(() => {});
+            return;
+          }
           const a = sound.pool[sound.idx];
           sound.idx = (sound.idx + 1) % sound.pool.length;
-          try {
-            a.currentTime = 0;
-            a.play().catch(() => {});
-          } catch (e) {
-            void e;
-          }
+          a.currentTime = 0;
+          a.play().catch(() => {});
         }
+
+        document.addEventListener('pointerdown', initAudioPools, {
+          once: true,
+          passive: true,
+        });
+        document.addEventListener('pointerover', initAudioPools, {
+          once: true,
+          passive: true,
+        });
+        document.addEventListener('touchstart', initAudioPools, {
+          once: true,
+          passive: true,
+        });
+        document.addEventListener('keydown', initAudioPools, { once: true });
 
         let lastHoverTs = 0;
         const HOVER_THROTTLE_MS = 220;
@@ -212,7 +251,7 @@
           () => {
             playSound('click');
           },
-          { passive: true, capture: true }
+          { passive: true }
         );
 
         const navElements = document.querySelectorAll('nav a, nav button');

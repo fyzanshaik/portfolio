@@ -81,9 +81,17 @@ function formatDate(dateString: string): string {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-      rel="stylesheet"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <script is:inline>
       (function () {
@@ -131,6 +139,10 @@ function formatDate(dateString: string): string {
         ><img
           src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png"
           alt="Buy Me A Coffee"
+          width="160"
+          height="40"
+          loading="lazy"
+          decoding="async"
           style="height: 40px !important; width: auto !important;"
         /></a
       >
@@ -272,14 +284,24 @@ function formatDate(dateString: string): string {
         }
       }
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-          calculateReadingTime();
-          updateProgressBar();
-        });
-      } else {
+      const rIC =
+        (window as any).requestIdleCallback ||
+        function (cb: any) {
+          setTimeout(
+            () => cb({ didTimeout: true, timeRemaining: () => 0 }),
+            120
+          );
+        };
+
+      const initIdle = () => {
         calculateReadingTime();
         updateProgressBar();
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => rIC(initIdle));
+      } else {
+        rIC(initIdle);
       }
 
       window.addEventListener('scroll', updateProgressBar, { passive: true });
