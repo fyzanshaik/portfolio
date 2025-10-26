@@ -22,4 +22,6 @@ From today I'll be (hopefully) publishing a new blog on computer science foundat
 
 I have an intern for 2026 summer at Atlan as a Backend intern! Algorithms + Math are what I am bat at and at the same time they excite me more. The world of computing is changing, we are at the bring of redifining computer + accessibility for everyone.
 
+Currently on Omarchy an Opinionated Arch linux setup.
+
 Nice to have you here 😄!
