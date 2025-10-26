@@ -6,22 +6,24 @@ date: 2025-10-26
 tags: ['personal']
 ---
 
-# What this website is?
+# What is this website?
 
-Hello fellow developers👋, my name is Faizan Shaik I am a final year undergrad kid who obsessed with backend engineering technologies and cloud. I love cloudflare and vercel, I like building small blocks of logic and piecing them together to orchestrate work. Since a kid I have always been tinkering with any new technology that my hands could find and right now I am tinkering with distributed systems, operating systems and machine learning code.
+Hello fellow developers 👋! My name is Faizan Shaik. I’m a final-year undergraduate student obsessed with backend engineering technologies and the cloud. I love Cloudflare and Vercel. I enjoy building small blocks of logic and piecing them together to orchestrate complex systems.  
+
+Since I was a kid, I’ve always been tinkering with new technologies—whatever I could get my hands on. Right now, I’m exploring distributed systems, operating systems, and machine learning code.
 
 ---
 
-You'll find me ranting about Football(Hala Madrid!), F1(LECLERECCCCCCCC!) and UFC(rooting for Tom Aspinal to fight Jon Jones) or how bad javascript/java frameworks are(I still love them).
+You’ll find me ranting about Football (Hala Madrid ⚪🤍), F1 (LECLERECCCCCCCC! 🏎️), and UFC (rooting for Tom Aspinall to fight Jon Jones 🥊), or about how bad JavaScript/Java frameworks can be (even though I still love them).  
 
-The goal of this blog is for me to get in a habit of constant learning and writing, for the majority part of my studies I didn't journal my learning I just did stuff which did land me at internships with amazing companies but right now in the age of AI being mediocre isn't enough anymore.
+The goal of this blog is to develop a habit of continuous learning and writing. For most of my studies, I didn’t document my progress—I just built things, which fortunately landed me internships at some amazing companies. But now, in the age of AI, being mediocre just isn’t enough anymore.  
 
-I am good at learning stuff, implementing features for a product but I struggle with first principle thinking and I have no good ideas for projects, it feels like I am at a rut so this is where I push myself.
+I’m good at learning new things and implementing features for products, but I struggle with first-principles thinking and generating interesting project ideas. It feels like I’m in a bit of a rut, so this blog is where I’ll push myself.  
 
-From today I'll be (hopefully) publishing a new blog on computer science foundations -> backend systems and a lot of MATH.
+Starting today, I’ll (hopefully) be publishing new blogs on computer science foundations, backend systems, and a lot of math!  
 
-I have an intern for 2026 summer at Atlan as a Backend intern! Algorithms + Math are what I am bat at and at the same time they excite me more. The world of computing is changing, we are at the bring of redifining computer + accessibility for everyone.
+I have a summer 2026 internship lined up at **Atlan** as a Backend Intern! Algorithms and math are the areas I’m *bad* at—but they’re also the ones that excite me the most. The world of computing is changing fast—we’re on the brink of redefining computing and accessibility for everyone.  
 
-Currently on Omarchy an Opinionated Arch linux setup.
+Currently running **Omarchy**, my opinionated Arch Linux setup.  
 
 Nice to have you here 😄!
