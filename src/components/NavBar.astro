@@ -581,6 +581,7 @@ const { enableLogoAnimation = false } = Astro.props;
   mobileMenuThemeToggle?.addEventListener('click', () => {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
     updateMobileMenuThemeIcon();
   });
 
@@ -610,6 +611,7 @@ const { enableLogoAnimation = false } = Astro.props;
   mobileTopThemeToggle?.addEventListener('click', () => {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
     updateMobileTopThemeIcon();
     updateMobileMenuThemeIcon();
   });

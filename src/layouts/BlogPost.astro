@@ -94,9 +94,16 @@ function formatDate(dateString: string): string {
     </noscript>
 
     <script is:inline>
-      // Force light mode for blogs - this must run before any other theme scripts
-      document.documentElement.classList.remove('dark');
-      document.documentElement.style.colorScheme = 'light';
+      (function () {
+        const theme =
+          localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      })();
     </script>
   </head>
   <body>
@@ -301,30 +308,20 @@ function formatDate(dateString: string): string {
     </script>
 
     <script is:inline>
-      // Blog-specific theme handling - force light mode but allow user to toggle
       (function () {
-        // Always start in light mode for blogs
-        document.documentElement.classList.remove('dark');
-        document.documentElement.style.colorScheme = 'light';
+        const originalTheme =
+          localStorage.getItem('theme') ||
+          (window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light');
 
-        // Override the main theme detection from Layout.astro
-        const originalTheme = localStorage.getItem('theme');
-        if (originalTheme !== 'dark') {
-          // If user hasn't explicitly chosen dark, force light mode
-          localStorage.setItem('theme', 'light');
+        if (originalTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = 'dark';
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.style.colorScheme = 'light';
         }
-
-        // Listen for theme changes from the toggle buttons
-        const themeToggles = document.querySelectorAll('[id*="theme-toggle"]');
-        themeToggles.forEach(toggle => {
-          toggle.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            document.documentElement.style.colorScheme = isDark
-              ? 'dark'
-              : 'light';
-          });
-        });
       })();
     </script>
   </body>

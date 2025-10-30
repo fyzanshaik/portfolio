@@ -50,8 +50,10 @@
 
   if (theme === 'dark') {
     document.documentElement.classList.add('dark');
+    document.documentElement.style.colorScheme = 'dark';
   } else {
     document.documentElement.classList.remove('dark');
+    document.documentElement.style.colorScheme = 'light';
   }
 
   window.localStorage.setItem('theme', theme);
@@ -75,6 +77,7 @@
   document.getElementById('theme-toggle')?.addEventListener('click', () => {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
     updateIcons();
     (window as any).AudioUX?.playTheme?.();
   });
