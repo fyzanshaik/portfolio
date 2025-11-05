@@ -5,8 +5,8 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://portfolio-5tk.pages.dev',
-  output: 'server', // Server mode for Cloudflare Pages with Functions
-  adapter: cloudflare({ mode: 'directory' }), // Pages deployment mode
+  output: 'server',
+  adapter: cloudflare({ mode: 'directory' }),
 
   vite: {
     plugins: [tailwindcss()],
