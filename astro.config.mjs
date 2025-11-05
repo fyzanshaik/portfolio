@@ -4,9 +4,9 @@ import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://personal-site.fyzan-shaik.workers.dev',
-  output: 'server',
-  adapter: cloudflare(),
+  site: 'https://portfolio-5tk.pages.dev',
+  output: 'server', // Server mode for Cloudflare Pages with Functions
+  adapter: cloudflare({ mode: 'directory' }), // Pages deployment mode
 
   vite: {
     plugins: [tailwindcss()],
@@ -19,7 +19,7 @@ export default defineConfig({
       lastmod: new Date(),
 
       serialize(item) {
-        if (item.url === 'https://personal-site.fyzan-shaik.workers.dev/') {
+        if (item.url === 'https://portfolio-5tk.pages.dev/') {
           item.priority = 1.0;
           item.changefreq = 'daily';
         }

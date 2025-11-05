@@ -14,9 +14,8 @@
     "check": "bun run lint && bun run format:check",
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
-    "cf:dev": "./node_modules/.bin/wrangler dev",
-    "cf:deploy": "bun run build && ./node_modules/.bin/wrangler deploy",
-    "cf:preview": "bun run build && ./node_modules/.bin/wrangler dev",
+    "pages:dev": "./node_modules/.bin/wrangler pages dev dist",
+    "pages:deploy": "bun run build && ./node_modules/.bin/wrangler pages deploy dist",
     "prepare": "husky"
   },
   "lint-staged": {
