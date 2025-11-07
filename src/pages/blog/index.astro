@@ -60,12 +60,12 @@ function formatDate(dateString: string): string {
           <div id="posts-container" class="space-y-12">
             {sortedPosts.map(post => (
               <article
-                class="post-item pl-0 hover:border-[var(--accent)] transition-colors"
+                class="post-item pl-0 hover:border-[var(--accent)]"
                 data-search-text={`${post.frontmatter.title.toLowerCase()} ${post.frontmatter.description.toLowerCase()} ${post.frontmatter.tags?.join(' ').toLowerCase() || ''}`}
               >
                 <a href={post.url} class="block group">
                   <div class="flex items-baseline justify-between gap-4 mb-2">
-                    <h2 class="text-2xl md:text-3xl font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors space-mono-bold">
+                    <h2 class="text-2xl md:text-3xl font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] space-mono-bold">
                       {post.frontmatter.title}
                     </h2>
                     <time class="text-sm text-[var(--text-secondary)] whitespace-nowrap">
@@ -79,7 +79,7 @@ function formatDate(dateString: string): string {
                     post.frontmatter.tags.length > 0 && (
                       <div class="flex flex-wrap gap-2">
                         {post.frontmatter.tags.map((tag: string) => (
-                          <span class="text-xs px-2 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)] transition-colors">
+                          <span class="text-xs px-2 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)]">
                             {tag}
                           </span>
                         ))}

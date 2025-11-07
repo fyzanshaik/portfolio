@@ -19,7 +19,8 @@ const { enableLogoAnimation = false } = Astro.props;
           alt="Faizan Shaik"
           width="48"
           height="48"
-          loading="lazy"
+          loading="eager"
+          fetchpriority="high"
           decoding="async"
           class="w-full h-full rounded-full relative z-10 border-2 border-[var(--bg-primary)] bg-[var(--bg-primary)]"
         />
@@ -85,7 +86,7 @@ const { enableLogoAnimation = false } = Astro.props;
     >
       <svg
         id="sound-icon-on"
-        class="w-5 h-5 hidden"
+        class="w-5 h-5"
         fill="currentColor"
         viewBox="0 0 24 24"
       >
@@ -124,7 +125,7 @@ const { enableLogoAnimation = false } = Astro.props;
   >
     <svg
       id="mobile-sound-icon-on"
-      class="w-5 h-5 hidden"
+      class="w-5 h-5"
       fill="currentColor"
       viewBox="0 0 24 24"
     >
@@ -159,7 +160,7 @@ const { enableLogoAnimation = false } = Astro.props;
   >
     <svg
       id="mobile-top-theme-icon-light"
-      class="w-5 h-5 hidden"
+      class="w-5 h-5"
       fill="none"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -308,7 +309,7 @@ const { enableLogoAnimation = false } = Astro.props;
         >
           <svg
             id="mobile-menu-theme-icon-light"
-            class="w-5 h-5 hidden"
+            class="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -348,7 +349,7 @@ const { enableLogoAnimation = false } = Astro.props;
         >
           <svg
             id="mobile-menu-sound-icon-on"
-            class="w-5 h-5 hidden"
+            class="w-5 h-5"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
@@ -380,6 +381,54 @@ const { enableLogoAnimation = false } = Astro.props;
     </div>
   </div>
 </div>
+
+<script is:inline>
+  (function() {
+    function setInitialSoundIconState(onId, offId) {
+      const onIcon = document.getElementById(onId);
+      const offIcon = document.getElementById(offId);
+      if (!onIcon || !offIcon) return;
+      
+      const isMuted = localStorage.getItem('audio-muted') === 'true';
+      if (isMuted) {
+        onIcon.classList.add('hidden');
+        offIcon.classList.remove('hidden');
+      } else {
+        onIcon.classList.remove('hidden');
+        offIcon.classList.add('hidden');
+      }
+    }
+    
+    function setInitialThemeIconState(lightId, darkId) {
+      const lightIcon = document.getElementById(lightId);
+      const darkIcon = document.getElementById(darkId);
+      if (!lightIcon || !darkIcon) return;
+      
+      const isDark = document.documentElement.classList.contains('dark');
+      if (isDark) {
+        lightIcon.classList.remove('hidden');
+        darkIcon.classList.add('hidden');
+      } else {
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
+    }
+    
+    function initIcons() {
+      setInitialSoundIconState('sound-icon-on', 'sound-icon-off');
+      setInitialSoundIconState('mobile-sound-icon-on', 'mobile-sound-icon-off');
+      setInitialSoundIconState('mobile-menu-sound-icon-on', 'mobile-menu-sound-icon-off');
+      setInitialThemeIconState('mobile-top-theme-icon-light', 'mobile-top-theme-icon-dark');
+      setInitialThemeIconState('mobile-menu-theme-icon-light', 'mobile-menu-theme-icon-dark');
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initIcons);
+    } else {
+      initIcons();
+    }
+  })();
+</script>
 
 <!-- Email Copy Notification -->
 <div
@@ -424,7 +473,7 @@ const { enableLogoAnimation = false } = Astro.props;
     try {
       await navigator.clipboard.writeText(email);
       showNotification();
-    } catch (err) {
+    } catch {
       const textArea = document.createElement('textarea');
       textArea.value = email;
       textArea.style.position = 'fixed';
@@ -539,10 +588,10 @@ const { enableLogoAnimation = false } = Astro.props;
       } else {
         (window as any).AudioUX?.mute?.();
       }
-      setTimeout(updateSoundIcon, 0);
+      updateSoundIcon();
     });
 
-    setTimeout(updateSoundIcon, 100);
+    updateSoundIcon();
   }
 
   setupSoundToggle('sound-toggle', 'sound-icon-on', 'sound-icon-off');

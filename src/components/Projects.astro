@@ -146,9 +146,9 @@ const projects = [
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       {
         projects.map(project => (
-          <div class="group border border-[var(--border)] rounded-xl p-4 bg-[var(--bg-surface)] hover:border-[var(--accent)] hover:shadow-lg hover:shadow-[var(--accent)]/10 transition-all duration-300 hover:-translate-y-1">
+          <div class="group border border-[var(--border)] rounded-xl p-4 bg-[var(--bg-surface)] hover:border-[var(--accent)] hover:shadow-lg hover:shadow-[var(--accent)]/10 transition-[transform,box-shadow] duration-300 hover:-translate-y-1">
             <div class="flex items-start justify-between mb-3">
-              <h3 class="text-xl font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors duration-300">
+              <h3 class="text-xl font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)]">
                 {project.title}
               </h3>
               <div class="flex items-center gap-2">
@@ -157,7 +157,7 @@ const projects = [
                     href={project.live}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-xs px-2 py-1 rounded border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors flex items-center gap-1"
+                    class="text-xs px-2 py-1 rounded border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--accent)] hover:border-[var(--accent)] flex items-center gap-1"
                     title="Live Demo"
                   >
                     <svg
@@ -193,13 +193,13 @@ const projects = [
               </div>
             </div>
 
-            <p class="text-sm text-[var(--text-secondary)] mb-3 leading-relaxed group-hover:text-[var(--text-primary)] transition-colors duration-300">
+            <p class="text-sm text-[var(--text-secondary)] mb-3 leading-relaxed group-hover:text-[var(--text-primary)]">
               {project.description}
             </p>
 
             <div class="flex flex-wrap gap-2">
               {project.tech.map(tech => (
-                <span class="text-xs px-3 py-1.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all duration-200 font-medium">
+                <span class="text-xs px-3 py-1.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)] font-medium">
                   {tech}
                 </span>
               ))}

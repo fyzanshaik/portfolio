@@ -324,6 +324,106 @@ function formatDate(dateString: string): string {
         }
       })();
     </script>
+    <script is:inline>
+      (function () {
+        const volume = 0.18;
+        const poolSize = 3;
+        const sounds = {
+          hover: { path: '/tap_05.wav', pool: [], idx: 0 },
+          click: { path: '/tap_03.wav', pool: [], idx: 0 },
+          theme: { path: '/tap_05.wav', pool: [], idx: 0 },
+        };
+
+        let audioInitialized = false;
+
+        function initAudioPools() {
+          if (audioInitialized) return;
+          audioInitialized = true;
+          if (localStorage.getItem('audio-muted') === 'true') return;
+          for (const sound of Object.values(sounds)) {
+            for (let i = 0; i < poolSize; i++) {
+              const a = new Audio();
+              a.src = sound.path;
+              a.preload = 'auto';
+              a.volume = volume;
+              sound.pool.push(a);
+            }
+          }
+        }
+
+        function playSound(soundType) {
+          if (localStorage.getItem('audio-muted') === 'true') return;
+          const sound = sounds[soundType];
+          if (!sound) return;
+          if (sound.pool.length === 0) {
+            const temp = new Audio(sound.path);
+            temp.preload = 'auto';
+            temp.volume = volume;
+            sound.pool.push(temp);
+            sound.idx = 0;
+            temp.currentTime = 0;
+            temp.play().catch(() => {});
+            return;
+          }
+          const a = sound.pool[sound.idx];
+          sound.idx = (sound.idx + 1) % sound.pool.length;
+          a.currentTime = 0;
+          a.play().catch(() => {});
+        }
+
+        document.addEventListener('pointerdown', initAudioPools, {
+          once: true,
+          passive: true,
+        });
+        document.addEventListener('pointerover', initAudioPools, {
+          once: true,
+          passive: true,
+        });
+        document.addEventListener('touchstart', initAudioPools, {
+          once: true,
+          passive: true,
+        });
+        document.addEventListener('keydown', initAudioPools, { once: true });
+
+        let lastHoverTs = 0;
+        const HOVER_THROTTLE_MS = 220;
+
+        document.addEventListener(
+          'click',
+          () => {
+            playSound('click');
+          },
+          { passive: true }
+        );
+
+        const navElements = document.querySelectorAll('nav a, nav button');
+        navElements.forEach(el => {
+          el.addEventListener(
+            'mouseover',
+            () => {
+              const now = performance.now();
+              if (now - lastHoverTs < HOVER_THROTTLE_MS) return;
+              lastHoverTs = now;
+              playSound('hover');
+            },
+            { passive: true }
+          );
+        });
+
+        const prefersReduced = window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches;
+        if (prefersReduced && localStorage.getItem('audio-muted') == null) {
+          localStorage.setItem('audio-muted', 'true');
+        }
+        window['AudioUX'] = {
+          mute: () => localStorage.setItem('audio-muted', 'true'),
+          unmute: () => localStorage.setItem('audio-muted', 'false'),
+          isMuted: () => localStorage.getItem('audio-muted') === 'true',
+          playTheme: () => playSound('theme'),
+        };
+      })();
+    </script>
   </body>
 </html>
 
