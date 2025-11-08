@@ -383,12 +383,12 @@ const { enableLogoAnimation = false } = Astro.props;
 </div>
 
 <script is:inline>
-  (function() {
+  (function () {
     function setInitialSoundIconState(onId, offId) {
       const onIcon = document.getElementById(onId);
       const offIcon = document.getElementById(offId);
       if (!onIcon || !offIcon) return;
-      
+
       const isMuted = localStorage.getItem('audio-muted') === 'true';
       if (isMuted) {
         onIcon.classList.add('hidden');
@@ -398,12 +398,12 @@ const { enableLogoAnimation = false } = Astro.props;
         offIcon.classList.add('hidden');
       }
     }
-    
+
     function setInitialThemeIconState(lightId, darkId) {
       const lightIcon = document.getElementById(lightId);
       const darkIcon = document.getElementById(darkId);
       if (!lightIcon || !darkIcon) return;
-      
+
       const isDark = document.documentElement.classList.contains('dark');
       if (isDark) {
         lightIcon.classList.remove('hidden');
@@ -413,15 +413,24 @@ const { enableLogoAnimation = false } = Astro.props;
         darkIcon.classList.remove('hidden');
       }
     }
-    
+
     function initIcons() {
       setInitialSoundIconState('sound-icon-on', 'sound-icon-off');
       setInitialSoundIconState('mobile-sound-icon-on', 'mobile-sound-icon-off');
-      setInitialSoundIconState('mobile-menu-sound-icon-on', 'mobile-menu-sound-icon-off');
-      setInitialThemeIconState('mobile-top-theme-icon-light', 'mobile-top-theme-icon-dark');
-      setInitialThemeIconState('mobile-menu-theme-icon-light', 'mobile-menu-theme-icon-dark');
+      setInitialSoundIconState(
+        'mobile-menu-sound-icon-on',
+        'mobile-menu-sound-icon-off'
+      );
+      setInitialThemeIconState(
+        'mobile-top-theme-icon-light',
+        'mobile-top-theme-icon-dark'
+      );
+      setInitialThemeIconState(
+        'mobile-menu-theme-icon-light',
+        'mobile-menu-theme-icon-dark'
+      );
     }
-    
+
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initIcons);
     } else {
