@@ -2,7 +2,7 @@
 
 Personal portfolio website built with Astro and deployed on Cloudflare Pages.
 
-🌐 **Live Site**: [portfolio-5tk.pages.dev](https://portfolio-5tk.pages.dev)
+🌐 **Live Site**: [fyzanshaik.in](https://fyzanshaik.in)
 
 ## Tech Stack
 

@@ -1,3 +1,7 @@
+---
+const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
+---
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -5,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="canonical" href="https://portfolio-5tk.pages.dev/" />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt" />
 
     <title>Faizan Shaik - Software Engineer | Backend, DevOps & AI/ML</title>
@@ -25,7 +29,7 @@
     <meta name="generator" content={Astro.generator} />
 
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://portfolio-5tk.pages.dev/" />
+    <meta property="og:url" content={canonicalUrl} />
     <meta
       property="og:title"
       content="Faizan Shaik - Software Engineer | Backend, DevOps & AI/ML"
@@ -36,9 +40,14 @@
     />
     <meta property="og:site_name" content="Faizan Shaik Portfolio" />
     <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://fyzanshaik.in/favicon.svg" />
+    <meta property="og:image:alt" content="Faizan Shaik - Software Engineer" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://portfolio-5tk.pages.dev/" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:image" content="https://fyzanshaik.in/favicon.svg" />
+    <meta name="twitter:image:alt" content="Faizan Shaik - Software Engineer" />
+    <meta name="twitter:creator" content="@fyzanshaik" />
     <meta
       name="twitter:title"
       content="Faizan Shaik - Software Engineer | Backend, DevOps & AI/ML"
@@ -53,7 +62,7 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Faizan Shaik",
-        "url": "https://personal-site.fyzan-shaik.workers.dev",
+        "url": "https://fyzanshaik.in",
         "jobTitle": "Software Engineer",
         "worksFor": {
           "@type": "Organization",

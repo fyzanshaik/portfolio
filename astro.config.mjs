@@ -4,7 +4,7 @@ import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://portfolio-5tk.pages.dev',
+  site: 'https://fyzanshaik.in',
   output: 'server',
   adapter: cloudflare({ mode: 'directory' }),
 
@@ -19,7 +19,7 @@ export default defineConfig({
       lastmod: new Date(),
 
       serialize(item) {
-        if (item.url === 'https://portfolio-5tk.pages.dev/') {
+        if (item.url === 'https://fyzanshaik.in/') {
           item.priority = 1.0;
           item.changefreq = 'daily';
         }

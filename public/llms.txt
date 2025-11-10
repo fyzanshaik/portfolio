@@ -11,10 +11,10 @@
 - LinkedIn: https://linkedin.com/in/fyzanshaik
 
 ## Site URLs
-- Homepage: https://personal-site.fyzan-shaik.workers.dev/
-- Blog: https://personal-site.fyzan-shaik.workers.dev/blog/
-- Sitemap: https://personal-site.fyzan-shaik.workers.dev/sitemap-index.xml
-- Robots: https://personal-site.fyzan-shaik.workers.dev/robots.txt
+- Homepage: https://fyzanshaik.in/
+- Blog: https://fyzanshaik.in/blog/
+- Sitemap: https://fyzanshaik.in/sitemap-index.xml
+- Robots: https://fyzanshaik.in/robots.txt
 
 ## Technical Stack
 - Framework: Astro v5.14.4
@@ -59,20 +59,20 @@
    - Repository: https://github.com/fyzanshaik/mini-git
 
 ### Blog Posts
-All blog posts available at: https://personal-site.fyzan-shaik.workers.dev/blog/
+All blog posts available at: https://fyzanshaik.in/blog/
 
 1. "Redis Caching Strategies for High-Traffic Applications"
-   - URL: https://personal-site.fyzan-shaik.workers.dev/posts/redis-caching-strategies/
+   - URL: https://fyzanshaik.in/posts/redis-caching-strategies/
    - Topics: Redis, Backend, Caching, Performance
    - Date: February 28, 2025
 
 2. "Building High-Performance Systems with Go"
-   - URL: https://personal-site.fyzan-shaik.workers.dev/posts/building-bookmyevent/
+   - URL: https://fyzanshaik.in/posts/building-bookmyevent/
    - Topics: Go, Backend, Systems Design
    - Date: March 15, 2025
 
 3. "Elasticsearch Deep Dive"
-   - URL: https://personal-site.fyzan-shaik.workers.dev/posts/elasticsearch-deep-dive/
+   - URL: https://fyzanshaik.in/posts/elasticsearch-deep-dive/
    - Topics: Elasticsearch, Search, Backend
    - Date: (Check sitemap for date)
 

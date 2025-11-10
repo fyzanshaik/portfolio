@@ -3,7 +3,7 @@ import NavBar from '../components/NavBar.astro';
 import '../styles/global.css';
 
 const { frontmatter } = Astro.props;
-const pageUrl = `https://personal-site.fyzan-shaik.workers.dev${Astro.url.pathname}`;
+const pageUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
@@ -38,11 +38,6 @@ function formatDate(dateString: string): string {
       content={new Date(frontmatter.date).toISOString()}
     />
     <meta name="article:author" content="Faizan Shaik" />
-    {
-      frontmatter.tags?.map((tag: string) => (
-        <meta name="article:tag" content={tag} />
-      ))
-    }
 
     <meta property="og:type" content="article" />
     <meta property="og:url" content={pageUrl} />
@@ -50,15 +45,25 @@ function formatDate(dateString: string): string {
     <meta property="og:description" content={frontmatter.description} />
     <meta property="og:site_name" content="Faizan Shaik Portfolio" />
     <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://fyzanshaik.in/favicon.svg" />
+    <meta property="og:image:alt" content={frontmatter.title} />
     <meta
       property="article:published_time"
       content={new Date(frontmatter.date).toISOString()}
     />
+    {
+      frontmatter.tags?.map((tag: string) => (
+        <meta property="article:tag" content={tag} />
+      ))
+    }
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content={pageUrl} />
     <meta name="twitter:title" content={frontmatter.title} />
     <meta name="twitter:description" content={frontmatter.description} />
+    <meta name="twitter:image" content="https://fyzanshaik.in/favicon.svg" />
+    <meta name="twitter:image:alt" content={frontmatter.title} />
+    <meta name="twitter:creator" content="@fyzanshaik" />
 
     <script
       type="application/ld+json"
@@ -71,7 +76,7 @@ function formatDate(dateString: string): string {
         author: {
           '@type': 'Person',
           name: 'Faizan Shaik',
-          url: 'https://personal-site.fyzan-shaik.workers.dev',
+          url: 'https://fyzanshaik.in',
         },
         keywords: frontmatter.tags?.join(', '),
         url: pageUrl,
