@@ -41,7 +41,9 @@ const experiences = [
 
 <section class="py-8">
   <div class="max-w-[1100px] mx-auto px-6">
-    <h2 class="text-xl font-bold mb-6 space-mono-bold">Work Experience</h2>
+    <h2 class="text-2xl md:text-3xl font-bold mb-6 space-mono-bold">
+      Work Experience
+    </h2>
     <div class="space-y-3">
       {
         experiences.map((exp, index) => (
@@ -53,17 +55,21 @@ const experiences = [
               <div class="flex-1">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
                   <div class="flex items-baseline gap-2">
-                    <h3 class="font-bold text-[var(--text-primary)]">
+                    <h3 class="text-lg md:text-xl font-bold text-[var(--text-primary)]">
                       {exp.company}
                     </h3>
-                    <span class="text-sm text-[var(--text-secondary)]">·</span>
-                    <p class="text-sm text-[var(--accent)]">{exp.role}</p>
+                    <span class="text-base text-[var(--text-secondary)]">
+                      ·
+                    </span>
+                    <p class="text-base md:text-lg text-[var(--accent)]">
+                      {exp.role}
+                    </p>
                   </div>
-                  <p class="text-xs text-[var(--text-secondary)]">
+                  <p class="text-sm md:text-base text-[var(--text-secondary)]">
                     {exp.period}
                   </p>
                 </div>
-                <p class="text-sm text-[var(--text-secondary)]">
+                <p class="text-base md:text-lg text-[var(--text-secondary)]">
                   {exp.highlight}
                 </p>
               </div>
@@ -84,7 +90,7 @@ const experiences = [
             <div class="experience-details hidden px-4 pb-4">
               <ul class="space-y-2 ml-4">
                 {exp.details.map(detail => (
-                  <li class="text-sm text-[var(--text-secondary)] list-disc">
+                  <li class="text-base md:text-lg text-[var(--text-secondary)] list-disc">
                     {detail}
                   </li>
                 ))}

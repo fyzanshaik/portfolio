@@ -141,14 +141,16 @@ const projects = [
 
 <section class="py-8">
   <div class="max-w-[1100px] mx-auto px-6">
-    <h2 class="text-xl font-bold mb-6 space-mono-bold">Projects</h2>
+    <h2 class="text-2xl md:text-3xl font-bold mb-6 space-mono-bold">
+      Projects
+    </h2>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       {
         projects.map(project => (
           <div class="group border border-[var(--border)] rounded-xl p-4 bg-[var(--bg-surface)] hover:border-[var(--accent)] hover:shadow-lg hover:shadow-[var(--accent)]/10 transition-[transform,box-shadow] duration-300 hover:-translate-y-1">
             <div class="flex items-start justify-between mb-3">
-              <h3 class="text-xl font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)]">
+              <h3 class="text-xl md:text-2xl font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)]">
                 {project.title}
               </h3>
               <div class="flex items-center gap-2">
@@ -193,13 +195,13 @@ const projects = [
               </div>
             </div>
 
-            <p class="text-sm text-[var(--text-secondary)] mb-3 leading-relaxed group-hover:text-[var(--text-primary)]">
+            <p class="text-base md:text-lg text-[var(--text-secondary)] mb-3 leading-relaxed group-hover:text-[var(--text-primary)]">
               {project.description}
             </p>
 
             <div class="flex flex-wrap gap-2">
               {project.tech.map(tech => (
-                <span class="text-xs px-3 py-1.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)] font-medium">
+                <span class="text-sm md:text-base px-3 py-1.5 rounded-full bg-[var(--bg-primary)] text-[var(--text-secondary)] border border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)] font-medium">
                   {tech}
                 </span>
               ))}

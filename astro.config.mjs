@@ -34,7 +34,7 @@ export default defineConfig({
         return item;
       },
 
-      filter: (page) => {
+      filter: page => {
         return !page.includes('/api/');
       },
     }),

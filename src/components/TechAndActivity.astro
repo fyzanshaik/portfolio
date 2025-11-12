@@ -18,18 +18,20 @@ const tools = [
   <div class="max-w-[1100px] mx-auto px-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <h2 class="text-xl font-bold mb-6 space-mono-bold">Tech I Love</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-6 space-mono-bold">
+          Tech I Love
+        </h2>
         <div class="space-y-4">
           <div>
             <p
-              class="text-xs text-[var(--text-secondary)] mb-2 uppercase tracking-wider"
+              class="text-sm md:text-base text-[var(--text-secondary)] mb-2 uppercase tracking-wider"
             >
               Languages
             </p>
             <div class="flex flex-wrap gap-2">
               {
                 languages.map(lang => (
-                  <span class="text-sm px-3 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border)]">
+                  <span class="text-base md:text-lg px-3 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border)]">
                     {lang}
                   </span>
                 ))
@@ -38,14 +40,14 @@ const tools = [
           </div>
           <div>
             <p
-              class="text-xs text-[var(--text-secondary)] mb-2 uppercase tracking-wider"
+              class="text-sm md:text-base text-[var(--text-secondary)] mb-2 uppercase tracking-wider"
             >
               Tools & Frameworks
             </p>
             <div class="flex flex-wrap gap-2">
               {
                 tools.map(tool => (
-                  <span class="text-sm px-3 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border)]">
+                  <span class="text-base md:text-lg px-3 py-1 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border)]">
                     {tool}
                   </span>
                 ))
@@ -57,7 +59,9 @@ const tools = [
 
       <div>
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold space-mono-bold">My Activity</h2>
+          <h2 class="text-2xl md:text-3xl font-bold space-mono-bold">
+            My Activity
+          </h2>
           <a
             id="profile-link"
             href={`https://github.com/${GITHUB_USERNAME}`}
