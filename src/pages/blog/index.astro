@@ -23,8 +23,8 @@ function formatDate(dateString: string): string {
 
 <Layout>
   <NavBar />
-  <main class="pt-12 pb-20">
-    <div class="max-w-[1200px] mx-auto px-6">
+  <main class="pt-12 pb-20 md:pl-24">
+    <div class="max-w-6xl mx-auto px-6">
       <div class="mb-12">
         <h1 class="text-4xl md:text-5xl font-bold mb-3 space-mono-bold">
           Blogs
@@ -60,7 +60,7 @@ function formatDate(dateString: string): string {
           <div id="posts-container" class="space-y-12">
             {sortedPosts.map(post => (
               <article
-                class="post-item pl-0 hover:border-[var(--accent)]"
+                class="post-item hover:border-[var(--accent)]"
                 data-search-text={`${post.frontmatter.title.toLowerCase()} ${post.frontmatter.description.toLowerCase()} ${post.frontmatter.tags?.join(' ').toLowerCase() || ''}`}
               >
                 <a href={post.url} class="block group">

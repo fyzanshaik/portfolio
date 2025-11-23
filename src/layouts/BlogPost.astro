@@ -165,8 +165,8 @@ function formatDate(dateString: string): string {
       </div>
     </div>
 
-    <main class="pt-12 pb-20">
-      <div class="max-w-[1200px] mx-auto px-6">
+    <main class="pt-12 pb-20 md:pl-24">
+      <div class="max-w-6xl mx-auto px-6">
         <a
           href="/blog"
           class="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent)] mb-12 transition-colors"
@@ -186,7 +186,7 @@ function formatDate(dateString: string): string {
           Back to Blog
         </a>
 
-        <article class="pl-0">
+        <article>
           <header class="mb-12 text-center">
             <h1
               class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 space-mono-bold leading-tight"
@@ -219,7 +219,7 @@ function formatDate(dateString: string): string {
             </div>
           </header>
 
-          <div id="blog-content" class="prose prose-invert max-w-none">
+          <div id="blog-content" class="prose prose-invert mx-auto">
             <slot />
           </div>
         </article>
