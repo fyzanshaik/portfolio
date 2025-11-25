@@ -11,7 +11,7 @@ import TimerGame from './TimerGame.astro';
         <h1
           class="text-2xl sm:text-3xl md:text-5xl font-bold mb-5 leading-tight text-[var(--text-primary)]"
         >
-          Hi, I'm <span class="text-[var(--accent)] space-mono-bold"
+          Hi, I'm <span class="text-[var(--accent)] space-mono"
             >Faizan Shaik</span
           >
         </h1>
@@ -116,85 +116,101 @@ import TimerGame from './TimerGame.astro';
       </div>
     </div>
 
-    <div class="flex lg:hidden mt-8 justify-center">
-      <div class="timer-game-mobile-wrapper">
-        <div
-          id="mobile-game-box"
-          class="relative w-full max-w-[280px] border border-[var(--border)] rounded-lg cursor-pointer select-none overflow-hidden aspect-square flex flex-col items-center justify-center touch-manipulation"
-        >
-          <span
-            id="mobile-target-time"
-            class="text-3xl font-mono text-[var(--accent)]">1s</span
+    <div class="flex lg:hidden mt-6 justify-center">
+      <div class="timer-game-mobile-wrapper flex gap-3">
+        <div class="flex-1">
+          <div
+            id="mobile-game-box"
+            class="relative w-32 h-32 border border-[var(--border)] rounded-lg cursor-pointer select-none overflow-hidden flex flex-col items-center justify-center touch-manipulation"
           >
-          <span
-            id="mobile-game-status"
-            class="text-xs text-[var(--text-secondary)] mt-2">tap to start</span
-          >
-        </div>
-        <div class="flex items-center justify-center gap-2 mt-3">
-          <button
-            id="mobile-mode-prev"
-            class="p-2 text-[var(--text-secondary)] active:text-[var(--accent)] transition-colors touch-manipulation"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <span
+              id="mobile-target-time"
+              class="text-2xl font-mono text-[var(--accent)]">1s</span
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 19l-7-7 7-7"></path>
-            </svg>
-          </button>
-          <div class="flex gap-1.5">
-            <button
-              data-mode="1"
-              class="mobile-mode-btn text-sm px-3 py-1 rounded font-mono text-[var(--accent)] bg-[var(--accent)]/10 touch-manipulation"
-              >1s</button
-            >
-            <button
-              data-mode="5"
-              class="mobile-mode-btn text-sm px-3 py-1 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
-              >5s</button
-            >
-            <button
-              data-mode="10"
-              class="mobile-mode-btn text-sm px-3 py-1 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
-              >10s</button
-            >
-            <button
-              data-mode="15"
-              class="mobile-mode-btn text-sm px-3 py-1 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
-              >15s</button
+            <span
+              id="mobile-game-status"
+              class="text-[10px] text-[var(--text-secondary)] mt-1"
+              >tap to start</span
             >
           </div>
-          <button
-            id="mobile-mode-next"
-            class="p-2 text-[var(--text-secondary)] active:text-[var(--accent)] transition-colors touch-manipulation"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div class="flex items-center justify-center gap-1 mt-2">
+            <button
+              id="mobile-mode-prev"
+              class="p-1 text-[var(--text-secondary)] active:text-[var(--accent)] transition-colors touch-manipulation"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"></path>
-            </svg>
-          </button>
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"></path>
+              </svg>
+            </button>
+            <div class="flex gap-1">
+              <button
+                data-mode="1"
+                class="mobile-mode-btn text-[10px] px-2 py-0.5 rounded font-mono text-[var(--accent)] bg-[var(--accent)]/10 touch-manipulation"
+                >1s</button
+              >
+              <button
+                data-mode="5"
+                class="mobile-mode-btn text-[10px] px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
+                >5s</button
+              >
+              <button
+                data-mode="10"
+                class="mobile-mode-btn text-[10px] px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
+                >10s</button
+              >
+              <button
+                data-mode="15"
+                class="mobile-mode-btn text-[10px] px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
+                >15s</button
+              >
+            </div>
+            <button
+              id="mobile-mode-next"
+              class="p-1 text-[var(--text-secondary)] active:text-[var(--accent)] transition-colors touch-manipulation"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
         </div>
-        <div class="text-center mt-3">
-          <span class="text-xs text-[var(--text-secondary)]">your best: </span>
-          <span
-            id="mobile-your-score"
-            class="text-sm font-mono text-[var(--text-primary)]">—</span
-          >
+        <div class="w-20 flex flex-col justify-center text-right">
+          <div class="mb-2">
+            <span class="text-[10px] text-[var(--text-secondary)] block"
+              >your best</span
+            >
+            <span
+              id="mobile-your-score"
+              class="text-xs font-mono text-[var(--text-primary)]">—</span
+            >
+          </div>
+          <div>
+            <span class="text-[10px] text-[var(--text-secondary)] block"
+              >high score</span
+            >
+            <span
+              id="mobile-high-score"
+              class="text-xs font-mono text-[var(--accent)]">—</span
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -207,6 +223,7 @@ import TimerGame from './TimerGame.astro';
     const mobileTargetTime = document.getElementById('mobile-target-time');
     const mobileGameStatus = document.getElementById('mobile-game-status');
     const mobileYourScore = document.getElementById('mobile-your-score');
+    const mobileHighScore = document.getElementById('mobile-high-score');
     const mobileModePrev = document.getElementById('mobile-mode-prev');
     const mobileModeNext = document.getElementById('mobile-mode-next');
     const mobileModeBtns = document.querySelectorAll('.mobile-mode-btn');
@@ -219,6 +236,26 @@ import TimerGame from './TimerGame.astro';
     let startTime = 0;
     let randomInterval: number | null = null;
     let userScores: Record<string, number> = {};
+    let highScores: Record<string, number> = {};
+
+    async function fetchHighScore() {
+      try {
+        const response = await fetch(
+          `/api/timer-game?mode=${modes[currentMode]}`
+        );
+        if (response.ok) {
+          const data = (await response.json()) as { highScore: number | null };
+          if (data.highScore !== null && data.highScore !== undefined) {
+            highScores[modes[currentMode].toString()] = data.highScore;
+            if (mobileHighScore) {
+              mobileHighScore.textContent = data.highScore.toFixed(3) + 's';
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to fetch high score:', e);
+      }
+    }
 
     function updateModeDisplay() {
       if (!mobileTargetTime || !mobileYourScore) return;
@@ -236,6 +273,13 @@ import TimerGame from './TimerGame.astro';
       const score = userScores[modes[currentMode].toString()];
       mobileYourScore.textContent =
         score !== undefined ? score.toFixed(3) + 's' : '—';
+
+      const hs = highScores[modes[currentMode].toString()];
+      if (mobileHighScore) {
+        mobileHighScore.textContent =
+          hs !== undefined ? hs.toFixed(3) + 's' : '—';
+      }
+      fetchHighScore();
     }
 
     function startGame() {
