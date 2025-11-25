@@ -3,6 +3,29 @@ export const prerender = false;
 interface Env {
   TIMER_GAME_DB: D1Database;
   TIMER_GAME_KV: KVNamespace;
+  TIMER_GAME_API_KEY: string;
+}
+
+const createUnauthorizedResponse = () =>
+  new Response('Nice try nerd!', {
+    status: 401,
+    headers: { 'Content-Type': 'text/plain' },
+  });
+
+function checkAuth(request: Request, env: Env | undefined): Response | null {
+  const serverKey = env?.TIMER_GAME_API_KEY;
+
+  if (!serverKey) {
+    console.error('API Key not configured.');
+    return createUnauthorizedResponse();
+  }
+
+  const clientKey = request.headers.get('X-API-Key');
+  if (clientKey !== serverKey) {
+    return createUnauthorizedResponse();
+  }
+
+  return null;
 }
 
 interface ScoreEntry {
@@ -23,6 +46,11 @@ export async function GET({
   request: Request;
   locals: { runtime: { env: Env } };
 }) {
+  const authResult = checkAuth(request, locals.runtime?.env);
+  if (authResult) {
+    return authResult;
+  }
+
   const url = new URL(request.url);
   const mode = parseInt(url.searchParams.get('mode') || '1');
   const username = url.searchParams.get('user');
@@ -182,6 +210,12 @@ export async function POST({
   request: Request;
   locals: { runtime: { env: Env } };
 }) {
+  const env = locals.runtime?.env;
+  const authResult = checkAuth(request, env);
+  if (authResult) {
+    return authResult;
+  }
+
   try {
     const body = (await request.json()) as {
       name: string;
@@ -212,8 +246,6 @@ export async function POST({
         headers: { 'Content-Type': 'application/json' },
       });
     }
-
-    const env = locals.runtime?.env;
 
     if (!env?.TIMER_GAME_DB) {
       return new Response(JSON.stringify({ success: true, saved: false }), {

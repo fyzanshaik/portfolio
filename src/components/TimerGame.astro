@@ -1,5 +1,5 @@
 ---
-
+const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
 ---
 
 <div class="timer-game-container w-full max-w-[280px] lg:max-w-sm relative">
@@ -261,22 +261,8 @@
   </div>
 </div>
 
-<script>
-  interface ScoreEntry {
-    name: string;
-    score: number;
-  }
-
-  interface ApiResponse {
-    highScore: number | null;
-    leaderboard: ScoreEntry[];
-    userScores: { [mode: string]: number };
-    isNewUser: boolean;
-    saved?: boolean;
-    assignedName?: string;
-  }
-
-  function generateAnonName(): string {
+<script define:vars={{ apiKey }}>
+  function generateAnonName() {
     const num = Math.floor(Math.random() * 99999)
       .toString()
       .padStart(5, '0');
@@ -286,51 +272,49 @@
   const modes = [1, 5, 10, 15];
   let currentModeIndex = 0;
   let modalModeIndex = 0;
-  let gameState: 'idle' | 'running' | 'result' = 'idle';
-  let startTime: number = 0;
-  let randomInterval: ReturnType<typeof setInterval> | null = null;
-  let userScoresCache: { [mode: string]: number } = {};
-  let nameTypingTimeout: ReturnType<typeof setTimeout> | null = null;
+  let gameState = 'idle';
+  let startTime = 0;
+  let randomInterval = null;
+  let userScoresCache = {};
+  let nameTypingTimeout = null;
   let isNewUser = true;
-  let fullLeaderboardCache: { [mode: string]: ScoreEntry[] } = {};
+  let fullLeaderboardCache = {};
 
-  const gameBox = document.getElementById('game-box')!;
-  const stateIdle = document.getElementById('state-idle')!;
-  const stateRunning = document.getElementById('state-running')!;
-  const stateResult = document.getElementById('state-result')!;
-  const targetTimeDisplay = document.getElementById('target-time-display')!;
-  const randomDisplay = document.getElementById('random-display')!;
-  const resultTime = document.getElementById('result-time')!;
-  const resultDiff = document.getElementById('result-diff')!;
-  const newBestIndicator = document.getElementById('new-best-indicator')!;
-  const yourScore = document.getElementById('your-score')!;
-  const highScore = document.getElementById('high-score')!;
-  const leaderboard = document.getElementById('leaderboard')!;
-  const playerNameInput = document.getElementById(
-    'player-name'
-  ) as HTMLInputElement;
-  const saveNameBtn = document.getElementById('save-name-btn')!;
-  const welcomeMsg = document.getElementById('welcome-msg')!;
+  const gameBox = document.getElementById('game-box');
+  const stateIdle = document.getElementById('state-idle');
+  const stateRunning = document.getElementById('state-running');
+  const stateResult = document.getElementById('state-result');
+  const targetTimeDisplay = document.getElementById('target-time-display');
+  const randomDisplay = document.getElementById('random-display');
+  const resultTime = document.getElementById('result-time');
+  const resultDiff = document.getElementById('result-diff');
+  const newBestIndicator = document.getElementById('new-best-indicator');
+  const yourScore = document.getElementById('your-score');
+  const highScore = document.getElementById('high-score');
+  const leaderboard = document.getElementById('leaderboard');
+  const playerNameInput = document.getElementById('player-name');
+  const saveNameBtn = document.getElementById('save-name-btn');
+  const welcomeMsg = document.getElementById('welcome-msg');
   const modeBtns = document.querySelectorAll('.mode-btn');
-  const modePrev = document.getElementById('mode-prev')!;
-  const modeNext = document.getElementById('mode-next')!;
+  const modePrev = document.getElementById('mode-prev');
+  const modeNext = document.getElementById('mode-next');
 
-  const leaderboardModal = document.getElementById('leaderboard-modal')!;
-  const modalBackdrop = document.getElementById('modal-backdrop')!;
-  const closeModalBtn = document.getElementById('close-modal')!;
-  const openLeaderboardBtn = document.getElementById('open-leaderboard')!;
-  const modalModeDisplay = document.getElementById('modal-mode-display')!;
-  const modalModePrev = document.getElementById('modal-mode-prev')!;
-  const modalModeNext = document.getElementById('modal-mode-next')!;
-  const modalLeaderboard = document.getElementById('modal-leaderboard')!;
+  const leaderboardModal = document.getElementById('leaderboard-modal');
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const closeModalBtn = document.getElementById('close-modal');
+  const openLeaderboardBtn = document.getElementById('open-leaderboard');
+  const modalModeDisplay = document.getElementById('modal-mode-display');
+  const modalModePrev = document.getElementById('modal-mode-prev');
+  const modalModeNext = document.getElementById('modal-mode-next');
+  const modalLeaderboard = document.getElementById('modal-leaderboard');
 
   function playGameSound() {
-    if ((window as any).AudioUX && !(window as any).AudioUX.isMuted()) {
-      (window as any).AudioUX.playTheme();
+    if (window.AudioUX && !window.AudioUX.isMuted()) {
+      window.AudioUX.playTheme();
     }
   }
 
-  function getUsername(): string {
+  function getUsername() {
     return (
       playerNameInput.value.trim() ||
       localStorage.getItem('timer-game-username') ||
@@ -338,7 +322,7 @@
     );
   }
 
-  function saveUsername(name: string) {
+  function saveUsername(name) {
     if (name && name !== 'anon') {
       localStorage.setItem('timer-game-username', name);
       saveNameBtn.classList.remove('opacity-0');
@@ -367,7 +351,7 @@
     saveNameBtn.classList.add('opacity-0');
   }
 
-  function updateWelcomeMessage(name: string, isNew: boolean) {
+  function updateWelcomeMessage(name, isNew) {
     if (name && isNew) {
       welcomeMsg.textContent = `hi ${name}!`;
       welcomeMsg.classList.add('text-[var(--accent)]');
@@ -407,10 +391,14 @@
       '<div class="text-xs text-[var(--text-secondary)] text-center">loading...</div>';
 
     try {
-      const response = await fetch(`/api/timer-game?mode=${mode}`);
+      const response = await fetch(`/api/timer-game?mode=${mode}`, {
+        headers: {
+          'X-API-Key': apiKey,
+        },
+      });
       if (!response.ok) return;
 
-      const data = (await response.json()) as ApiResponse;
+      const data = await response.json();
       fullLeaderboardCache[mode.toString()] = data.leaderboard || [];
 
       renderModalLeaderboard();
@@ -548,7 +536,7 @@
     targetTimeDisplay.textContent = `${targetSeconds}s`;
 
     modeBtns.forEach(btn => {
-      const mode = parseInt((btn as HTMLElement).dataset.mode || '0');
+      const mode = parseInt(btn.dataset.mode || '0');
       if (mode === targetSeconds) {
         btn.classList.add('text-[var(--accent)]', 'bg-[var(--accent)]/10');
         btn.classList.remove('text-[var(--text-secondary)]');
@@ -567,7 +555,7 @@
     yourScore.textContent = score !== undefined ? `${score.toFixed(3)}s` : '—';
   }
 
-  function switchState(newState: 'idle' | 'running' | 'result') {
+  function switchState(newState) {
     gameState = newState;
     stateIdle.classList.toggle('hidden', newState !== 'idle');
     stateRunning.classList.toggle('hidden', newState !== 'running');
@@ -627,7 +615,7 @@
     }
   }
 
-  async function submitScore(score: number) {
+  async function submitScore(score) {
     const targetSeconds = modes[currentModeIndex];
     let name = getUsername();
     const needsAnonName = !name;
@@ -636,7 +624,10 @@
     try {
       const response = await fetch('/api/timer-game', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': apiKey,
+        },
         body: JSON.stringify({
           name,
           score,
@@ -645,7 +636,7 @@
         }),
       });
 
-      const data = (await response.json()) as ApiResponse;
+      const data = await response.json();
 
       if (data.saved) {
         const finalName = data.assignedName || name;
@@ -674,10 +665,14 @@
     }
 
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: {
+          'X-API-Key': apiKey,
+        },
+      });
       if (!response.ok) return;
 
-      const data = (await response.json()) as ApiResponse;
+      const data = await response.json();
 
       if (data.highScore !== null && data.highScore !== undefined) {
         highScore.textContent = `${data.highScore.toFixed(3)}s`;
@@ -699,7 +694,7 @@
         leaderboard.innerHTML = data.leaderboard
           .slice(0, 3)
           .map(
-            (entry: { name: string; score: number }, i: number) =>
+            (entry, i) =>
               `<div class="${i === 0 ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}">${entry.name}: ${entry.score.toFixed(3)}s</div>`
           )
           .join('');
@@ -745,7 +740,7 @@
   modeBtns.forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      const mode = parseInt((btn as HTMLElement).dataset.mode || '0');
+      const mode = parseInt(btn.dataset.mode || '0');
       currentModeIndex = modes.indexOf(mode);
       updateModeDisplay();
       fetchScores();
