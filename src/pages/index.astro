@@ -2,27 +2,27 @@
 import Layout from '../layouts/Layout.astro';
 import NavBar from '../components/NavBar.astro';
 import Hero from '../components/Hero.astro';
-import TechAndActivity from '../components/TechAndActivity.astro';
-import Timeline from '../components/Timeline.astro';
 import Projects from '../components/Projects.astro';
+import Activity from '../components/Activity.astro';
+import RecentPosts from '../components/RecentPosts.astro';
 import '../styles/global.css';
 ---
 
 <Layout>
   <NavBar />
-  <main>
+  <main class="max-w-[1100px] mx-auto">
     <Hero />
-    <TechAndActivity />
-    <Timeline />
-    <Projects />
+    <div class="space-y-12 pb-20">
+      <RecentPosts />
+      <Activity />
+      <Projects />
+    </div>
   </main>
-  <footer class="border-t border-[var(--border)] py-8">
+  <footer class="border-t border-[var(--border)] py-8 mt-12">
     <div class="max-w-[1100px] mx-auto px-6">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-        <p class="text-xs text-[var(--text-secondary)]">
-          © 2025 Faizan Shaik · Built with Astro, deployed on Cloudflare
-        </p>
-        <div class="flex items-center gap-3 text-xs space-mono-regular">
+        <p class="text-xs text-[var(--text-secondary)]">© 2025 Faizan Shaik</p>
+        <div class="flex items-center gap-4 text-xs">
           <a
             href="https://github.com/fyzanshaik"
             target="_blank"
@@ -41,7 +41,6 @@ import '../styles/global.css';
           </a>
           <a
             href="mailto:fyzanshaik.work@gmail.com"
-            id="copy-email-footer"
             class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
           >
             Email
@@ -57,14 +56,6 @@ import '../styles/global.css';
             class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
           >
             Sitemap
-          </a>
-          <a
-            href="https://buymeacoffee.com/fyzanshaik"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
-          >
-            Buy Me a Coffee
           </a>
         </div>
       </div>

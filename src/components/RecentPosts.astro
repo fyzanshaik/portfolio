@@ -1,0 +1,70 @@
+---
+const posts = import.meta.glob<any>('../pages/posts/*.md', { eager: true });
+const allPosts = Object.values(posts);
+const recentPosts = allPosts
+  .sort(
+    (a: any, b: any) =>
+      new Date(b.frontmatter.date).getTime() -
+      new Date(a.frontmatter.date).getTime()
+  )
+  .slice(0, 3);
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date);
+}
+---
+
+<section>
+  <div class="max-w-[1100px] mx-auto px-6">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-lg md:text-xl font-bold">Writing</h2>
+      <a
+        href="/blog"
+        class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1"
+      >
+        View All
+        <svg
+          class="w-3 h-3"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+      </a>
+    </div>
+
+    <div class="space-y-4">
+      {
+        recentPosts.map(post => (
+          <div class="group">
+            <a href={post.url} class="block">
+              <div class="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8">
+                <span class="text-xs text-[var(--text-secondary)] font-mono whitespace-nowrap w-[100px]">
+                  {formatDate(post.frontmatter.date)}
+                </span>
+                <div class="flex-1">
+                  <h3 class="text-base font-medium group-hover:text-[var(--accent)] transition-colors mb-1">
+                    {post.frontmatter.title}
+                  </h3>
+                  <p class="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed max-w-2xl">
+                    {post.frontmatter.description}
+                  </p>
+                </div>
+              </div>
+            </a>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

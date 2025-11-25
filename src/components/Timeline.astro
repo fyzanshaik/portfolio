@@ -39,87 +39,60 @@ const experiences = [
 ];
 ---
 
-<section class="py-8">
-  <div class="max-w-[1100px] mx-auto px-6">
-    <h2 class="text-xl md:text-2xl font-black mb-6 space-mono-bold">
+<section>
+  <div class="max-w-[1100px] mx-auto">
+    <h2 class="text-lg md:text-xl font-bold mb-6 text-[var(--text-primary)]">
       Work Experience
     </h2>
-    <div class="space-y-3">
+    <div class="space-y-6">
       {
-        experiences.map((exp, index) => (
-          <div class="border border-[var(--border)] rounded-lg bg-[var(--bg-surface)] overflow-hidden hover:border-[var(--accent)]">
-            <button
-              class="experience-toggle w-full p-4 text-left flex items-start justify-between gap-4 cursor-pointer"
-              data-index={index}
-            >
-              <div class="flex-1">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
-                  <div class="flex items-baseline gap-2">
-                    <h3 class="text-base md:text-lg font-black text-[var(--text-primary)]">
-                      {exp.company}
-                    </h3>
-                    <span class="text-sm text-[var(--text-secondary)]">·</span>
-                    <p class="text-sm md:text-base text-[var(--accent)] font-black">
-                      {exp.role}
-                    </p>
-                  </div>
-                  <p class="text-xs md:text-sm text-[var(--text-secondary)] font-semibold">
-                    {exp.period}
-                  </p>
+        experiences.map(exp => (
+          <details class="group">
+            <summary class="list-none cursor-pointer hover:text-[var(--accent)] transition-colors">
+              <div class="flex flex-col md:flex-row md:items-baseline justify-between gap-1 md:gap-4">
+                <div class="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-2">
+                  <h3 class="text-base md:text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+                    {exp.company}
+                  </h3>
+                  <span class="text-sm text-[var(--text-secondary)]">
+                    · {exp.role}
+                  </span>
                 </div>
-                <p class="text-sm md:text-base text-[var(--text-secondary)] font-semibold">
-                  {exp.highlight}
-                </p>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-mono text-[var(--text-secondary)]">
+                    {exp.period}
+                  </span>
+                  <svg
+                    class="w-3 h-3 text-[var(--accent)] transform group-open:rotate-180 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
               </div>
-              <svg
-                class="expand-icon w-5 h-5 text-[var(--text-secondary)] transition-transform flex-shrink-0 mt-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            <div class="experience-details hidden px-4 pb-4">
-              <ul class="space-y-2 ml-4">
+              <p class="text-sm text-[var(--text-secondary)] mt-1 max-w-2xl">
+                {exp.highlight}
+              </p>
+            </summary>
+            <div class="mt-3 ml-4 pl-4 border-l-2 border-[var(--border)]">
+              <ul class="space-y-2">
                 {exp.details.map(detail => (
-                  <li class="text-sm md:text-base text-[var(--text-secondary)] list-disc font-medium">
+                  <li class="text-sm text-[var(--text-secondary)] leading-relaxed">
                     {detail}
                   </li>
                 ))}
               </ul>
             </div>
-          </div>
+          </details>
         ))
       }
     </div>
   </div>
 </section>
-
-<script>
-  const toggleButtons = document.querySelectorAll('.experience-toggle');
-
-  toggleButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const detailsEl = button.nextElementSibling as HTMLElement;
-      const iconEl = button.querySelector('.expand-icon');
-
-      if (detailsEl && iconEl) {
-        const isExpanded = !detailsEl.classList.contains('hidden');
-
-        if (isExpanded) {
-          detailsEl.classList.add('hidden');
-          iconEl.classList.remove('rotate-180');
-        } else {
-          detailsEl.classList.remove('hidden');
-          iconEl.classList.add('rotate-180');
-        }
-      }
-    });
-  });
-</script>

@@ -1,0 +1,75 @@
+---
+import Layout from '../layouts/Layout.astro';
+import NavBar from '../components/NavBar.astro';
+import Timeline from '../components/Timeline.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+  <NavBar />
+  <main class="max-w-[1100px] mx-auto px-6 pt-16 pb-12 md:pt-28 md:pb-16">
+    <div class="max-w-4xl">
+      <h1
+        class="text-2xl sm:text-3xl md:text-5xl font-bold mb-5 leading-tight text-[var(--accent)] space-mono-bold"
+      >
+        $whoami?
+      </h1>
+
+      <div class="space-y-4 mb-8">
+        <p
+          class="text-sm sm:text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-3xl"
+        >
+          Software engineer based in Hyderabad. I build scalable backend
+          systems, work on cloud infrastructure, and explore AI/ML.
+        </p>
+
+        <p
+          class="text-sm sm:text-base md:text-lg text-[var(--text-secondary)] leading-relaxed max-w-3xl"
+        >
+          Passionate about <span class="text-[var(--text-primary)]">Go</span>, <span
+            class="text-[var(--text-primary)]">TypeScript</span
+          >, and <span class="text-[var(--text-primary)]">Python</span>. I enjoy
+          solving problems in distributed systems and high-performance
+          computing. Outside of work, I read research papers, tinker with
+          embedded devices, and contribute to open source.
+        </p>
+      </div>
+
+      <div class="mb-10">
+        <h2
+          class="text-lg md:text-xl font-bold mb-4 text-[var(--text-primary)]"
+        >
+          Currently
+        </h2>
+        <ul class="space-y-2 text-sm sm:text-base text-[var(--text-secondary)]">
+          <li class="flex items-center gap-2">
+            <span class="text-[var(--accent)]">→</span>
+            Backend services with <span class="text-[var(--text-primary)]"
+              >Go</span
+            >
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-[var(--accent)]">→</span>
+            Container orchestration with <span
+              class="text-[var(--text-primary)]">Kubernetes</span
+            >
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-[var(--accent)]">→</span>
+            Database optimization (<span class="text-[var(--text-primary)]"
+              >PostgreSQL</span
+            >, <span class="text-[var(--text-primary)]">Redis</span>)
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="text-[var(--accent)]">→</span>
+            <span class="text-[var(--text-primary)]">LLMs</span> and AI agents
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-[var(--border)] pt-10">
+      <Timeline />
+    </div>
+  </main>
+</Layout>
