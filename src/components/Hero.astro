@@ -1,101 +1,47 @@
 ---
-const posts = import.meta.glob<any>('../pages/posts/*.md', { eager: true });
-const allPosts = Object.values(posts);
-const recentPosts = allPosts
-  .sort(
-    (a: any, b: any) =>
-      new Date(b.frontmatter.date).getTime() -
-      new Date(a.frontmatter.date).getTime()
-  )
-  .slice(0, 2);
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
-}
 ---
 
-<section class="pt-12 pb-8">
-  <div class="max-w-[1100px] mx-auto px-6">
-    <div class="grid md:grid-cols-2 gap-12 items-start">
-      <div>
-        <div
-          class="text-base text-[var(--text-secondary)] mb-2 space-mono-regular"
-        >
-          tl;dr
-        </div>
-        <h1 class="text-4xl md:text-5xl font-black mb-4 leading-tight">
-          Hi, I'm <span class="text-[var(--accent)]">Faizan Shaik</span>
-        </h1>
-        <p
-          class="text-lg md:text-xl text-[var(--text-secondary)] mb-6 leading-relaxed font-semibold"
-        >
-          A <span class="relative inline-block"
-            ><span class="line-through text-[var(--text-secondary)] opacity-60"
-              >developer</span
-            >
-            <span class="text-[var(--text-primary)] font-black">engineer</span
-            ></span
-          > who builds everything from embedded systems to web products to AI solutions.
-          I love working on backend, infra, and full-stack applications that scale.
-        </p>
-        <p
-          class="text-sm md:text-base text-[var(--text-secondary)] font-semibold"
-        >
-          Based in <a
-            href="https://www.google.com/maps/place/hyderabad+location/data=!4m2!3m1!1s0x3bcb99daeaebd2c7:0xae93b78392bafbc2?sa=X&ved=1t:155783&ictx=111"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-[var(--accent)] font-medium hover:underline"
-            >Hyderabad</a
-          > · Have something to build? <a
-            href="mailto:fyzanshaik.work@gmail.com"
-            id="copy-email-hero"
-            class="text-[var(--accent)] font-medium hover:underline"
-            >Reach out →</a
-          >
-        </p>
-      </div>
+<section class="pt-8">
+  <div class="flex flex-col gap-6">
+    <h1 class="text-4xl md:text-5xl font-bold leading-tight">Faizan Shaik</h1>
 
-      <div>
-        <div class="flex items-center justify-between mb-4">
-          <h2
-            class="text-sm md:text-base font-black space-mono-regular text-[var(--text-secondary)]"
-          >
-            LATEST ARTICLES
-          </h2>
-          <a
-            href="/blog"
-            class="text-xs md:text-sm text-[var(--accent)] hover:underline font-bold"
-            >view all →</a
-          >
-        </div>
-        <div class="space-y-3">
-          {
-            recentPosts.map(post => (
-              <a
-                href={post.url}
-                class="block p-4 rounded-lg border border-[var(--border)] bg-[var(--bg-surface)] hover:border-[var(--accent)] group"
-              >
-                <div class="flex items-start justify-between gap-2 mb-1">
-                  <h3 class="text-sm md:text-base font-black text-[var(--text-primary)] group-hover:text-[var(--accent)] line-clamp-1">
-                    {post.frontmatter.title}
-                  </h3>
-                  <span class="text-xs text-[var(--text-secondary)] whitespace-nowrap font-semibold">
-                    {formatDate(post.frontmatter.date)}
-                  </span>
-                </div>
-                <p class="text-xs md:text-sm text-[var(--text-secondary)] line-clamp-2 font-medium">
-                  {post.frontmatter.description}
-                </p>
-              </a>
-            ))
-          }
-        </div>
-      </div>
+    <div
+      class="flex flex-col gap-4 text-lg md:text-xl leading-relaxed text-[var(--text-secondary)] space-mono-regular"
+    >
+      <p>
+        Software engineer based in Hyderabad. Building scalable backend systems,
+        distributed infrastructure, and AI solutions.
+      </p>
+      <p>
+        Specializing in Go, TypeScript, and Python. Obsessed with performance,
+        simplicity, and the craft of building software.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-6 mt-2 text-sm space-mono-regular">
+      <a
+        href="mailto:fyzanshaik.work@gmail.com"
+        class="text-[var(--text-primary)] border-b border-[var(--text-primary)] hover:opacity-70 transition-opacity"
+      >
+        Reach out {'>'}
+      </a>
+      <a
+        href="https://github.com/fyzanshaik"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+      >
+        [GitHub]
+      </a>
+      <a
+        href="https://linkedin.com/in/fyzanshaik"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+      >
+        [LinkedIn]
+      </a>
     </div>
   </div>
 </section>

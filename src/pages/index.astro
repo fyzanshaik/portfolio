@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import NavBar from '../components/NavBar.astro';
 import Hero from '../components/Hero.astro';
-import TechAndActivity from '../components/TechAndActivity.astro';
+import GitHubStats from '../components/GitHubStats.astro';
 import Timeline from '../components/Timeline.astro';
 import Projects from '../components/Projects.astro';
 import '../styles/global.css';
@@ -10,24 +10,28 @@ import '../styles/global.css';
 
 <Layout>
   <NavBar />
-  <main>
+  <main class="max-w-3xl mx-auto px-6 py-12 flex flex-col gap-20">
     <Hero />
-    <TechAndActivity />
-    <Timeline />
-    <Projects />
+    <div id="work">
+      <Timeline />
+    </div>
+    <div id="projects">
+      <Projects />
+    </div>
+    <GitHubStats />
   </main>
-  <footer class="border-t border-[var(--border)] py-8">
-    <div class="max-w-[1100px] mx-auto px-6">
+  <footer class="border-t border-[var(--border)] py-8 mt-12">
+    <div class="max-w-3xl mx-auto px-6">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-        <p class="text-xs text-[var(--text-secondary)]">
-          © 2025 Faizan Shaik · Built with Astro, deployed on Cloudflare
+        <p class="text-xs text-[var(--text-secondary)] space-mono-regular">
+          © 2025 Faizan Shaik
         </p>
-        <div class="flex items-center gap-3 text-xs space-mono-regular">
+        <div class="flex items-center gap-4 text-xs space-mono-regular">
           <a
             href="https://github.com/fyzanshaik"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+            class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline decoration-[var(--text-primary)] underline-offset-4 transition-colors"
           >
             GitHub
           </a>
@@ -35,36 +39,15 @@ import '../styles/global.css';
             href="https://linkedin.com/in/fyzanshaik"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+            class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline decoration-[var(--text-primary)] underline-offset-4 transition-colors"
           >
             LinkedIn
           </a>
           <a
             href="mailto:fyzanshaik.work@gmail.com"
-            id="copy-email-footer"
-            class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+            class="text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline decoration-[var(--text-primary)] underline-offset-4 transition-colors"
           >
             Email
-          </a>
-          <a
-            href="/llms.txt"
-            class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
-          >
-            LLMs.txt
-          </a>
-          <a
-            href="/sitemap-index.xml"
-            class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
-          >
-            Sitemap
-          </a>
-          <a
-            href="https://buymeacoffee.com/fyzanshaik"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
-          >
-            Buy Me a Coffee
           </a>
         </div>
       </div>

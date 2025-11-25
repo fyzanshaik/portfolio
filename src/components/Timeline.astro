@@ -4,122 +4,55 @@ const experiences = [
     company: 'Rare Labs',
     role: 'Software Developer Intern',
     period: 'Oct 2024 – Apr 2025',
-    location: 'Hyderabad, India',
-    highlight:
-      'Built AI-powered Legal Research Platform with 98% accuracy, reduced query time by 90%',
-    details: [
-      'Developed a full-stack AI-powered Legal Research Platform using Next.js, TypeScript, and Firebase, enabling real-time legal research with accurate case law and contextual insights.',
-      'Engineered a landmark case retrieval algorithm combining GPT, search techniques, and court filtering to identify Supreme Court precedents with 98% accuracy, validated by practicing attorneys.',
-      'Optimized the AI Legal Search system through streaming responses, API integration and parallel processing, reducing response time by 90% and query time from 40-50s to 10-15s.',
-      'Built a scalable memo management system with AI-powered creation, secure sharing, and PDF exports using Firebase Firestore. Created a Python web scraper to automate legal data collection from Kanoon.',
-    ],
+    description:
+      'Built AI-powered Legal Research Platform with 98% accuracy, reduced query time by 90%.',
   },
   {
     company: 'Encapz Technologies',
     role: 'Full Stack Intern',
     period: 'Apr 2024 – Aug 2024',
-    location: 'Hyderabad, India',
-    highlight: 'Worked on Spring Boot and Vaadin framework in Java',
-    details: [
-      'Optimized backend services using Java, Spring Boot, and JPA through indexing, pagination, and N+1 query reduction, achieving 40% improvement in database performance.',
-      'Implemented Redis caching for frequently accessed data, reducing backend latency by 60% and improving responsiveness for high-traffic scenarios.',
-    ],
+    description:
+      'Optimized backend services using Java Spring Boot, reducing latency by 60% via Redis caching.',
   },
   {
     company: 'United Network Of Professionals',
     role: 'Software Engineer Intern',
     period: 'Sep 2023 – Apr 2024',
-    location: 'Hyderabad, India',
-    highlight:
-      'Redesigned Quiz UI and built RESTful APIs with Node.js, Express, MongoDB',
-    details: [
-      'Redesigned Quiz Section UI using React and developed RESTful APIs with Node.js, Express, and MongoDB for real-time feedback, improving engagement and reducing response time.',
-    ],
+    description:
+      'Redesigned Quiz UI and built RESTful APIs with Node.js/Express for real-time feedback.',
   },
 ];
 ---
 
-<section class="py-8">
-  <div class="max-w-[1100px] mx-auto px-6">
-    <h2 class="text-xl md:text-2xl font-black mb-6 space-mono-bold">
-      Work Experience
-    </h2>
-    <div class="space-y-3">
-      {
-        experiences.map((exp, index) => (
-          <div class="border border-[var(--border)] rounded-lg bg-[var(--bg-surface)] overflow-hidden hover:border-[var(--accent)]">
-            <button
-              class="experience-toggle w-full p-4 text-left flex items-start justify-between gap-4 cursor-pointer"
-              data-index={index}
-            >
-              <div class="flex-1">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
-                  <div class="flex items-baseline gap-2">
-                    <h3 class="text-base md:text-lg font-black text-[var(--text-primary)]">
-                      {exp.company}
-                    </h3>
-                    <span class="text-sm text-[var(--text-secondary)]">·</span>
-                    <p class="text-sm md:text-base text-[var(--accent)] font-black">
-                      {exp.role}
-                    </p>
-                  </div>
-                  <p class="text-xs md:text-sm text-[var(--text-secondary)] font-semibold">
-                    {exp.period}
-                  </p>
-                </div>
-                <p class="text-sm md:text-base text-[var(--text-secondary)] font-semibold">
-                  {exp.highlight}
-                </p>
-              </div>
-              <svg
-                class="expand-icon w-5 h-5 text-[var(--text-secondary)] transition-transform flex-shrink-0 mt-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            <div class="experience-details hidden px-4 pb-4">
-              <ul class="space-y-2 ml-4">
-                {exp.details.map(detail => (
-                  <li class="text-sm md:text-base text-[var(--text-secondary)] list-disc font-medium">
-                    {detail}
-                  </li>
-                ))}
-              </ul>
+<section>
+  <h2 class="text-2xl font-bold mb-8">Work History</h2>
+
+  <div class="relative border-l border-[var(--border)] ml-2 space-y-12">
+    {
+      experiences.map(exp => (
+        <div class="relative pl-8">
+          <div class="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-[var(--text-primary)] rounded-full" />
+
+          <div class="flex flex-col gap-1">
+            <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+              <h3 class="text-lg font-bold text-[var(--text-primary)]">
+                {exp.company}
+              </h3>
+              <span class="text-sm text-[var(--text-secondary)] space-mono-regular">
+                {exp.period}
+              </span>
             </div>
+
+            <p class="text-sm font-medium text-[var(--text-primary)] mb-2">
+              {exp.role}
+            </p>
+
+            <p class="text-sm text-[var(--text-secondary)] leading-relaxed space-mono-regular">
+              {exp.description}
+            </p>
           </div>
-        ))
-      }
-    </div>
+        </div>
+      ))
+    }
   </div>
 </section>
-
-<script>
-  const toggleButtons = document.querySelectorAll('.experience-toggle');
-
-  toggleButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const detailsEl = button.nextElementSibling as HTMLElement;
-      const iconEl = button.querySelector('.expand-icon');
-
-      if (detailsEl && iconEl) {
-        const isExpanded = !detailsEl.classList.contains('hidden');
-
-        if (isExpanded) {
-          detailsEl.classList.add('hidden');
-          iconEl.classList.remove('rotate-180');
-        } else {
-          detailsEl.classList.remove('hidden');
-          iconEl.classList.add('rotate-180');
-        }
-      }
-    });
-  });
-</script>
