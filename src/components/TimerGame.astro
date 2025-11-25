@@ -2,7 +2,7 @@
 
 ---
 
-<div class="timer-game-container w-full max-w-sm relative">
+<div class="timer-game-container w-full max-w-[280px] lg:max-w-sm relative">
   <div class="flex items-center justify-between mb-3">
     <div class="flex items-center gap-1">
       <input
@@ -273,6 +273,14 @@
     userScores: { [mode: string]: number };
     isNewUser: boolean;
     saved?: boolean;
+    assignedName?: string;
+  }
+
+  function generateAnonName(): string {
+    const num = Math.floor(Math.random() * 99999)
+      .toString()
+      .padStart(5, '0');
+    return `anon${num}`;
   }
 
   const modes = [1, 5, 10, 15];
@@ -617,24 +625,33 @@
   async function submitScore(score: number) {
     const targetSeconds = modes[currentModeIndex];
     let name = getUsername();
-    if (!name) name = 'anon';
-
-    saveUsername(name);
+    const needsAnonName = !name;
+    if (!name) name = generateAnonName();
 
     try {
       const response = await fetch('/api/timer-game', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, score, mode: targetSeconds }),
+        body: JSON.stringify({
+          name,
+          score,
+          mode: targetSeconds,
+          generateUnique: needsAnonName,
+        }),
       });
 
       const data = (await response.json()) as ApiResponse;
 
       if (data.saved) {
+        const finalName = data.assignedName || name;
+        if (needsAnonName) {
+          saveUsername(finalName);
+          playerNameInput.value = finalName;
+        }
         userScoresCache[targetSeconds.toString()] = score;
         isNewUser = false;
         updateYourScoreDisplay();
-        updateWelcomeMessage(name, false);
+        updateWelcomeMessage(finalName, false);
         await fetchScores();
       }
     } catch (error) {

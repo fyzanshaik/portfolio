@@ -151,6 +151,30 @@ export async function GET({
   );
 }
 
+function generateAnonName(): string {
+  const num = Math.floor(Math.random() * 99999)
+    .toString()
+    .padStart(5, '0');
+  return `anon${num}`;
+}
+
+async function findUniqueAnonName(
+  db: D1Database,
+  baseName: string,
+  maxAttempts = 10
+): Promise<string> {
+  let name = baseName;
+  for (let i = 0; i < maxAttempts; i++) {
+    const exists = await db
+      .prepare(`SELECT 1 FROM timer_scores WHERE name = ? LIMIT 1`)
+      .bind(name)
+      .first();
+    if (!exists) return name;
+    name = generateAnonName();
+  }
+  return name;
+}
+
 export async function POST({
   request,
   locals,
@@ -163,8 +187,9 @@ export async function POST({
       name: string;
       score: number;
       mode: number;
+      generateUnique?: boolean;
     };
-    const { name, score, mode } = body;
+    const { name, score, mode, generateUnique } = body;
 
     if (!name || typeof score !== 'number' || ![1, 5, 10, 15].includes(mode)) {
       return new Response(JSON.stringify({ error: 'Invalid input' }), {
@@ -173,7 +198,7 @@ export async function POST({
       });
     }
 
-    const sanitizedName = name.slice(0, 12).replace(/[^a-zA-Z0-9_-]/g, '');
+    let sanitizedName = name.slice(0, 12).replace(/[^a-zA-Z0-9_-]/g, '');
     if (!sanitizedName) {
       return new Response(JSON.stringify({ error: 'Invalid name' }), {
         status: 400,
@@ -197,6 +222,13 @@ export async function POST({
       });
     }
 
+    if (generateUnique && sanitizedName.startsWith('anon')) {
+      sanitizedName = await findUniqueAnonName(
+        env.TIMER_GAME_DB,
+        sanitizedName
+      );
+    }
+
     const existing = await env.TIMER_GAME_DB.prepare(
       `SELECT score FROM timer_scores WHERE name = ? AND mode = ?`
     )
@@ -210,6 +242,7 @@ export async function POST({
           saved: false,
           reason: 'existing_better',
           currentBest: existing.score,
+          assignedName: sanitizedName,
         }),
         {
           status: 200,
@@ -244,6 +277,7 @@ export async function POST({
         success: true,
         saved: true,
         newBest: score,
+        assignedName: sanitizedName,
       }),
       {
         status: 200,

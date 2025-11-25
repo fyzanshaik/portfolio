@@ -7,7 +7,6 @@ import TimerGame from './TimerGame.astro';
     <div
       class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 lg:gap-12"
     >
-      <!-- Left: Intro Content -->
       <div class="flex-1 max-w-2xl">
         <h1
           class="text-2xl sm:text-3xl md:text-5xl font-bold mb-5 leading-tight text-[var(--text-primary)]"
@@ -39,7 +38,9 @@ import TimerGame from './TimerGame.astro';
             class="text-[var(--accent)] underline underline-offset-2 hover:text-[var(--text-primary)] transition-colors"
             >learn more about me</a
           >, or try my <span class="text-[var(--accent)]">timer game</span> and beat
-          the leaderboard →
+          the leaderboard <span class="hidden lg:inline text-[var(--accent)]"
+            >→</span
+          ><span class="lg:hidden text-[var(--accent)]">↓</span>
         </p>
 
         <div class="flex flex-wrap items-center gap-3 sm:gap-4">
@@ -110,10 +111,13 @@ import TimerGame from './TimerGame.astro';
         </div>
       </div>
 
-      <!-- Right: Timer Game (hidden on mobile) -->
       <div class="hidden lg:block">
         <TimerGame />
       </div>
+    </div>
+
+    <div class="lg:hidden mt-8 flex justify-center">
+      <TimerGame />
     </div>
   </div>
 </section>
