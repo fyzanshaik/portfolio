@@ -111,13 +111,236 @@ import TimerGame from './TimerGame.astro';
         </div>
       </div>
 
-      <div class="hidden lg:block">
+      <div class="hidden lg:flex">
         <TimerGame />
       </div>
     </div>
 
-    <div class="lg:hidden mt-8 flex justify-center">
-      <TimerGame />
+    <div class="flex lg:hidden mt-8 justify-center">
+      <div class="timer-game-mobile-wrapper">
+        <div
+          id="mobile-game-box"
+          class="relative w-full max-w-[280px] border border-[var(--border)] rounded-lg cursor-pointer select-none overflow-hidden aspect-square flex flex-col items-center justify-center touch-manipulation"
+        >
+          <span
+            id="mobile-target-time"
+            class="text-3xl font-mono text-[var(--accent)]">1s</span
+          >
+          <span
+            id="mobile-game-status"
+            class="text-xs text-[var(--text-secondary)] mt-2">tap to start</span
+          >
+        </div>
+        <div class="flex items-center justify-center gap-2 mt-3">
+          <button
+            id="mobile-mode-prev"
+            class="p-2 text-[var(--text-secondary)] active:text-[var(--accent)] transition-colors touch-manipulation"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          <div class="flex gap-1.5">
+            <button
+              data-mode="1"
+              class="mobile-mode-btn text-sm px-3 py-1 rounded font-mono text-[var(--accent)] bg-[var(--accent)]/10 touch-manipulation"
+              >1s</button
+            >
+            <button
+              data-mode="5"
+              class="mobile-mode-btn text-sm px-3 py-1 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
+              >5s</button
+            >
+            <button
+              data-mode="10"
+              class="mobile-mode-btn text-sm px-3 py-1 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
+              >10s</button
+            >
+            <button
+              data-mode="15"
+              class="mobile-mode-btn text-sm px-3 py-1 rounded font-mono text-[var(--text-secondary)] touch-manipulation"
+              >15s</button
+            >
+          </div>
+          <button
+            id="mobile-mode-next"
+            class="p-2 text-[var(--text-secondary)] active:text-[var(--accent)] transition-colors touch-manipulation"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="text-center mt-3">
+          <span class="text-xs text-[var(--text-secondary)]">your best: </span>
+          <span
+            id="mobile-your-score"
+            class="text-sm font-mono text-[var(--text-primary)]">—</span
+          >
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+<script>
+  (function () {
+    const mobileGameBox = document.getElementById('mobile-game-box');
+    const mobileTargetTime = document.getElementById('mobile-target-time');
+    const mobileGameStatus = document.getElementById('mobile-game-status');
+    const mobileYourScore = document.getElementById('mobile-your-score');
+    const mobileModePrev = document.getElementById('mobile-mode-prev');
+    const mobileModeNext = document.getElementById('mobile-mode-next');
+    const mobileModeBtns = document.querySelectorAll('.mobile-mode-btn');
+
+    if (!mobileGameBox) return;
+
+    const modes = [1, 5, 10, 15];
+    let currentMode = 0;
+    let gameState = 'idle';
+    let startTime = 0;
+    let randomInterval: number | null = null;
+    let userScores: Record<string, number> = {};
+
+    function updateModeDisplay() {
+      if (!mobileTargetTime || !mobileYourScore) return;
+      mobileTargetTime.textContent = modes[currentMode] + 's';
+      mobileModeBtns.forEach(btn => {
+        const mode = parseInt((btn as HTMLElement).dataset.mode || '0');
+        if (mode === modes[currentMode]) {
+          btn.classList.add('text-[var(--accent)]', 'bg-[var(--accent)]/10');
+          btn.classList.remove('text-[var(--text-secondary)]');
+        } else {
+          btn.classList.remove('text-[var(--accent)]', 'bg-[var(--accent)]/10');
+          btn.classList.add('text-[var(--text-secondary)]');
+        }
+      });
+      const score = userScores[modes[currentMode].toString()];
+      mobileYourScore.textContent =
+        score !== undefined ? score.toFixed(3) + 's' : '—';
+    }
+
+    function startGame() {
+      if (!mobileTargetTime || !mobileGameStatus) return;
+      startTime = performance.now();
+      gameState = 'running';
+      mobileGameStatus.textContent = 'tap to stop!';
+      randomInterval = window.setInterval(() => {
+        mobileTargetTime.textContent = (Math.random() * 99).toFixed(3);
+      }, 50);
+    }
+
+    function stopGame() {
+      if (!mobileTargetTime || !mobileGameStatus || !mobileYourScore) return;
+      if (randomInterval) {
+        clearInterval(randomInterval);
+        randomInterval = null;
+      }
+      const elapsed = (performance.now() - startTime) / 1000;
+      const target = modes[currentMode];
+      const diff = elapsed - target;
+      const absDiff = Math.abs(diff);
+
+      mobileTargetTime.textContent = elapsed.toFixed(3) + 's';
+      mobileGameStatus.textContent =
+        diff >= 0 ? '+' + diff.toFixed(3) + 's' : diff.toFixed(3) + 's';
+      gameState = 'result';
+
+      const currentBest = userScores[target.toString()];
+      if (currentBest === undefined || absDiff < currentBest) {
+        userScores[target.toString()] = absDiff;
+        mobileYourScore.textContent = absDiff.toFixed(3) + 's';
+        localStorage.setItem(
+          'timer-game-mobile-scores',
+          JSON.stringify(userScores)
+        );
+      }
+
+      setTimeout(() => {
+        gameState = 'idle';
+        if (mobileTargetTime && mobileGameStatus) {
+          mobileTargetTime.textContent = modes[currentMode] + 's';
+          mobileGameStatus.textContent = 'tap to start';
+        }
+      }, 2000);
+    }
+
+    function handleGameTap(e: Event) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (gameState === 'idle') {
+        startGame();
+      } else if (gameState === 'running') {
+        stopGame();
+      }
+    }
+
+    mobileGameBox.addEventListener('touchend', handleGameTap, {
+      passive: false,
+    });
+    mobileGameBox.addEventListener('click', handleGameTap);
+
+    function handleModePrev(e: Event) {
+      e.preventDefault();
+      e.stopPropagation();
+      currentMode = (currentMode - 1 + modes.length) % modes.length;
+      updateModeDisplay();
+    }
+
+    function handleModeNext(e: Event) {
+      e.preventDefault();
+      e.stopPropagation();
+      currentMode = (currentMode + 1) % modes.length;
+      updateModeDisplay();
+    }
+
+    mobileModePrev?.addEventListener('touchend', handleModePrev, {
+      passive: false,
+    });
+    mobileModePrev?.addEventListener('click', handleModePrev);
+    mobileModeNext?.addEventListener('touchend', handleModeNext, {
+      passive: false,
+    });
+    mobileModeNext?.addEventListener('click', handleModeNext);
+
+    mobileModeBtns.forEach(btn => {
+      function handleModeBtn(e: Event) {
+        e.preventDefault();
+        e.stopPropagation();
+        const mode = parseInt((btn as HTMLElement).dataset.mode || '0');
+        currentMode = modes.indexOf(mode);
+        updateModeDisplay();
+      }
+      btn.addEventListener('touchend', handleModeBtn, { passive: false });
+      btn.addEventListener('click', handleModeBtn);
+    });
+
+    const savedScores = localStorage.getItem('timer-game-mobile-scores');
+    if (savedScores) {
+      try {
+        userScores = JSON.parse(savedScores);
+      } catch (e) {
+        console.warn('Failed to parse saved scores:', e);
+      }
+    }
+    updateModeDisplay();
+  })();
+</script>
