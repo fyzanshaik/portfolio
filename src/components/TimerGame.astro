@@ -347,7 +347,9 @@
         saveNameBtn.classList.add('opacity-0');
         saveNameBtn.classList.remove('text-[var(--accent)]');
       }, 1500);
+      return true;
     }
+    return false;
   }
 
   function loadSavedUsername() {
@@ -372,6 +374,13 @@
     } else {
       welcomeMsg.textContent = 'leaderboard';
       welcomeMsg.classList.remove('text-[var(--accent)]');
+    }
+  }
+
+  function refreshGameData() {
+    fetchScores();
+    if (!leaderboardModal.classList.contains('hidden')) {
+      renderModalLeaderboard();
     }
   }
 
@@ -489,9 +498,8 @@
 
     nameTypingTimeout = setTimeout(() => {
       const name = playerNameInput.value.trim();
-      if (name) {
-        saveUsername(name);
-        fetchScores();
+      if (name && saveUsername(name)) {
+        refreshGameData();
       }
     }, 3000);
   });
@@ -502,9 +510,8 @@
       nameTypingTimeout = null;
     }
     const name = playerNameInput.value.trim();
-    if (name) {
-      saveUsername(name);
-      fetchScores();
+    if (name && saveUsername(name)) {
+      refreshGameData();
     }
     hideSaveButton();
   });
@@ -516,9 +523,8 @@
         nameTypingTimeout = null;
       }
       const name = playerNameInput.value.trim();
-      if (name) {
-        saveUsername(name);
-        fetchScores();
+      if (name && saveUsername(name)) {
+        refreshGameData();
       }
       playerNameInput.blur();
     }
@@ -531,9 +537,8 @@
       nameTypingTimeout = null;
     }
     const name = playerNameInput.value.trim();
-    if (name) {
-      saveUsername(name);
-      fetchScores();
+    if (name && saveUsername(name)) {
+      refreshGameData();
     }
     playGameSound();
   });
