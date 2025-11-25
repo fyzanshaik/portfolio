@@ -800,8 +800,8 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
       document.addEventListener('click', event => {
         if (
           !infoTooltip.classList.contains('hidden') &&
-          !infoButton.contains(event.target) &&
-          !infoTooltip.contains(event.target)
+          !infoButton.contains(event.target as Node) &&
+          !infoTooltip.contains(event.target as Node)
         ) {
           infoTooltip.classList.add('hidden');
         }
