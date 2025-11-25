@@ -1,0 +1,726 @@
+---
+
+---
+
+<div class="timer-game-container w-full max-w-sm relative">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-1">
+      <input
+        type="text"
+        id="player-name"
+        placeholder="your name"
+        maxlength="12"
+        class="w-20 px-2 py-1 text-xs bg-transparent border-b border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] transition-colors font-mono"
+      />
+      <button
+        id="save-name-btn"
+        class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors opacity-0"
+        title="Save name"
+      >
+        <svg
+          class="w-3.5 h-3.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"></path>
+        </svg>
+      </button>
+    </div>
+    <button
+      id="open-leaderboard"
+      class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors font-mono"
+    >
+      leaderboard ↗
+    </button>
+  </div>
+
+  <div class="flex gap-4">
+    <div class="flex-1">
+      <div
+        id="game-box"
+        class="relative aspect-square border border-[var(--border)] rounded-lg cursor-pointer select-none overflow-hidden transition-all hover:border-[var(--accent)]"
+      >
+        <div
+          id="state-idle"
+          class="absolute inset-0 flex flex-col items-center justify-center"
+        >
+          <span
+            class="text-3xl font-mono text-[var(--accent)]"
+            id="target-time-display">1s</span
+          >
+          <span class="text-xs text-[var(--text-secondary)] mt-2"
+            >click to start</span
+          >
+        </div>
+
+        <div
+          id="state-running"
+          class="absolute inset-0 flex items-center justify-center hidden"
+        >
+          <span
+            id="random-display"
+            class="text-4xl font-mono text-[var(--text-secondary)] tabular-nums"
+            >0.000</span
+          >
+        </div>
+
+        <div
+          id="state-result"
+          class="absolute inset-0 flex flex-col items-center justify-center hidden"
+        >
+          <span class="text-xs text-[var(--text-secondary)] mb-1"
+            >your time</span
+          >
+          <span
+            id="result-time"
+            class="text-3xl font-mono text-[var(--text-primary)]">0.000s</span
+          >
+          <span id="result-diff" class="text-sm font-mono mt-1"></span>
+          <span
+            id="new-best-indicator"
+            class="text-xs text-[var(--accent)] mt-1 hidden">NEW BEST!</span
+          >
+          <span class="text-xs text-[var(--text-secondary)] mt-3"
+            >click to retry</span
+          >
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-2 mt-3">
+        <button
+          id="mode-prev"
+          class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <div class="flex gap-1">
+          <button
+            data-mode="1"
+            class="mode-btn text-xs px-2 py-0.5 rounded font-mono text-[var(--accent)] bg-[var(--accent)]/10"
+            >1s</button
+          >
+          <button
+            data-mode="5"
+            class="mode-btn text-xs px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] hover:text-[var(--accent)]"
+            >5s</button
+          >
+          <button
+            data-mode="10"
+            class="mode-btn text-xs px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] hover:text-[var(--accent)]"
+            >10s</button
+          >
+          <button
+            data-mode="15"
+            class="mode-btn text-xs px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] hover:text-[var(--accent)]"
+            >15s</button
+          >
+        </div>
+        <button
+          id="mode-next"
+          class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="w-20 flex flex-col justify-center text-right">
+      <div class="mb-3">
+        <span class="text-xs text-[var(--text-secondary)] block">your best</span
+        >
+        <span
+          id="your-score"
+          class="text-sm font-mono text-[var(--text-primary)]">—</span
+        >
+      </div>
+      <div>
+        <span class="text-xs text-[var(--text-secondary)] block"
+          >high score</span
+        >
+        <span id="high-score" class="text-sm font-mono text-[var(--accent)]"
+          >—</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <div id="leaderboard" class="hidden"></div>
+  <span id="welcome-msg" class="hidden"></span>
+
+  <!-- Leaderboard Modal -->
+  <div id="leaderboard-modal" class="fixed inset-0 z-50 hidden">
+    <div
+      class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+      id="modal-backdrop"
+    >
+    </div>
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 max-h-[80vh] bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg shadow-xl overflow-hidden"
+    >
+      <div
+        class="p-4 border-b border-[var(--border)] flex items-center justify-between"
+      >
+        <h3 class="text-base font-bold text-[var(--text-primary)]">
+          Leaderboard
+        </h3>
+        <button
+          id="close-modal"
+          class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-4">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <button
+            id="modal-mode-prev"
+            class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          <span
+            id="modal-mode-display"
+            class="text-lg font-mono text-[var(--accent)] font-bold">1s</span
+          >
+          <button
+            id="modal-mode-next"
+            class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div id="modal-leaderboard" class="space-y-2 max-h-60 overflow-y-auto">
+          <div class="text-sm text-[var(--text-secondary)] text-center">
+            loading...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modes = [1, 5, 10, 15];
+  let currentModeIndex = 0;
+  let modalModeIndex = 0;
+  let gameState: 'idle' | 'running' | 'result' = 'idle';
+  let startTime: number = 0;
+  let randomInterval: ReturnType<typeof setInterval> | null = null;
+  let userScoresCache: { [mode: string]: number } = {};
+  let nameTypingTimeout: ReturnType<typeof setTimeout> | null = null;
+  let isNewUser = true;
+  let fullLeaderboardCache: {
+    [mode: string]: Array<{ name: string; score: number }>;
+  } = {};
+
+  const gameBox = document.getElementById('game-box')!;
+  const stateIdle = document.getElementById('state-idle')!;
+  const stateRunning = document.getElementById('state-running')!;
+  const stateResult = document.getElementById('state-result')!;
+  const targetTimeDisplay = document.getElementById('target-time-display')!;
+  const randomDisplay = document.getElementById('random-display')!;
+  const resultTime = document.getElementById('result-time')!;
+  const resultDiff = document.getElementById('result-diff')!;
+  const newBestIndicator = document.getElementById('new-best-indicator')!;
+  const yourScore = document.getElementById('your-score')!;
+  const highScore = document.getElementById('high-score')!;
+  const leaderboard = document.getElementById('leaderboard')!;
+  const playerNameInput = document.getElementById(
+    'player-name'
+  ) as HTMLInputElement;
+  const saveNameBtn = document.getElementById('save-name-btn')!;
+  const welcomeMsg = document.getElementById('welcome-msg')!;
+  const modeBtns = document.querySelectorAll('.mode-btn');
+  const modePrev = document.getElementById('mode-prev')!;
+  const modeNext = document.getElementById('mode-next')!;
+
+  const leaderboardModal = document.getElementById('leaderboard-modal')!;
+  const modalBackdrop = document.getElementById('modal-backdrop')!;
+  const closeModalBtn = document.getElementById('close-modal')!;
+  const openLeaderboardBtn = document.getElementById('open-leaderboard')!;
+  const modalModeDisplay = document.getElementById('modal-mode-display')!;
+  const modalModePrev = document.getElementById('modal-mode-prev')!;
+  const modalModeNext = document.getElementById('modal-mode-next')!;
+  const modalLeaderboard = document.getElementById('modal-leaderboard')!;
+
+  function playGameSound() {
+    if ((window as any).AudioUX && !(window as any).AudioUX.isMuted()) {
+      (window as any).AudioUX.playTheme();
+    }
+  }
+
+  function getUsername(): string {
+    return (
+      playerNameInput.value.trim() ||
+      localStorage.getItem('timer-game-username') ||
+      ''
+    );
+  }
+
+  function saveUsername(name: string) {
+    if (name && name !== 'anon') {
+      localStorage.setItem('timer-game-username', name);
+      saveNameBtn.classList.remove('opacity-0');
+      saveNameBtn.classList.add('text-[var(--accent)]');
+      setTimeout(() => {
+        saveNameBtn.classList.add('opacity-0');
+        saveNameBtn.classList.remove('text-[var(--accent)]');
+      }, 1500);
+    }
+  }
+
+  function loadSavedUsername() {
+    const saved = localStorage.getItem('timer-game-username');
+    if (saved) {
+      playerNameInput.value = saved;
+    }
+  }
+
+  function showSaveButton() {
+    saveNameBtn.classList.remove('opacity-0');
+  }
+
+  function hideSaveButton() {
+    saveNameBtn.classList.add('opacity-0');
+  }
+
+  function updateWelcomeMessage(name: string, isNew: boolean) {
+    if (name && isNew) {
+      welcomeMsg.textContent = `hi ${name}!`;
+      welcomeMsg.classList.add('text-[var(--accent)]');
+    } else {
+      welcomeMsg.textContent = 'leaderboard';
+      welcomeMsg.classList.remove('text-[var(--accent)]');
+    }
+  }
+
+  function openModal() {
+    modalModeIndex = currentModeIndex;
+    updateModalModeDisplay();
+    fetchModalLeaderboard();
+    leaderboardModal.classList.remove('hidden');
+    playGameSound();
+  }
+
+  function closeModal() {
+    leaderboardModal.classList.add('hidden');
+    playGameSound();
+  }
+
+  function updateModalModeDisplay() {
+    modalModeDisplay.textContent = `${modes[modalModeIndex]}s`;
+  }
+
+  async function fetchModalLeaderboard() {
+    const mode = modes[modalModeIndex];
+    modalLeaderboard.innerHTML =
+      '<div class="text-xs text-[var(--text-secondary)] text-center">loading...</div>';
+
+    try {
+      const response = await fetch(`/api/timer-game?mode=${mode}`);
+      if (!response.ok) return;
+
+      const data = await response.json();
+      fullLeaderboardCache[mode.toString()] = data.leaderboard || [];
+
+      renderModalLeaderboard();
+    } catch (error) {
+      console.error('Failed to fetch leaderboard:', error);
+      modalLeaderboard.innerHTML =
+        '<div class="text-xs text-[var(--text-secondary)] text-center">failed to load</div>';
+    }
+  }
+
+  function renderModalLeaderboard() {
+    const mode = modes[modalModeIndex];
+    const entries = fullLeaderboardCache[mode.toString()] || [];
+    const username = getUsername();
+
+    if (entries.length === 0) {
+      modalLeaderboard.innerHTML =
+        '<div class="text-sm text-[var(--text-secondary)] text-center py-4">no scores yet</div>';
+      return;
+    }
+
+    modalLeaderboard.innerHTML = entries
+      .map((entry, i) => {
+        const isCurrentUser = entry.name === username;
+        const rankColor =
+          i === 0
+            ? 'text-[var(--accent)]'
+            : i === 1
+              ? 'text-yellow-400'
+              : i === 2
+                ? 'text-orange-400'
+                : 'text-[var(--text-secondary)]';
+        const bgClass = isCurrentUser ? 'bg-[var(--accent)]/10' : '';
+
+        return `
+        <div class="flex items-center justify-between py-2 px-3 rounded ${bgClass}">
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-mono ${rankColor} w-5">#${i + 1}</span>
+            <span class="text-sm font-mono ${isCurrentUser ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}">${entry.name}</span>
+          </div>
+          <span class="text-sm font-mono text-[var(--text-secondary)]">${entry.score.toFixed(3)}s</span>
+        </div>
+      `;
+      })
+      .join('');
+  }
+
+  openLeaderboardBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    openModal();
+  });
+
+  closeModalBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    closeModal();
+  });
+
+  modalBackdrop.addEventListener('click', e => {
+    e.stopPropagation();
+    closeModal();
+  });
+
+  modalModePrev.addEventListener('click', e => {
+    e.stopPropagation();
+    modalModeIndex = (modalModeIndex - 1 + modes.length) % modes.length;
+    updateModalModeDisplay();
+    fetchModalLeaderboard();
+    playGameSound();
+  });
+
+  modalModeNext.addEventListener('click', e => {
+    e.stopPropagation();
+    modalModeIndex = (modalModeIndex + 1) % modes.length;
+    updateModalModeDisplay();
+    fetchModalLeaderboard();
+    playGameSound();
+  });
+
+  playerNameInput.addEventListener('input', () => {
+    showSaveButton();
+
+    if (nameTypingTimeout) {
+      clearTimeout(nameTypingTimeout);
+    }
+
+    nameTypingTimeout = setTimeout(() => {
+      const name = playerNameInput.value.trim();
+      if (name) {
+        saveUsername(name);
+        fetchScores();
+      }
+    }, 3000);
+  });
+
+  playerNameInput.addEventListener('blur', () => {
+    if (nameTypingTimeout) {
+      clearTimeout(nameTypingTimeout);
+      nameTypingTimeout = null;
+    }
+    const name = playerNameInput.value.trim();
+    if (name) {
+      saveUsername(name);
+      fetchScores();
+    }
+    hideSaveButton();
+  });
+
+  playerNameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (nameTypingTimeout) {
+        clearTimeout(nameTypingTimeout);
+        nameTypingTimeout = null;
+      }
+      const name = playerNameInput.value.trim();
+      if (name) {
+        saveUsername(name);
+        fetchScores();
+      }
+      playerNameInput.blur();
+    }
+  });
+
+  saveNameBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (nameTypingTimeout) {
+      clearTimeout(nameTypingTimeout);
+      nameTypingTimeout = null;
+    }
+    const name = playerNameInput.value.trim();
+    if (name) {
+      saveUsername(name);
+      fetchScores();
+    }
+    playGameSound();
+  });
+
+  function updateModeDisplay() {
+    const targetSeconds = modes[currentModeIndex];
+    targetTimeDisplay.textContent = `${targetSeconds}s`;
+
+    modeBtns.forEach(btn => {
+      const mode = parseInt((btn as HTMLElement).dataset.mode || '0');
+      if (mode === targetSeconds) {
+        btn.classList.add('text-[var(--accent)]', 'bg-[var(--accent)]/10');
+        btn.classList.remove('text-[var(--text-secondary)]');
+      } else {
+        btn.classList.remove('text-[var(--accent)]', 'bg-[var(--accent)]/10');
+        btn.classList.add('text-[var(--text-secondary)]');
+      }
+    });
+
+    updateYourScoreDisplay();
+  }
+
+  function updateYourScoreDisplay() {
+    const mode = modes[currentModeIndex].toString();
+    const score = userScoresCache[mode];
+    yourScore.textContent = score !== undefined ? `${score.toFixed(3)}s` : '—';
+  }
+
+  function switchState(newState: 'idle' | 'running' | 'result') {
+    gameState = newState;
+    stateIdle.classList.toggle('hidden', newState !== 'idle');
+    stateRunning.classList.toggle('hidden', newState !== 'running');
+    stateResult.classList.toggle('hidden', newState !== 'result');
+    if (newState !== 'result') {
+      newBestIndicator.classList.add('hidden');
+    }
+  }
+
+  function generateRandomDisplay() {
+    const random = (Math.random() * 99).toFixed(3);
+    randomDisplay.textContent = random;
+  }
+
+  function startGame() {
+    playGameSound();
+    startTime = performance.now();
+    switchState('running');
+    randomInterval = setInterval(generateRandomDisplay, 50);
+  }
+
+  async function stopGame() {
+    if (randomInterval) {
+      clearInterval(randomInterval);
+      randomInterval = null;
+    }
+
+    const endTime = performance.now();
+    const elapsedSeconds = (endTime - startTime) / 1000;
+    const targetSeconds = modes[currentModeIndex];
+    const diff = elapsedSeconds - targetSeconds;
+    const absDiff = Math.abs(diff);
+
+    playGameSound();
+
+    resultTime.textContent = `${elapsedSeconds.toFixed(3)}s`;
+
+    if (diff > 0) {
+      resultDiff.textContent = `+${diff.toFixed(3)}s`;
+      resultDiff.className = 'text-sm font-mono mt-1 text-red-400';
+    } else if (diff < 0) {
+      resultDiff.textContent = `${diff.toFixed(3)}s`;
+      resultDiff.className = 'text-sm font-mono mt-1 text-yellow-400';
+    } else {
+      resultDiff.textContent = 'PERFECT!';
+      resultDiff.className = 'text-sm font-mono mt-1 text-[var(--accent)]';
+    }
+
+    switchState('result');
+
+    const currentBest = userScoresCache[targetSeconds.toString()];
+    const isBetter = currentBest === undefined || absDiff < currentBest;
+
+    if (isBetter) {
+      newBestIndicator.classList.remove('hidden');
+      await submitScore(absDiff);
+    }
+  }
+
+  async function submitScore(score: number) {
+    const targetSeconds = modes[currentModeIndex];
+    let name = getUsername();
+    if (!name) name = 'anon';
+
+    saveUsername(name);
+
+    try {
+      const response = await fetch('/api/timer-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, score, mode: targetSeconds }),
+      });
+
+      const data = await response.json();
+
+      if (data.saved) {
+        userScoresCache[targetSeconds.toString()] = score;
+        isNewUser = false;
+        updateYourScoreDisplay();
+        updateWelcomeMessage(name, false);
+        await fetchScores();
+      }
+    } catch (error) {
+      console.error('Failed to save score:', error);
+    }
+  }
+
+  async function fetchScores() {
+    const targetSeconds = modes[currentModeIndex];
+    const username = getUsername();
+
+    let url = `/api/timer-game?mode=${targetSeconds}`;
+    if (username) {
+      url += `&user=${encodeURIComponent(username)}`;
+    }
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) return;
+
+      const data = await response.json();
+
+      if (data.highScore !== null && data.highScore !== undefined) {
+        highScore.textContent = `${data.highScore.toFixed(3)}s`;
+      } else {
+        highScore.textContent = '—';
+      }
+
+      if (data.userScores && Object.keys(data.userScores).length > 0) {
+        userScoresCache = data.userScores;
+        updateYourScoreDisplay();
+      }
+
+      isNewUser = data.isNewUser ?? true;
+      updateWelcomeMessage(username, isNewUser);
+
+      fullLeaderboardCache[targetSeconds.toString()] = data.leaderboard || [];
+
+      if (data.leaderboard && data.leaderboard.length > 0) {
+        leaderboard.innerHTML = data.leaderboard
+          .slice(0, 3)
+          .map(
+            (entry: { name: string; score: number }, i: number) =>
+              `<div class="${i === 0 ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}">${entry.name}: ${entry.score.toFixed(3)}s</div>`
+          )
+          .join('');
+      } else {
+        leaderboard.innerHTML =
+          '<div class="text-[var(--text-secondary)]">no scores yet</div>';
+      }
+    } catch (error) {
+      console.error('Failed to fetch scores:', error);
+      leaderboard.innerHTML =
+        '<div class="text-[var(--text-secondary)]">—</div>';
+    }
+  }
+
+  gameBox.addEventListener('click', e => {
+    e.stopPropagation();
+
+    if (gameState === 'idle') {
+      startGame();
+    } else if (gameState === 'running') {
+      stopGame();
+    } else if (gameState === 'result') {
+      switchState('idle');
+    }
+  });
+
+  modePrev.addEventListener('click', e => {
+    e.stopPropagation();
+    currentModeIndex = (currentModeIndex - 1 + modes.length) % modes.length;
+    updateModeDisplay();
+    fetchScores();
+    playGameSound();
+  });
+
+  modeNext.addEventListener('click', e => {
+    e.stopPropagation();
+    currentModeIndex = (currentModeIndex + 1) % modes.length;
+    updateModeDisplay();
+    fetchScores();
+    playGameSound();
+  });
+
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const mode = parseInt((btn as HTMLElement).dataset.mode || '0');
+      currentModeIndex = modes.indexOf(mode);
+      updateModeDisplay();
+      fetchScores();
+      playGameSound();
+    });
+  });
+
+  loadSavedUsername();
+  updateModeDisplay();
+  fetchScores();
+</script>

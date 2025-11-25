@@ -1,0 +1,13 @@
+name = "fyzanshaik-portfolio"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "TIMER_GAME_DB"
+database_name = "timer-game-db"
+database_id = "4701d31b-2196-49b9-8ffd-55e39a71345d"
+
+[[kv_namespaces]]
+binding = "TIMER_GAME_KV"
+id = "a4c905b055b74aa39cd614c73e482d0f"
+
+
