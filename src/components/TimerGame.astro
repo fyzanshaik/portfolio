@@ -31,12 +31,45 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         </svg>
       </button>
     </div>
-    <button
-      id="open-leaderboard"
-      class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors font-mono"
-    >
-      leaderboard ↗
-    </button>
+    <div class="flex items-center gap-2">
+      <div class="relative">
+        <button
+          id="game-info-button"
+          aria-label="Game instructions"
+          class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+        </button>
+        <div
+          id="game-info-tooltip"
+          class="absolute hidden bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-2 text-xs text-left text-[var(--text-primary)] bg-[var(--bg-surface)] border border-[var(--border)] rounded-md shadow-lg z-10"
+        >
+          <p class="font-bold">How to Play:</p>
+          <p>1. Click the box to start.</p>
+          <p>2. Click again to stop.</p>
+          <p>3. Get as close to the target time as possible!</p>
+        </div>
+      </div>
+      <button
+        id="open-leaderboard"
+        class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors font-mono"
+      >
+        leaderboard ↗
+      </button>
+    </div>
   </div>
 
   <div class="flex gap-4">
@@ -751,4 +784,28 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
   loadSavedUsername();
   updateModeDisplay();
   fetchScores();
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const infoButton = document.getElementById('game-info-button');
+    const infoTooltip = document.getElementById('game-info-tooltip');
+
+    if (infoButton && infoTooltip) {
+      infoButton.addEventListener('click', event => {
+        event.stopPropagation();
+        infoTooltip.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', event => {
+        if (
+          !infoTooltip.classList.contains('hidden') &&
+          !infoButton.contains(event.target) &&
+          !infoTooltip.contains(event.target)
+        ) {
+          infoTooltip.classList.add('hidden');
+        }
+      });
+    }
+  });
 </script>
