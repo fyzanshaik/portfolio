@@ -262,6 +262,19 @@
 </div>
 
 <script>
+  interface ScoreEntry {
+    name: string;
+    score: number;
+  }
+
+  interface ApiResponse {
+    highScore: number | null;
+    leaderboard: ScoreEntry[];
+    userScores: { [mode: string]: number };
+    isNewUser: boolean;
+    saved?: boolean;
+  }
+
   const modes = [1, 5, 10, 15];
   let currentModeIndex = 0;
   let modalModeIndex = 0;
@@ -271,9 +284,7 @@
   let userScoresCache: { [mode: string]: number } = {};
   let nameTypingTimeout: ReturnType<typeof setTimeout> | null = null;
   let isNewUser = true;
-  let fullLeaderboardCache: {
-    [mode: string]: Array<{ name: string; score: number }>;
-  } = {};
+  let fullLeaderboardCache: { [mode: string]: ScoreEntry[] } = {};
 
   const gameBox = document.getElementById('game-box')!;
   const stateIdle = document.getElementById('state-idle')!;
@@ -382,7 +393,7 @@
       const response = await fetch(`/api/timer-game?mode=${mode}`);
       if (!response.ok) return;
 
-      const data = await response.json();
+      const data = (await response.json()) as ApiResponse;
       fullLeaderboardCache[mode.toString()] = data.leaderboard || [];
 
       renderModalLeaderboard();
@@ -617,7 +628,7 @@
         body: JSON.stringify({ name, score, mode: targetSeconds }),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as ApiResponse;
 
       if (data.saved) {
         userScoresCache[targetSeconds.toString()] = score;
@@ -644,7 +655,7 @@
       const response = await fetch(url);
       if (!response.ok) return;
 
-      const data = await response.json();
+      const data = (await response.json()) as ApiResponse;
 
       if (data.highScore !== null && data.highScore !== undefined) {
         highScore.textContent = `${data.highScore.toFixed(3)}s`;
