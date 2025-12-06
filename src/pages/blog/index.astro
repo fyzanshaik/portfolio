@@ -11,6 +11,8 @@ const sortedPosts = allPosts.sort(
     new Date(a.frontmatter.date).getTime()
 );
 
+const ogImage = 'https://fyzanshaik.in/og-default.png';
+
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return new Intl.DateTimeFormat('en-US', {
@@ -21,7 +23,14 @@ function formatDate(dateString: string): string {
 }
 ---
 
-<Layout>
+<Layout
+  title="Blog | Faizan Shaik"
+  description="Writing about systems, performance, and the craft of building software"
+  ogTitle="Blog | Faizan Shaik"
+  ogDescription="Writing about systems, performance, and the craft of building software"
+  ogImage={ogImage}
+  ogImageAlt="Blog | Faizan Shaik"
+>
   <NavBar />
   <main class="pt-12 pb-20 md:pl-24">
     <div class="max-w-6xl mx-auto px-6">
