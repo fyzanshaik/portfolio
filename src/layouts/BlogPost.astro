@@ -438,6 +438,49 @@ function formatDate(dateString: string): string {
         };
       })();
     </script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const blogContent = document.getElementById('blog-content');
+        if (!blogContent) return;
+
+        const codeBlocks = blogContent.querySelectorAll('pre');
+
+        codeBlocks.forEach(codeBlock => {
+          const parent = codeBlock.parentNode;
+          if (!parent) return;
+
+          const wrapper = document.createElement('div');
+          wrapper.style.position = 'relative';
+
+          const copyButton = document.createElement('button');
+          copyButton.textContent = 'Copy';
+          copyButton.className = 'copy-code-button';
+
+          parent.insertBefore(wrapper, codeBlock);
+          wrapper.appendChild(codeBlock);
+          wrapper.appendChild(copyButton);
+
+          copyButton.addEventListener('click', () => {
+            const codeToCopy = codeBlock.querySelector('code')?.innerText || '';
+            navigator.clipboard
+              .writeText(codeToCopy)
+              .then(() => {
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => {
+                  copyButton.textContent = 'Copy';
+                }, 2000);
+              })
+              .catch(err => {
+                console.error('Failed to copy text: ', err);
+                copyButton.textContent = 'Error';
+                setTimeout(() => {
+                  copyButton.textContent = 'Copy';
+                }, 2000);
+              });
+          });
+        });
+      });
+    </script>
   </body>
 </html>
 
@@ -509,6 +552,11 @@ function formatDate(dateString: string): string {
     color: var(--text-secondary);
   }
 
+  .prose ol {
+    list-style-type: decimal;
+    padding-left: 1.75rem;
+  }
+
   .prose li {
     margin-bottom: 0.5rem;
   }
@@ -539,5 +587,30 @@ function formatDate(dateString: string): string {
 
   .prose em {
     color: var(--text-secondary);
+  }
+
+  .copy-code-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: var(--bg-surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8em;
+    font-family: sans-serif;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .prose div[style*='position: relative']:hover .copy-code-button {
+    opacity: 1;
+  }
+
+  .copy-code-button:hover {
+    background-color: var(--accent);
+    color: var(--bg-primary);
   }
 </style>
