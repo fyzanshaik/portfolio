@@ -119,6 +119,17 @@ function formatDate(dateString: string): string {
         }
       })();
     </script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFKQC37HGP"
+    ></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-RFKQC37HGP');
+    </script>
   </head>
   <body>
     <NavBar />
