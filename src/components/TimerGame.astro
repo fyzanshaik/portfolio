@@ -784,14 +784,28 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
   loadSavedUsername();
   updateModeDisplay();
   fetchScores();
+
+  // Cleanup intervals when navigating away (View Transitions)
+  document.addEventListener('astro:before-swap', () => {
+    if (randomInterval) {
+      clearInterval(randomInterval);
+      randomInterval = null;
+    }
+    if (nameTypingTimeout) {
+      clearTimeout(nameTypingTimeout);
+      nameTypingTimeout = null;
+    }
+  });
 </script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+  function setupInfoTooltip() {
     const infoButton = document.getElementById('game-info-button');
     const infoTooltip = document.getElementById('game-info-tooltip');
 
-    if (infoButton && infoTooltip) {
+    if (infoButton && infoTooltip && !infoButton.dataset.tooltipSetup) {
+      infoButton.dataset.tooltipSetup = 'true';
+
       infoButton.addEventListener('click', event => {
         event.stopPropagation();
         infoTooltip.classList.toggle('hidden');
@@ -807,5 +821,9 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         }
       });
     }
-  });
+  }
+
+  // Run on initial load and View Transitions navigation
+  setupInfoTooltip();
+  document.addEventListener('astro:page-load', setupInfoTooltip);
 </script>

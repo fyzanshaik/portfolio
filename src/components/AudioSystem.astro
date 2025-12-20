@@ -1,0 +1,181 @@
+---
+// AudioSystem.astro - Shared Web Audio API implementation for instant sound playback
+// This component should be included once in the main layout
+// Note: Add preload links in <head> for best performance:
+// <link rel="preload" href="/tap_03.wav" as="fetch" type="audio/wav" crossorigin="anonymous" />
+// <link rel="preload" href="/tap_05.wav" as="fetch" type="audio/wav" crossorigin="anonymous" />
+---
+
+<script is:inline>
+  (function () {
+    // Skip if AudioUX already exists (View Transitions persist this)
+    if (window.AudioUX && window.AudioUX._initialized) return;
+
+    const volume = 0.18;
+    const soundPaths = {
+      hover: '/tap_05.wav',
+      click: '/tap_03.wav',
+      theme: '/tap_05.wav',
+    };
+
+    let audioContext = null;
+    const audioBuffers = {};
+    let audioReady = false;
+    let contextResumed = false;
+
+    // Pre-fetch and decode audio files for instant playback
+    async function preloadAudioBuffers() {
+      if (audioReady) return;
+
+      try {
+        const AudioContextClass =
+          window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+
+        audioContext = new AudioContextClass();
+
+        const uniquePaths = [...new Set(Object.values(soundPaths))];
+
+        await Promise.all(
+          uniquePaths.map(async path => {
+            try {
+              const response = await fetch(path);
+              const arrayBuffer = await response.arrayBuffer();
+              audioBuffers[path] =
+                await audioContext.decodeAudioData(arrayBuffer);
+            } catch (e) {
+              console.warn('Failed to load audio:', path, e);
+            }
+          })
+        );
+
+        audioReady = true;
+      } catch (e) {
+        console.warn('Web Audio API not available:', e);
+      }
+    }
+
+    // Resume audio context on first user interaction (browser requirement)
+    async function resumeAudioContext() {
+      if (contextResumed || !audioContext) return;
+
+      try {
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+        contextResumed = true;
+      } catch (e) {
+        console.warn('Failed to resume audio context:', e);
+      }
+    }
+
+    function playSound(soundType) {
+      if (localStorage.getItem('audio-muted') === 'true') return;
+      if (!audioReady || !audioContext) return;
+
+      const path = soundPaths[soundType];
+      const buffer = audioBuffers[path];
+      if (!buffer) return;
+
+      try {
+        // Resume context if needed
+        if (audioContext.state === 'suspended') {
+          audioContext.resume();
+        }
+
+        // Create a new source node for each play (they're single-use)
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+
+        source.buffer = buffer;
+        gainNode.gain.value = volume;
+
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        source.start(0);
+      } catch (e) {
+        console.warn('Failed to play sound:', e);
+      }
+    }
+
+    // Start preloading immediately
+    preloadAudioBuffers();
+
+    // Resume context on first user interaction
+    const resumeEvents = ['pointerdown', 'touchstart', 'keydown'];
+    const resumeHandler = () => {
+      resumeAudioContext();
+      resumeEvents.forEach(e => document.removeEventListener(e, resumeHandler));
+    };
+    resumeEvents.forEach(e =>
+      document.addEventListener(e, resumeHandler, { once: true, passive: true })
+    );
+
+    let lastHoverTs = 0;
+    let lastClickTs = 0;
+    const HOVER_THROTTLE_MS = 220;
+    const CLICK_THROTTLE_MS = 100;
+
+    // Skip click sound on theme/sound toggle buttons (they have their own sounds)
+    document.addEventListener(
+      'click',
+      e => {
+        const target = e.target;
+        // Don't play click sound on theme/sound toggle buttons
+        if (
+          target.closest(
+            '#theme-toggle, #sound-toggle, #mobile-sound-toggle, #mobile-top-theme-toggle, #mobile-menu-theme-toggle, #mobile-menu-sound-toggle'
+          )
+        ) {
+          return;
+        }
+
+        // Throttle clicks to prevent double sounds
+        const now = performance.now();
+        if (now - lastClickTs < CLICK_THROTTLE_MS) return;
+        lastClickTs = now;
+
+        playSound('click');
+      },
+      { passive: true }
+    );
+
+    // Setup nav hover sounds (also re-run on page load for View Transitions)
+    function setupNavHoverSounds() {
+      const navElements = document.querySelectorAll('nav a, nav button');
+      navElements.forEach(el => {
+        if (el.dataset.hoverSound) return; // Already setup
+        el.dataset.hoverSound = 'true';
+        el.addEventListener(
+          'mouseover',
+          () => {
+            const now = performance.now();
+            if (now - lastHoverTs < HOVER_THROTTLE_MS) return;
+            lastHoverTs = now;
+            playSound('hover');
+          },
+          { passive: true }
+        );
+      });
+    }
+
+    setupNavHoverSounds();
+    document.addEventListener('astro:page-load', setupNavHoverSounds);
+
+    const prefersReduced = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    if (prefersReduced && localStorage.getItem('audio-muted') == null) {
+      localStorage.setItem('audio-muted', 'true');
+    }
+
+    window.AudioUX = {
+      _initialized: true,
+      mute: () => localStorage.setItem('audio-muted', 'true'),
+      unmute: () => localStorage.setItem('audio-muted', 'false'),
+      isMuted: () => localStorage.getItem('audio-muted') === 'true',
+      playTheme: () => playSound('theme'),
+    };
+  })();
+</script>

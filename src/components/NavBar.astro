@@ -6,92 +6,155 @@ interface Props {
 const { enableLogoAnimation = false } = Astro.props;
 ---
 
-<nav class="fixed left-6 top-1/2 -translate-y-1/2 z-50 hidden md:block">
-  <div class="flex flex-col items-center gap-3">
-    <a href="/" class="group relative mb-2">
-      <div class="relative w-12 h-12 bg-[var(--bg-primary)] rounded-full">
-        <div
-          class={`absolute -inset-1 rounded-full ${enableLogoAnimation ? 'spinning-border' : ''}`}
-        >
-        </div>
-        <img
-          src="https://github.com/fyzanshaik.png"
-          alt="Faizan Shaik"
-          width="48"
-          height="48"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-          class="w-full h-full rounded-full relative z-10 border-2 border-[var(--bg-primary)] bg-[var(--bg-primary)]"
-        />
-      </div>
-    </a>
-
-    <div class="w-px h-6 bg-[var(--border)]"></div>
-
-    <a
-      href="/"
-      class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
+<div transition:persist="navbar-container">
+  <!-- Desktop Nav: Always visible on xl+, auto-hide dock on lg-xl -->
+  <nav
+    id="desktop-nav"
+    class="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex items-center"
+  >
+    <!-- Dock indicator pill - visible when nav is collapsed (lg-xl only) -->
+    <div
+      id="nav-indicator"
+      class="hidden lg:block xl:hidden absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-16 bg-[var(--accent)]/40 rounded-full transition-all duration-300 hover:h-20 hover:bg-[var(--accent)]/60"
+      aria-hidden="true"
     >
-      [Home]
-    </a>
-    <a
-      href="/about"
-      class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
-    >
-      [About]
-    </a>
-    <a
-      href="/blog"
-      class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
-    >
-      [Blog]
-    </a>
-    <a
-      href="https://www.linkedin.com/in/fyzanshaik/"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
-    >
-      [LinkedIn]
-    </a>
-    <a
-      href="https://github.com/fyzanshaik"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
-    >
-      [GitHub]
-    </a>
-    <a
-      href="https://www.x.com/fyzanshaik"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
-    >
-      [X]
-    </a>
-    <a
-      href="mailto:fyzanshaik.work@gmail.com"
-      id="copy-email-nav"
-      class="nav-link text-xs px-3 py-1.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all space-mono-regular"
-    >
-      [Email]
-    </a>
-
-    <div class="w-px h-6 bg-[var(--border)]"></div>
-
-    <div class="theme-toggle-wrapper">
-      <ThemeToggle />
     </div>
 
+    <!-- Nav content - slides in/out on lg-xl, always visible on xl+ -->
+    <div
+      id="nav-content"
+      class="nav-dock flex flex-col items-center gap-2 px-3 py-4
+           lg:-translate-x-[calc(100%-6px)] xl:translate-x-0
+           transition-transform duration-300 ease-out
+           lg:bg-[var(--bg-surface)]/90 lg:backdrop-blur-xl lg:rounded-full lg:border lg:border-slate-400/30 dark:lg:border-slate-500/40 lg:shadow-2xl lg:ml-2
+           xl:bg-transparent xl:backdrop-blur-none xl:rounded-none xl:border-none xl:shadow-none xl:ml-0 xl:px-4"
+    >
+      <a href="/" class="group relative mb-1">
+        <div class="relative w-10 h-10 bg-[var(--bg-primary)] rounded-full">
+          <div
+            class={`absolute -inset-0.5 rounded-full ${enableLogoAnimation ? 'spinning-border' : ''}`}
+          >
+          </div>
+          <img
+            src="https://github.com/fyzanshaik.png"
+            alt="Faizan Shaik"
+            width="40"
+            height="40"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            class="w-full h-full rounded-full relative z-10 border-2 border-[var(--bg-primary)] bg-[var(--bg-primary)]"
+          />
+        </div>
+      </a>
+
+      <div class="w-px h-4 bg-[var(--border)]"></div>
+
+      <a
+        href="/"
+        class="nav-link text-[11px] px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+      >
+        [Home]
+      </a>
+      <a
+        href="/about"
+        class="nav-link text-[11px] px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+      >
+        [About]
+      </a>
+      <a
+        href="/blog"
+        class="nav-link text-[11px] px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+      >
+        [Blog]
+      </a>
+      <a
+        href="https://www.linkedin.com/in/fyzanshaik/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="nav-link text-[11px] px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+      >
+        [LinkedIn]
+      </a>
+      <a
+        href="https://github.com/fyzanshaik"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="nav-link text-[11px] px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+      >
+        [GitHub]
+      </a>
+      <a
+        href="https://www.x.com/fyzanshaik"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="nav-link text-[11px] px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+      >
+        [X]
+      </a>
+      <a
+        href="mailto:fyzanshaik.work@gmail.com"
+        id="copy-email-nav"
+        class="nav-link text-[11px] px-2 py-1 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+      >
+        [Email]
+      </a>
+
+      <div class="w-px h-4 bg-[var(--border)]"></div>
+
+      <div class="theme-toggle-wrapper">
+        <ThemeToggle />
+      </div>
+
+      <button
+        id="sound-toggle"
+        aria-label="Toggle sound"
+        class="p-1.5 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all"
+      >
+        <svg
+          id="sound-icon-on"
+          class="w-4 h-4"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+          ></path>
+        </svg>
+        <svg
+          id="sound-icon-off"
+          class="w-4 h-4 hidden"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M6.857 3.5H4a2 2 0 00-2 2v12a2 2 0 002 2h2.857M9 5v14l4-3h6a2 2 0 002-2V8a2 2 0 00-2-2h-6l-4-3z"
+          ></path>
+          <line
+            x1="3"
+            y1="3"
+            x2="21"
+            y2="21"
+            stroke-linecap="round"
+            stroke-linejoin="round"></line>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Nav: Shows below lg (1024px) -->
+  <div
+    class="lg:hidden fixed top-3 right-3 z-50 flex items-center gap-1.5 bg-[var(--bg-primary)]/80 backdrop-blur-sm rounded-lg p-1.5"
+  >
     <button
-      id="sound-toggle"
+      id="mobile-sound-toggle"
       aria-label="Toggle sound"
       class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
     >
       <svg
-        id="sound-icon-on"
+        id="mobile-sound-icon-on"
         class="w-5 h-5"
         fill="currentColor"
         viewBox="0 0 24 24"
@@ -101,7 +164,7 @@ const { enableLogoAnimation = false } = Astro.props;
         ></path>
       </svg>
       <svg
-        id="sound-icon-off"
+        id="mobile-sound-icon-off"
         class="w-5 h-5 hidden"
         fill="none"
         stroke="currentColor"
@@ -120,358 +183,375 @@ const { enableLogoAnimation = false } = Astro.props;
           stroke-linejoin="round"></line>
       </svg>
     </button>
+    <button
+      id="mobile-top-theme-toggle"
+      aria-label="Toggle theme"
+      class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
+    >
+      <svg
+        id="mobile-top-theme-icon-light"
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+        ></path>
+      </svg>
+      <svg
+        id="mobile-top-theme-icon-dark"
+        class="w-5 h-5 hidden"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+        ></path>
+      </svg>
+    </button>
+    <button
+      id="mobile-menu-toggle"
+      aria-label="Toggle menu"
+      class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
+    >
+      <svg
+        id="menu-icon"
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+      <svg
+        id="close-icon"
+        class="w-6 h-6 hidden"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
   </div>
-</nav>
 
-<div
-  class="md:hidden fixed top-3 right-3 z-50 flex items-center gap-1.5 bg-[var(--bg-primary)]/80 backdrop-blur-sm rounded-lg p-1.5"
->
-  <button
-    id="mobile-sound-toggle"
-    aria-label="Toggle sound"
-    class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
-  >
-    <svg
-      id="mobile-sound-icon-on"
-      class="w-5 h-5"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
-      ></path>
-    </svg>
-    <svg
-      id="mobile-sound-icon-off"
-      class="w-5 h-5 hidden"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      viewBox="0 0 24 24"
-    >
-      <path
-        d="M6.857 3.5H4a2 2 0 00-2 2v12a2 2 0 002 2h2.857M9 5v14l4-3h6a2 2 0 002-2V8a2 2 0 00-2-2h-6l-4-3z"
-      ></path>
-      <line
-        x1="3"
-        y1="3"
-        x2="21"
-        y2="21"
-        stroke-linecap="round"
-        stroke-linejoin="round"></line>
-    </svg>
-  </button>
-  <button
-    id="mobile-top-theme-toggle"
-    aria-label="Toggle theme"
-    class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
-  >
-    <svg
-      id="mobile-top-theme-icon-light"
-      class="w-5 h-5"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-      ></path>
-    </svg>
-    <svg
-      id="mobile-top-theme-icon-dark"
-      class="w-5 h-5 hidden"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-      ></path>
-    </svg>
-  </button>
-  <button
-    id="mobile-menu-toggle"
-    aria-label="Toggle menu"
-    class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
-  >
-    <svg
-      id="menu-icon"
-      class="w-6 h-6"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M4 6h16M4 12h16M4 18h16"></path>
-    </svg>
-    <svg
-      id="close-icon"
-      class="w-6 h-6 hidden"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M6 18L18 6M6 6l12 12"></path>
-    </svg>
-  </button>
-</div>
-
-<div
-  id="mobile-menu"
-  class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden opacity-0 pointer-events-none transition-opacity duration-300"
->
   <div
-    id="mobile-menu-content"
-    class="fixed left-0 top-0 h-full w-64 bg-[var(--bg-primary)] border-r border-[var(--border)] transform -translate-x-full transition-transform duration-300 overflow-y-auto"
+    id="mobile-menu"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden opacity-0 pointer-events-none transition-opacity duration-300"
   >
-    <div class="flex flex-col p-6 space-y-4">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-bold text-[var(--text-primary)]">Menu</h2>
-        <button
-          id="mobile-menu-close"
-          aria-label="Close menu"
-          class="p-1 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+    <div
+      id="mobile-menu-content"
+      class="fixed left-0 top-0 h-full w-64 bg-[var(--bg-primary)] border-r border-[var(--border)] transform -translate-x-full transition-transform duration-300 overflow-y-auto"
+    >
+      <div class="flex flex-col p-6 space-y-4">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold text-[var(--text-primary)]">Menu</h2>
+          <button
+            id="mobile-menu-close"
+            aria-label="Close menu"
+            class="p-1 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <a
+          href="/"
+          class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+        >
+          [Home]
+        </a>
+        <a
+          href="/about"
+          class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+        >
+          [About]
+        </a>
+        <a
+          href="/blog"
+          class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+        >
+          [Blog]
+        </a>
+        <a
+          href="https://www.linkedin.com/in/fyzanshaik/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+        >
+          [LinkedIn]
+        </a>
+        <a
+          href="https://github.com/fyzanshaik"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+        >
+          [GitHub]
+        </a>
+        <a
+          href="https://www.x.com/fyzanshaik"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+        >
+          [X]
+        </a>
+        <a
+          href="mailto:fyzanshaik.work@gmail.com"
+          id="copy-email-mobile"
+          class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
+        >
+          [Email]
+        </a>
+
+        <div class="h-px bg-[var(--border)] my-2"></div>
+
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs text-[var(--text-secondary)] font-medium"
+            >Theme</span
+          >
+          <button
+            id="mobile-menu-theme-toggle"
+            aria-label="Toggle theme"
+            class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
+          >
+            <svg
+              id="mobile-menu-theme-icon-light"
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+              ></path>
+            </svg>
+            <svg
+              id="mobile-menu-theme-icon-dark"
+              class="w-5 h-5 hidden"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs text-[var(--text-secondary)] font-medium"
+            >Sound</span
+          >
+          <button
+            id="mobile-menu-sound-toggle"
+            aria-label="Toggle sound"
+            class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
+          >
+            <svg
+              id="mobile-menu-sound-icon-on"
+              class="w-5 h-5"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+              ></path>
+            </svg>
+            <svg
+              id="mobile-menu-sound-icon-off"
+              class="w-5 h-5 hidden"
+              fill="none"
+              stroke="currentColor"
               stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-
-      <a
-        href="/"
-        class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
-      >
-        [Home]
-      </a>
-      <a
-        href="/about"
-        class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
-      >
-        [About]
-      </a>
-      <a
-        href="/blog"
-        class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
-      >
-        [Blog]
-      </a>
-      <a
-        href="https://www.linkedin.com/in/fyzanshaik/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
-      >
-        [LinkedIn]
-      </a>
-      <a
-        href="https://github.com/fyzanshaik"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
-      >
-        [GitHub]
-      </a>
-      <a
-        href="https://www.x.com/fyzanshaik"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
-      >
-        [X]
-      </a>
-      <a
-        href="mailto:fyzanshaik.work@gmail.com"
-        id="copy-email-mobile"
-        class="nav-link text-sm px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all space-mono-regular"
-      >
-        [Email]
-      </a>
-
-      <div class="h-px bg-[var(--border)] my-2"></div>
-
-      <div class="flex items-center justify-between gap-2">
-        <span class="text-xs text-[var(--text-secondary)] font-medium"
-          >Theme</span
-        >
-        <button
-          id="mobile-menu-theme-toggle"
-          aria-label="Toggle theme"
-          class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
-        >
-          <svg
-            id="mobile-menu-theme-icon-light"
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-            ></path>
-          </svg>
-          <svg
-            id="mobile-menu-theme-icon-dark"
-            class="w-5 h-5 hidden"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-            ></path>
-          </svg>
-        </button>
-      </div>
-
-      <div class="flex items-center justify-between gap-2">
-        <span class="text-xs text-[var(--text-secondary)] font-medium"
-          >Sound</span
-        >
-        <button
-          id="mobile-menu-sound-toggle"
-          aria-label="Toggle sound"
-          class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
-        >
-          <svg
-            id="mobile-menu-sound-icon-on"
-            class="w-5 h-5"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
-            ></path>
-          </svg>
-          <svg
-            id="mobile-menu-sound-icon-off"
-            class="w-5 h-5 hidden"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M6.857 3.5H4a2 2 0 00-2 2v12a2 2 0 002 2h2.857M9 5v14l4-3h6a2 2 0 002-2V8a2 2 0 00-2-2h-6l-4-3z"
-            ></path>
-            <line
-              x1="3"
-              y1="3"
-              x2="21"
-              y2="21"
-              stroke-linecap="round"
-              stroke-linejoin="round"></line>
-          </svg>
-        </button>
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M6.857 3.5H4a2 2 0 00-2 2v12a2 2 0 002 2h2.857M9 5v14l4-3h6a2 2 0 002-2V8a2 2 0 00-2-2h-6l-4-3z"
+              ></path>
+              <line
+                x1="3"
+                y1="3"
+                x2="21"
+                y2="21"
+                stroke-linecap="round"
+                stroke-linejoin="round"></line>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script is:inline>
-  (function () {
-    function setInitialSoundIconState(onId, offId) {
-      const onIcon = document.getElementById(onId);
-      const offIcon = document.getElementById(offId);
-      if (!onIcon || !offIcon) return;
+  <script is:inline>
+    (function () {
+      function setInitialSoundIconState(onId, offId) {
+        const onIcon = document.getElementById(onId);
+        const offIcon = document.getElementById(offId);
+        if (!onIcon || !offIcon) return;
 
-      const isMuted = localStorage.getItem('audio-muted') === 'true';
-      if (isMuted) {
-        onIcon.classList.add('hidden');
-        offIcon.classList.remove('hidden');
-      } else {
-        onIcon.classList.remove('hidden');
-        offIcon.classList.add('hidden');
+        const isMuted = localStorage.getItem('audio-muted') === 'true';
+        if (isMuted) {
+          onIcon.classList.add('hidden');
+          offIcon.classList.remove('hidden');
+        } else {
+          onIcon.classList.remove('hidden');
+          offIcon.classList.add('hidden');
+        }
       }
-    }
 
-    function setInitialThemeIconState(lightId, darkId) {
-      const lightIcon = document.getElementById(lightId);
-      const darkIcon = document.getElementById(darkId);
-      if (!lightIcon || !darkIcon) return;
+      function setInitialThemeIconState(lightId, darkId) {
+        const lightIcon = document.getElementById(lightId);
+        const darkIcon = document.getElementById(darkId);
+        if (!lightIcon || !darkIcon) return;
 
-      const isDark = document.documentElement.classList.contains('dark');
-      if (isDark) {
-        lightIcon.classList.remove('hidden');
-        darkIcon.classList.add('hidden');
-      } else {
-        lightIcon.classList.add('hidden');
-        darkIcon.classList.remove('hidden');
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+          lightIcon.classList.remove('hidden');
+          darkIcon.classList.add('hidden');
+        } else {
+          lightIcon.classList.add('hidden');
+          darkIcon.classList.remove('hidden');
+        }
       }
-    }
 
-    function initIcons() {
-      setInitialSoundIconState('sound-icon-on', 'sound-icon-off');
-      setInitialSoundIconState('mobile-sound-icon-on', 'mobile-sound-icon-off');
-      setInitialSoundIconState(
-        'mobile-menu-sound-icon-on',
-        'mobile-menu-sound-icon-off'
-      );
-      setInitialThemeIconState(
-        'mobile-top-theme-icon-light',
-        'mobile-top-theme-icon-dark'
-      );
-      setInitialThemeIconState(
-        'mobile-menu-theme-icon-light',
-        'mobile-menu-theme-icon-dark'
-      );
-    }
+      function initIcons() {
+        setInitialSoundIconState('sound-icon-on', 'sound-icon-off');
+        setInitialSoundIconState(
+          'mobile-sound-icon-on',
+          'mobile-sound-icon-off'
+        );
+        setInitialSoundIconState(
+          'mobile-menu-sound-icon-on',
+          'mobile-menu-sound-icon-off'
+        );
+        setInitialThemeIconState(
+          'mobile-top-theme-icon-light',
+          'mobile-top-theme-icon-dark'
+        );
+        setInitialThemeIconState(
+          'mobile-menu-theme-icon-light',
+          'mobile-menu-theme-icon-dark'
+        );
+      }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initIcons);
-    } else {
+      // Auto-hide dock behavior for lg-xl screens
+      function setupDockBehavior() {
+        const nav = document.getElementById('desktop-nav');
+        const navContent = document.getElementById('nav-content');
+        const indicator = document.getElementById('nav-indicator');
+        if (!nav || !navContent) return;
+
+        let hideTimeout = null;
+        let isHovering = false;
+
+        function showNav() {
+          if (hideTimeout) {
+            clearTimeout(hideTimeout);
+            hideTimeout = null;
+          }
+          isHovering = true;
+          navContent.classList.remove('lg:-translate-x-[calc(100%-4px)]');
+          navContent.classList.add('lg:translate-x-0');
+          if (indicator) {
+            indicator.style.opacity = '0';
+          }
+        }
+
+        function hideNav() {
+          isHovering = false;
+          hideTimeout = setTimeout(() => {
+            if (!isHovering) {
+              navContent.classList.remove('lg:translate-x-0');
+              navContent.classList.add('lg:-translate-x-[calc(100%-4px)]');
+              if (indicator) {
+                indicator.style.opacity = '1';
+              }
+            }
+          }, 300);
+        }
+
+        // Show on nav hover
+        nav.addEventListener('mouseenter', showNav);
+        nav.addEventListener('mouseleave', hideNav);
+
+        // Also trigger when mouse is at the very left edge of screen
+        document.addEventListener('mousemove', e => {
+          // Only on lg-xl screens (check if nav is in dock mode)
+          if (window.innerWidth >= 1280) return; // xl+ always shows
+          if (window.innerWidth < 1024) return; // below lg uses mobile
+
+          if (e.clientX <= 8 && !isHovering) {
+            showNav();
+          }
+        });
+      }
+
+      // Run immediately and on View Transitions navigation
       initIcons();
-    }
-  })();
-</script>
+      setupDockBehavior();
+      document.addEventListener('astro:page-load', () => {
+        initIcons();
+        setupDockBehavior();
+      });
+    })();
+  </script>
 
-<!-- Email Copy Notification -->
-<div
-  id="email-notification"
-  class="fixed top-4 right-4 bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] px-4 py-2 rounded-lg shadow-lg z-50 opacity-0 pointer-events-none transition-all duration-300 transform translate-x-full"
->
-  <div class="flex items-center gap-2">
-    <svg
-      class="w-4 h-4 text-[var(--accent)]"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M5 13l4 4L19 7"></path>
-    </svg>
-    <span class="text-sm font-medium">Email copied!</span>
+  <!-- Email Copy Notification -->
+  <div
+    id="email-notification"
+    class="fixed top-4 right-4 bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] px-4 py-2 rounded-lg shadow-lg z-50 opacity-0 pointer-events-none transition-all duration-300 transform translate-x-full"
+  >
+    <div class="flex items-center gap-2">
+      <svg
+        class="w-4 h-4 text-[var(--accent)]"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M5 13l4 4L19 7"></path>
+      </svg>
+      <span class="text-sm font-medium">Email copied!</span>
+    </div>
   </div>
 </div>
 

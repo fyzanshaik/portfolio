@@ -1,5 +1,7 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import NavBar from '../components/NavBar.astro';
+import AudioSystem from '../components/AudioSystem.astro';
 import '../styles/global.css';
 
 const { frontmatter } = Astro.props;
@@ -94,6 +96,21 @@ function formatDate(dateString: string): string {
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Preload audio files for instant playback -->
+    <link
+      rel="preload"
+      href="/tap_03.wav"
+      as="fetch"
+      type="audio/wav"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/tap_05.wav"
+      as="fetch"
+      type="audio/wav"
+      crossorigin="anonymous"
+    />
     <link
       rel="preload"
       as="style"
@@ -109,14 +126,26 @@ function formatDate(dateString: string): string {
 
     <script is:inline>
       (function () {
-        const theme =
-          localStorage.getItem('theme') ||
-          (window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light');
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
+        function applyTheme() {
+          const theme =
+            localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light');
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+          }
         }
+
+        // Apply theme immediately
+        applyTheme();
+
+        // Re-apply after View Transitions swap (before new page renders)
+        document.addEventListener('astro:after-swap', applyTheme);
       })();
     </script>
 
@@ -130,6 +159,8 @@ function formatDate(dateString: string): string {
       gtag('js', new Date());
       gtag('config', 'G-RFKQC37HGP');
     </script>
+
+    <ViewTransitions />
   </head>
   <body>
     <NavBar />
@@ -323,140 +354,26 @@ function formatDate(dateString: string): string {
         updateProgressBar();
       };
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => rIC(initIdle));
-      } else {
-        rIC(initIdle);
-      }
+      // Run on initial load and View Transitions navigation
+      rIC(initIdle);
+      document.addEventListener('astro:page-load', () => rIC(initIdle));
 
       window.addEventListener('scroll', updateProgressBar, { passive: true });
     </script>
 
-    <script is:inline>
-      (function () {
-        const originalTheme =
-          localStorage.getItem('theme') ||
-          (window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light');
-
-        if (originalTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-          document.documentElement.style.colorScheme = 'dark';
-        } else {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.style.colorScheme = 'light';
-        }
-      })();
-    </script>
-    <script is:inline>
-      (function () {
-        const volume = 0.18;
-        const poolSize = 3;
-        const sounds = {
-          hover: { path: '/tap_05.wav', pool: [], idx: 0 },
-          click: { path: '/tap_03.wav', pool: [], idx: 0 },
-          theme: { path: '/tap_05.wav', pool: [], idx: 0 },
-        };
-
-        let audioInitialized = false;
-
-        function initAudioPools() {
-          if (audioInitialized) return;
-          audioInitialized = true;
-          if (localStorage.getItem('audio-muted') === 'true') return;
-          for (const sound of Object.values(sounds)) {
-            for (let i = 0; i < poolSize; i++) {
-              const a = new Audio();
-              a.src = sound.path;
-              a.preload = 'auto';
-              a.volume = volume;
-              sound.pool.push(a);
-            }
-          }
-        }
-
-        function playSound(soundType) {
-          if (localStorage.getItem('audio-muted') === 'true') return;
-          const sound = sounds[soundType];
-          if (!sound) return;
-          if (sound.pool.length === 0) {
-            const temp = new Audio(sound.path);
-            temp.preload = 'auto';
-            temp.volume = volume;
-            sound.pool.push(temp);
-            sound.idx = 0;
-            temp.currentTime = 0;
-            temp.play().catch(() => {});
-            return;
-          }
-          const a = sound.pool[sound.idx];
-          sound.idx = (sound.idx + 1) % sound.pool.length;
-          a.currentTime = 0;
-          a.play().catch(() => {});
-        }
-
-        document.addEventListener('pointerdown', initAudioPools, {
-          once: true,
-          passive: true,
-        });
-        document.addEventListener('pointerover', initAudioPools, {
-          once: true,
-          passive: true,
-        });
-        document.addEventListener('touchstart', initAudioPools, {
-          once: true,
-          passive: true,
-        });
-        document.addEventListener('keydown', initAudioPools, { once: true });
-
-        let lastHoverTs = 0;
-        const HOVER_THROTTLE_MS = 220;
-
-        document.addEventListener(
-          'click',
-          () => {
-            playSound('click');
-          },
-          { passive: true }
-        );
-
-        const navElements = document.querySelectorAll('nav a, nav button');
-        navElements.forEach(el => {
-          el.addEventListener(
-            'mouseover',
-            () => {
-              const now = performance.now();
-              if (now - lastHoverTs < HOVER_THROTTLE_MS) return;
-              lastHoverTs = now;
-              playSound('hover');
-            },
-            { passive: true }
-          );
-        });
-
-        const prefersReduced = window.matchMedia(
-          '(prefers-reduced-motion: reduce)'
-        ).matches;
-        if (prefersReduced && localStorage.getItem('audio-muted') == null) {
-          localStorage.setItem('audio-muted', 'true');
-        }
-        window['AudioUX'] = {
-          mute: () => localStorage.setItem('audio-muted', 'true'),
-          unmute: () => localStorage.setItem('audio-muted', 'false'),
-          isMuted: () => localStorage.getItem('audio-muted') === 'true',
-          playTheme: () => playSound('theme'),
-        };
-      })();
-    </script>
+    <AudioSystem />
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      function setupCopyCodeButtons() {
         const blogContent = document.getElementById('blog-content');
         if (!blogContent) return;
 
         const codeBlocks = blogContent.querySelectorAll('pre');
 
         codeBlocks.forEach(codeBlock => {
+          // Skip if already wrapped
+          if ((codeBlock as HTMLElement).dataset.copySetup) return;
+          (codeBlock as HTMLElement).dataset.copySetup = 'true';
+
           const parent = codeBlock.parentNode;
           if (!parent) return;
 
@@ -490,7 +407,11 @@ function formatDate(dateString: string): string {
               });
           });
         });
-      });
+      }
+
+      // Run on initial load and View Transitions navigation
+      setupCopyCodeButtons();
+      document.addEventListener('astro:page-load', setupCopyCodeButtons);
     </script>
   </body>
 </html>

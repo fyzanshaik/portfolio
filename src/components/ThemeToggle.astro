@@ -5,11 +5,11 @@
 <button
   id="theme-toggle"
   aria-label="Toggle theme"
-  class="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] hover:border hover:border-[var(--border)] transition-all"
+  class="p-1.5 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all"
 >
   <svg
     id="theme-icon-light"
-    class="w-5 h-5"
+    class="w-4 h-4"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -23,7 +23,7 @@
   </svg>
   <svg
     id="theme-icon-dark"
-    class="w-5 h-5 hidden"
+    class="w-4 h-4 hidden"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -54,11 +54,9 @@
       }
     }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', setInitialThemeIcon);
-    } else {
-      setInitialThemeIcon();
-    }
+    // Run immediately and on View Transitions navigation
+    setInitialThemeIcon();
+    document.addEventListener('astro:page-load', setInitialThemeIcon);
   })();
 </script>
 

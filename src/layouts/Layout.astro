@@ -1,4 +1,8 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
+import AudioSystem from '../components/AudioSystem.astro';
+import BackToTop from '../components/BackToTop.astro';
+
 interface Props {
   title?: string;
   description?: string;
@@ -100,14 +104,26 @@ const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
 
     <script is:inline>
       (function () {
-        const theme =
-          localStorage.getItem('theme') ||
-          (window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light');
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
+        function applyTheme() {
+          const theme =
+            localStorage.getItem('theme') ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light');
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+          }
         }
+
+        // Apply theme immediately
+        applyTheme();
+
+        // Re-apply after View Transitions swap (before new page renders)
+        document.addEventListener('astro:after-swap', applyTheme);
       })();
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -117,6 +133,21 @@ const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
       as="image"
       href="https://github.com/fyzanshaik.png"
       fetchpriority="high"
+    />
+    <!-- Preload audio files for instant playback -->
+    <link
+      rel="preload"
+      href="/tap_03.wav"
+      as="fetch"
+      type="audio/wav"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/tap_05.wav"
+      as="fetch"
+      type="audio/wav"
+      crossorigin="anonymous"
     />
     <link
       rel="preload"
@@ -141,156 +172,13 @@ const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
       gtag('js', new Date());
       gtag('config', 'G-RFKQC37HGP');
     </script>
+
+    <ViewTransitions />
   </head>
   <body>
     <slot />
 
-    <button
-      id="back-to-top"
-      class="fixed bottom-6 right-6 w-11 h-11 rounded-full bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--accent)] hover:text-white hover:border-[var(--accent)] transition-all opacity-0 pointer-events-none z-50 shadow-lg hover:shadow-xl backdrop-blur-sm hover:scale-110"
-      style="box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);"
-      aria-label="Back to top"
-    >
-      <svg
-        class="w-5 h-5 mx-auto"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2.5"
-          d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
-      </svg>
-    </button>
-
-    <script is:inline>
-      (function () {
-        const backToTopButton = document.getElementById('back-to-top');
-
-        function toggleBackToTop() {
-          if (window.scrollY > 300) {
-            backToTopButton.style.opacity = '1';
-            backToTopButton.style.pointerEvents = 'auto';
-          } else {
-            backToTopButton.style.opacity = '0';
-            backToTopButton.style.pointerEvents = 'none';
-          }
-        }
-
-        function scrollToTop() {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-          });
-        }
-
-        window.addEventListener('scroll', toggleBackToTop, { passive: true });
-        backToTopButton.addEventListener('click', scrollToTop);
-
-        toggleBackToTop();
-      })();
-    </script>
-    <script is:inline>
-      (function () {
-        const volume = 0.18;
-        const poolSize = 3;
-        const sounds = {
-          hover: { path: '/tap_05.wav', pool: [], idx: 0 },
-          click: { path: '/tap_03.wav', pool: [], idx: 0 },
-          theme: { path: '/tap_05.wav', pool: [], idx: 0 },
-        };
-
-        let audioInitialized = false;
-
-        function initAudioPools() {
-          if (audioInitialized) return;
-          audioInitialized = true;
-          if (localStorage.getItem('audio-muted') === 'true') return;
-          for (const sound of Object.values(sounds)) {
-            for (let i = 0; i < poolSize; i++) {
-              const a = new Audio();
-              a.src = sound.path;
-              a.preload = 'auto';
-              a.volume = volume;
-              sound.pool.push(a);
-            }
-          }
-        }
-
-        function playSound(soundType) {
-          if (localStorage.getItem('audio-muted') === 'true') return;
-          const sound = sounds[soundType];
-          if (!sound) return;
-          if (sound.pool.length === 0) {
-            const temp = new Audio(sound.path);
-            temp.preload = 'auto';
-            temp.volume = volume;
-            sound.pool.push(temp);
-            sound.idx = 0;
-            temp.currentTime = 0;
-            temp.play().catch(() => {});
-            return;
-          }
-          const a = sound.pool[sound.idx];
-          sound.idx = (sound.idx + 1) % sound.pool.length;
-          a.currentTime = 0;
-          a.play().catch(() => {});
-        }
-
-        document.addEventListener('pointerdown', initAudioPools, {
-          once: true,
-          passive: true,
-        });
-        document.addEventListener('pointerover', initAudioPools, {
-          once: true,
-          passive: true,
-        });
-        document.addEventListener('touchstart', initAudioPools, {
-          once: true,
-          passive: true,
-        });
-        document.addEventListener('keydown', initAudioPools, { once: true });
-
-        let lastHoverTs = 0;
-        const HOVER_THROTTLE_MS = 220;
-
-        document.addEventListener(
-          'click',
-          () => {
-            playSound('click');
-          },
-          { passive: true }
-        );
-
-        const navElements = document.querySelectorAll('nav a, nav button');
-        navElements.forEach(el => {
-          el.addEventListener(
-            'mouseover',
-            () => {
-              const now = performance.now();
-              if (now - lastHoverTs < HOVER_THROTTLE_MS) return;
-              lastHoverTs = now;
-              playSound('hover');
-            },
-            { passive: true }
-          );
-        });
-
-        const prefersReduced = window.matchMedia(
-          '(prefers-reduced-motion: reduce)'
-        ).matches;
-        if (prefersReduced && localStorage.getItem('audio-muted') == null) {
-          localStorage.setItem('audio-muted', 'true');
-        }
-        window['AudioUX'] = {
-          mute: () => localStorage.setItem('audio-muted', 'true'),
-          unmute: () => localStorage.setItem('audio-muted', 'false'),
-          isMuted: () => localStorage.getItem('audio-muted') === 'true',
-          playTheme: () => playSound('theme'),
-        };
-      })();
-    </script>
+    <BackToTop />
+    <AudioSystem />
   </body>
 </html>
