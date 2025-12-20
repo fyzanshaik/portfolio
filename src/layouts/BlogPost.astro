@@ -215,6 +215,7 @@ function formatDate(dateString: string): string {
     <main class="pt-12 pb-20 md:pl-24">
       <div class="max-w-6xl mx-auto px-6">
         <a
+          id="back-link"
           href="/"
           class="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent)] mb-12 transition-colors"
         >
@@ -230,8 +231,21 @@ function formatDate(dateString: string): string {
               stroke-width="2"
               d="M15 19l-7-7 7-7"></path>
           </svg>
-          Back to Home
+          <span id="back-link-text">Back to Home</span>
         </a>
+        <script is:inline>
+          (function () {
+            const backLink = document.getElementById('back-link');
+            const backText = document.getElementById('back-link-text');
+            if (!backLink || !backText) return;
+
+            const referrer = document.referrer;
+            if (referrer && referrer.includes('/blog')) {
+              backLink.href = '/blog';
+              backText.textContent = 'Back to Blog';
+            }
+          })();
+        </script>
 
         <article>
           <header class="mb-12 text-center">
