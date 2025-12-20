@@ -123,6 +123,11 @@ const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
         document.addEventListener('astro:after-swap', applyTheme);
       })();
     </script>
+    <script is:inline>
+      document.addEventListener('astro:before-preparation', () => {
+        sessionStorage.setItem('prev-page', window.location.pathname);
+      });
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

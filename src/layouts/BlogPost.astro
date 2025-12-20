@@ -235,15 +235,29 @@ function formatDate(dateString: string): string {
         </a>
         <script is:inline>
           (function () {
-            const backLink = document.getElementById('back-link');
-            const backText = document.getElementById('back-link-text');
-            if (!backLink || !backText) return;
+            function updateBackLink() {
+              const backLink = document.getElementById('back-link');
+              const backText = document.getElementById('back-link-text');
+              if (!backLink || !backText) return;
 
-            const referrer = document.referrer;
-            if (referrer && referrer.includes('/blog')) {
-              backLink.href = '/blog';
-              backText.textContent = 'Back to Blog';
+              const prevPage = sessionStorage.getItem('prev-page');
+              const referrer = document.referrer;
+
+              const cameFromBlog =
+                (prevPage && prevPage.includes('/blog')) ||
+                (referrer && referrer.includes('/blog'));
+
+              if (cameFromBlog) {
+                backLink.href = '/blog';
+                backText.textContent = 'Back to Blog';
+              } else {
+                backLink.href = '/';
+                backText.textContent = 'Back to Home';
+              }
             }
+
+            updateBackLink();
+            document.addEventListener('astro:page-load', updateBackLink);
           })();
         </script>
 
