@@ -7,12 +7,10 @@ const { enableLogoAnimation = false } = Astro.props;
 ---
 
 <div transition:persist="navbar-container">
-  <!-- Desktop Nav: Always visible on xl+, auto-hide dock on lg-xl -->
   <nav
     id="desktop-nav"
     class="fixed left-0 top-1/2 -translate-y-1/2 z-50 hidden lg:flex items-center"
   >
-    <!-- Dock indicator pill - visible when nav is collapsed (lg-xl only) -->
     <div
       id="nav-indicator"
       class="hidden lg:block xl:hidden absolute left-1 top-1/2 -translate-y-1/2 w-1.5 h-16 bg-[var(--accent)]/40 rounded-full transition-all duration-300 hover:h-20 hover:bg-[var(--accent)]/60"
@@ -20,7 +18,6 @@ const { enableLogoAnimation = false } = Astro.props;
     >
     </div>
 
-    <!-- Nav content - slides in/out on lg-xl, always visible on xl+ -->
     <div
       id="nav-content"
       class="nav-dock flex flex-col items-center gap-2 px-3 py-4
@@ -144,7 +141,6 @@ const { enableLogoAnimation = false } = Astro.props;
     </div>
   </nav>
 
-  <!-- Mobile Nav: Shows below lg (1024px) -->
   <div
     class="lg:hidden fixed top-3 right-3 z-50 flex items-center gap-1.5 bg-[var(--bg-primary)]/80 backdrop-blur-sm rounded-lg p-1.5"
   >
@@ -470,7 +466,6 @@ const { enableLogoAnimation = false } = Astro.props;
         );
       }
 
-      // Auto-hide dock behavior for lg-xl screens
       function setupDockBehavior() {
         const nav = document.getElementById('desktop-nav');
         const navContent = document.getElementById('nav-content');
@@ -506,15 +501,12 @@ const { enableLogoAnimation = false } = Astro.props;
           }, 300);
         }
 
-        // Show on nav hover
         nav.addEventListener('mouseenter', showNav);
         nav.addEventListener('mouseleave', hideNav);
 
-        // Also trigger when mouse is at the very left edge of screen
         document.addEventListener('mousemove', e => {
-          // Only on lg-xl screens (check if nav is in dock mode)
-          if (window.innerWidth >= 1280) return; // xl+ always shows
-          if (window.innerWidth < 1024) return; // below lg uses mobile
+          if (window.innerWidth >= 1280) return;
+          if (window.innerWidth < 1024) return;
 
           if (e.clientX <= 8 && !isHovering) {
             showNav();
@@ -522,7 +514,6 @@ const { enableLogoAnimation = false } = Astro.props;
         });
       }
 
-      // Run immediately and on View Transitions navigation
       initIcons();
       setupDockBehavior();
       document.addEventListener('astro:page-load', () => {
@@ -532,7 +523,6 @@ const { enableLogoAnimation = false } = Astro.props;
     })();
   </script>
 
-  <!-- Email Copy Notification -->
   <div
     id="email-notification"
     class="fixed top-4 right-4 bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] px-4 py-2 rounded-lg shadow-lg z-50 opacity-0 pointer-events-none transition-all duration-300 transform translate-x-full"

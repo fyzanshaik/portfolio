@@ -96,7 +96,6 @@ function formatDate(dateString: string): string {
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Preload audio files for instant playback -->
     <link
       rel="preload"
       href="/tap_03.wav"
@@ -141,10 +140,7 @@ function formatDate(dateString: string): string {
           }
         }
 
-        // Apply theme immediately
         applyTheme();
-
-        // Re-apply after View Transitions swap (before new page renders)
         document.addEventListener('astro:after-swap', applyTheme);
       })();
     </script>
@@ -354,7 +350,6 @@ function formatDate(dateString: string): string {
         updateProgressBar();
       };
 
-      // Run on initial load and View Transitions navigation
       rIC(initIdle);
       document.addEventListener('astro:page-load', () => rIC(initIdle));
 
@@ -370,7 +365,6 @@ function formatDate(dateString: string): string {
         const codeBlocks = blogContent.querySelectorAll('pre');
 
         codeBlocks.forEach(codeBlock => {
-          // Skip if already wrapped
           if ((codeBlock as HTMLElement).dataset.copySetup) return;
           (codeBlock as HTMLElement).dataset.copySetup = 'true';
 
@@ -409,7 +403,6 @@ function formatDate(dateString: string): string {
         });
       }
 
-      // Run on initial load and View Transitions navigation
       setupCopyCodeButtons();
       document.addEventListener('astro:page-load', setupCopyCodeButtons);
     </script>

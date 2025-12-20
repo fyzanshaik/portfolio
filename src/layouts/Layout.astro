@@ -119,10 +119,7 @@ const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
           }
         }
 
-        // Apply theme immediately
         applyTheme();
-
-        // Re-apply after View Transitions swap (before new page renders)
         document.addEventListener('astro:after-swap', applyTheme);
       })();
     </script>
@@ -134,7 +131,6 @@ const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
       href="https://github.com/fyzanshaik.png"
       fetchpriority="high"
     />
-    <!-- Preload audio files for instant playback -->
     <link
       rel="preload"
       href="/tap_03.wav"

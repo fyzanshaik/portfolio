@@ -1,5 +1,5 @@
 ---
-// BackToTop.astro - Shared back to top button component
+
 ---
 
 <button
@@ -52,7 +52,6 @@
       toggleBackToTop();
     }
 
-    // Run immediately and on View Transitions navigation
     setupBackToTop();
     document.addEventListener('astro:page-load', setupBackToTop);
   })();
