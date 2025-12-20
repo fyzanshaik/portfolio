@@ -111,3 +111,14 @@ body {
   background: var(--accent);
   color: var(--bg-primary);
 }
+
+/* Disable View Transitions animations for instant page changes */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-group(root) {
+  animation-duration: 0s;
+}
