@@ -58,3 +58,7 @@ This was the best interview I have ever had. I made sure to prepare myself well 
 After waiting for 2 weeks I got my mail that I was in! This was a pretty amazing feeling. I failed or was ignored by other MNC roles. I wasn't keen on relying on college placements (which I still got in). This was a huge roller coaster. I had to handle quite a lot of negative feelings while doing this but I am glad I'll be joining Atlan from Jan 2026!
 
 Hopefully this was a nice read for you. There's still a lot to learn, the people here are all cracked af but I am excited to start my path!
+
+ps follow me on [X](https://x.com/fyzanshaik):))
+
+![X post](/posts-mages/x-post.png)
