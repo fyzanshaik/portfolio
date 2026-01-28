@@ -120,9 +120,9 @@ git config commit.gpgsign true
 
 ---
 
-## Pro Tip: Create a Shell Alias
+## Pro Tip: Create Shell Functions
 
-Running those config commands every time is tedious. Add this function to your `~/.zshrc` (or `~/.bashrc`):
+Running those config commands every time is tedious. Add these functions to your `~/.zshrc` (or `~/.bashrc`):
 
 ```bash
 # Personal GitHub setup
@@ -134,28 +134,41 @@ git-personal() {
   git config commit.gpgsign true
   echo "✓ Configured for personal GitHub"
 }
+
+# Clone personal GitHub repo from HTTPS URL
+# Usage: gp https://github.com/yourusername/repo
+unalias gp 2>/dev/null  # Remove oh-my-zsh git plugin's gp alias
+gp() {
+  local url="$1"
+  local repo_path=$(echo "$url" | sed -E 's|https?://github\.com/||; s|\.git$||')
+  local ssh_url="git@github.com-personal:${repo_path}.git"
+
+  echo "Cloning: $ssh_url"
+  git clone "$ssh_url" && cd "$(basename "$repo_path")" && git-personal
+}
 ```
 
-Now your workflow becomes:
+Now your workflow is just one command:
 
 ```bash
-git clone git@github.com-personal:yourusername/repo.git
-cd repo
-git-personal
+gp https://github.com/yourusername/repo
 ```
 
-Three commands, and you're ready to code with signed commits!
+The `gp` function takes a GitHub HTTPS URL, converts it to use your personal SSH config, clones it, changes into the directory, and configures your identity - all in one step!
+
+> **Important zsh note:** If you use oh-my-zsh with the git plugin, it defines `gp` as an alias for `git push`. The `unalias gp` line removes that alias so your function can be defined. Also, never use `path` as a variable name in zsh functions - it's a special variable tied to `PATH` and will break command lookups!
 
 ---
 
 ## Quick Reference
 
-| Task                | Command                                           |
-| ------------------- | ------------------------------------------------- |
-| Clone personal repo | `git clone git@github.com-personal:user/repo.git` |
-| Clone work repo     | `git clone https://github.com/company/repo.git`   |
-| Setup personal repo | `git-personal` (after adding the alias)           |
-| Test personal SSH   | `ssh -T git@github.com-personal`                  |
+| Task                         | Command                                           |
+| ---------------------------- | ------------------------------------------------- |
+| Clone + setup personal repo  | `gp https://github.com/user/repo`                 |
+| Clone personal repo (manual) | `git clone git@github.com-personal:user/repo.git` |
+| Clone work repo              | `git clone https://github.com/company/repo.git`   |
+| Setup personal repo manually | `git-personal` (after cloning)                    |
+| Test personal SSH            | `ssh -T git@github.com-personal`                  |
 
 ---
 
@@ -164,7 +177,7 @@ Three commands, and you're ready to code with signed commits!
 - SSH keys with host aliases let you use multiple GitHub accounts without conflicts
 - Your work HTTPS workflow stays completely unchanged
 - Personal repos use `github.com-personal` as the host
-- A shell alias makes per-repo setup a one-liner
+- The `gp` function makes cloning personal repos a one-liner: just paste the GitHub URL
 - Signing keys add that nice "Verified" badge to your commits
 
 No more authentication headaches. Both accounts, one machine, zero friction.
