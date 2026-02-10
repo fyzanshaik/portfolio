@@ -30,3 +30,13 @@ bun run preview
 ## Deployment
 
 Automatically deployed to Cloudflare Pages on every push to `main`.
+
+## Forking This Project
+
+If you're forking this repo, note that Google Analytics is configured via environment variables. You'll need to:
+
+1. Get your own GA Measurement ID from [Google Analytics](https://analytics.google.com/)
+2. Add it to your deployment platform as `PUBLIC_GA_ID`
+3. See `.env.example` for reference
+
+Without setting this variable, analytics simply won't load (which is fine for most forks).

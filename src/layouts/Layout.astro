@@ -22,6 +22,7 @@ const {
 } = Astro.props;
 
 const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
+const GA_ID = import.meta.env.PUBLIC_GA_ID;
 ---
 
 <!doctype html>
@@ -163,16 +164,25 @@ const canonicalUrl = `https://fyzanshaik.in${Astro.url.pathname}`;
       />
     </noscript>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFKQC37HGP"
-    ></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', 'G-RFKQC37HGP');
-    </script>
+    {
+      GA_ID && (
+        <>
+          <script
+            async
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          />
+          <script
+            is:inline
+            set:html={`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}
+          />
+        </>
+      )
+    }
 
     <ViewTransitions />
   </head>
