@@ -6,7 +6,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://fyzanshaik.in',
   output: 'server',
-  adapter: cloudflare({ mode: 'directory' }),
+  adapter: cloudflare(),
 
   vite: {
     plugins: [tailwindcss()],

@@ -1,21 +1,21 @@
 # Portfolio
 
-Personal portfolio and blog built with Astro, deployed on Cloudflare Pages.
+Personal portfolio and blog built with Astro, deployed on Cloudflare Workers.
 
 ## Stack
 
-- **Framework**: Astro 5 with TypeScript
+- **Framework**: Astro 7 with TypeScript
 - **Styling**: Tailwind CSS 4
-- **Deployment**: Cloudflare Pages (via Wrangler)
+- **Deployment**: Cloudflare Workers (via Wrangler, adapter `@astrojs/cloudflare` v14)
 - **Package Manager**: bun
 
 ## Commands
 
 ```bash
 bun run dev          # Start dev server (localhost:4321)
-bun run build        # Type-check + build
+bun run build        # Type-check + build (emits Worker in dist/server, assets in dist/client)
 bun run check        # Lint + format check
-bun run pages:deploy # Build and deploy to Cloudflare
+bun run deploy       # Build and deploy Worker to Cloudflare (uses dist/server/wrangler.json)
 ```
 
 ## Project Structure
