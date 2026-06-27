@@ -1,5 +1,5 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 import AudioSystem from '../components/AudioSystem.astro';
 import BackToTop from '../components/BackToTop.astro';
 
@@ -30,6 +30,16 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#0a0a0a"
+      media="(prefers-color-scheme: dark)"
+    />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="canonical" href={canonicalUrl} />
@@ -129,8 +139,20 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
         sessionStorage.setItem('prev-page', window.location.pathname);
       });
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/geist-sans.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/geist-mono.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link
       rel="preload"
       as="image"
@@ -151,19 +173,6 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
       type="audio/wav"
       crossorigin="anonymous"
     />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
-
     {
       GA_ID && (
         <>
@@ -184,7 +193,7 @@ const GA_ID = import.meta.env.PUBLIC_GA_ID;
       )
     }
 
-    <ViewTransitions />
+    <ClientRouter />
   </head>
   <body>
     <slot />

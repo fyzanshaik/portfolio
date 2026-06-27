@@ -93,7 +93,7 @@ const projects = [
   {
     title: 'LeetFetch',
     description:
-      "Interactive LeetCode API explorer that lets developers query and test LeetCode's GraphQL API. Features real-time data exploration, code snippet generation, theme switching, and ready-to-use API examples for building LeetCode-related applications.",
+      'Interactive LeetCode API explorer that lets developers query and test LeetCode’s GraphQL API. Features real-time data exploration, code snippet generation, theme switching, and ready-to-use API examples for building LeetCode-related applications.',
     tech: ['Next.js', 'TypeScript', 'GraphQL', 'Tailwind CSS', 'Shadcn/ui'],
     github: 'https://github.com/fyzanshaik/leetfetch',
     live: 'https://leetfetch.vercel.app',
@@ -149,7 +149,7 @@ const projects = [
 
 <section>
   <div class="max-w-[1100px] mx-auto px-6">
-    <h2 class="text-lg md:text-xl font-bold mb-6">Projects</h2>
+    <h2 class="heading-24 mb-6">Projects</h2>
 
     <div class="space-y-4">
       {
@@ -157,13 +157,14 @@ const projects = [
           <details class="group border-b border-[var(--border)] pb-4 last:border-0">
             <summary class="flex items-center justify-between cursor-pointer list-none hover:text-[var(--accent)] transition-colors">
               <div class="flex items-center gap-3">
-                <span class="text-base font-medium">{project.title}</span>
+                <span class="heading-16">{project.title}</span>
               </div>
-              <div class="flex items-center gap-4 text-xs text-[var(--text-secondary)]">
+              <div class="flex items-center gap-4 label-12 text-[var(--text-secondary)]">
                 <span class="hidden md:block font-mono">
                   {project.tech.slice(0, 2).join(', ')}
                 </span>
                 <svg
+                  aria-hidden="true"
                   class="w-4 h-4 transform group-open:rotate-180 transition-transform"
                   fill="none"
                   viewBox="0 0 24 24"
@@ -180,14 +181,14 @@ const projects = [
             </summary>
 
             <div class="mt-4 pl-0 md:pl-4">
-              <p class="text-[var(--text-secondary)] text-sm leading-relaxed mb-4 max-w-3xl">
+              <p class="copy-14 text-[var(--text-secondary)] mb-4 max-w-3xl">
                 {project.description}
               </p>
 
               <div class="flex flex-wrap items-center justify-between gap-4">
                 <div class="flex flex-wrap gap-2">
                   {project.tech.map(t => (
-                    <span class="text-xs px-2 py-1 bg-[var(--bg-surface)] rounded text-[var(--text-secondary)]">
+                    <span class="label-12 font-mono px-2 py-1 rounded-sm bg-[var(--bg-fill)] text-[var(--text-secondary)] border border-[var(--border)]">
                       {t}
                     </span>
                   ))}
@@ -199,9 +200,10 @@ const projects = [
                       href={project.live}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="text-xs flex items-center gap-1 hover:text-[var(--accent)] transition-colors"
+                      class="label-12 flex items-center gap-1 hover:text-[var(--accent)] transition-colors"
                     >
                       <svg
+                        aria-hidden="true"
                         class="w-3 h-3"
                         fill="none"
                         stroke="currentColor"
@@ -221,9 +223,10 @@ const projects = [
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-xs flex items-center gap-1 hover:text-[var(--accent)] transition-colors"
+                    class="label-12 flex items-center gap-1 hover:text-[var(--accent)] transition-colors"
                   >
                     <svg
+                      aria-hidden="true"
                       class="w-3 h-3"
                       fill="currentColor"
                       viewBox="0 0 24 24"

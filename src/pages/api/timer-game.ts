@@ -1,3 +1,5 @@
+import { env as cfEnv } from 'cloudflare:workers';
+
 export const prerender = false;
 
 interface Env {
@@ -5,6 +7,8 @@ interface Env {
   TIMER_GAME_KV: KVNamespace;
   TIMER_GAME_API_KEY: string;
 }
+
+const env = cfEnv as unknown as Env;
 
 const createUnauthorizedResponse = () =>
   new Response('Nice try nerd!', {
@@ -39,14 +43,8 @@ interface UserScores {
   [mode: string]: number;
 }
 
-export async function GET({
-  request,
-  locals,
-}: {
-  request: Request;
-  locals: { runtime: { env: Env } };
-}) {
-  const authResult = checkAuth(request, locals.runtime?.env);
+export async function GET({ request }: { request: Request }) {
+  const authResult = checkAuth(request, env);
   if (authResult) {
     return authResult;
   }
@@ -61,8 +59,6 @@ export async function GET({
       headers: { 'Content-Type': 'application/json' },
     });
   }
-
-  const env = locals.runtime?.env;
 
   if (!env?.TIMER_GAME_KV && !env?.TIMER_GAME_DB) {
     return new Response(
@@ -203,14 +199,7 @@ async function findUniqueAnonName(
   return name;
 }
 
-export async function POST({
-  request,
-  locals,
-}: {
-  request: Request;
-  locals: { runtime: { env: Env } };
-}) {
-  const env = locals.runtime?.env;
+export async function POST({ request }: { request: Request }) {
   const authResult = checkAuth(request, env);
   if (authResult) {
     return authResult;

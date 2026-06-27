@@ -1,21 +1,108 @@
 @import 'tailwindcss';
 
-:root {
-  --bg-primary: #fdfbf7; /* Warm off-white like paper */
-  --bg-surface: #f5f2eb;
-  --border: #e6e2d8;
-  --text-primary: #1a1a1a;
-  --text-secondary: #666666;
-  --accent: #333333; /* Minimal accent - dark gray/black */
+/* Geist Sans + Geist Mono, self-hosted (woff2, variable). */
+@font-face {
+  font-family: 'Geist Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/geist-sans.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Geist Sans';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/geist-sans-italic.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/geist-mono.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/geist-mono-italic.woff2') format('woff2-variations');
 }
 
+@theme {
+  --font-sans:
+    'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --ease-geist: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+/* Light theme — Geist tokens. */
+:root {
+  --bg-primary: #ffffff; /* background-100 */
+  --bg-surface: #fafafa; /* background-200, subtle separation */
+  --bg-fill: #f2f2f2; /* gray-100, chips / hover fill */
+  --bg-fill-hover: #ebebeb; /* gray-200 */
+
+  --border: #00000014; /* gray-alpha-400, default border */
+  --border-hover: #00000036; /* gray-alpha-500 */
+
+  --text-primary: #171717; /* gray-1000 */
+  --text-secondary: #4d4d4d; /* gray-900 */
+  --text-tertiary: #6b6b6b; /* darkened past gray-700 to clear WCAG AA on white */
+
+  --accent: #15803d; /* green, deep enough for AA link text on white */
+  --accent-hover: #166534;
+  --accent-fg: #ffffff;
+
+  --primary-fill: #171717; /* gray-1000 */
+  --primary-fill-fg: #ffffff;
+
+  --selection-bg: #bbf7d0; /* green-200 */
+  --selection-fg: #14532d;
+
+  --focus-ring: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent);
+
+  --shadow-card: 0 2px 2px rgba(0, 0, 0, 0.04);
+  --shadow-popover:
+    0 1px 1px rgba(0, 0, 0, 0.02), 0 4px 8px -4px rgba(0, 0, 0, 0.04),
+    0 16px 24px -8px rgba(0, 0, 0, 0.06);
+}
+
+/* Dark theme — derived from the canonical Geist dark palette. */
 .dark {
-  --bg-primary: #050505; /* Deep black */
-  --bg-surface: #0a0a0a;
-  --border: #333333;
-  --text-primary: #ededed;
-  --text-secondary: #888888;
-  --accent: #22c55e; /* Bright terminal green */
+  --bg-primary: #0a0a0a; /* background-100 */
+  --bg-surface: #1a1a1a; /* elevated surface */
+  --bg-fill: #1f1f1f;
+  --bg-fill-hover: #292929;
+
+  --border: #ffffff17;
+  --border-hover: #ffffff2e;
+
+  --text-primary: #ededed; /* gray-1000 */
+  --text-secondary: #a1a1a1; /* gray-900 */
+  --text-tertiary: #8f8f8f; /* lightened to clear WCAG AA on elevated surfaces */
+
+  --accent: #16a34a; /* darker terminal green on near-black */
+  --accent-hover: #22c55e;
+  --accent-fg: #04210f;
+
+  --primary-fill: #ededed;
+  --primary-fill-fg: #0a0a0a;
+
+  --selection-bg: #14532d; /* deep green */
+  --selection-fg: #dcfce7;
+
+  --shadow-card: 0 2px 2px rgba(0, 0, 0, 0.25);
+  --shadow-popover:
+    0 8px 16px -4px rgba(0, 0, 0, 0.4), 0 24px 32px -8px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -29,96 +116,160 @@ html {
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-family: var(--font-sans);
   font-size: 16px;
   font-weight: 400;
-  line-height: 1.7;
+  line-height: 1.5;
+  letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.space-mono-regular {
-  font-family: 'Space Mono', monospace;
+/* Geist typography tokens, as utilities so they take variants (md:, hover:).
+   Headings tighten letter-spacing as size grows. */
+@utility heading-72 {
+  font-size: clamp(36px, 8vw, 72px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.06em;
+}
+@utility heading-56 {
+  font-size: clamp(32px, 7vw, 56px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.06em;
+}
+@utility heading-48 {
+  font-size: clamp(30px, 6vw, 48px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.06em;
+}
+@utility heading-40 {
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.06em;
+}
+@utility heading-32 {
+  font-size: clamp(24px, 4vw, 32px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+@utility heading-24 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  letter-spacing: -0.04em;
+}
+@utility heading-20 {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 26px;
+  letter-spacing: -0.02em;
+}
+@utility heading-16 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+}
+@utility copy-20 {
+  font-size: 20px;
   font-weight: 400;
-  font-style: normal;
+  line-height: 36px;
 }
-
-.space-mono-bold {
-  font-family: 'Space Mono', monospace;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.space-mono-regular-italic {
-  font-family: 'Space Mono', monospace;
+@utility copy-18 {
+  font-size: 18px;
   font-weight: 400;
-  font-style: italic;
+  line-height: 28px;
+}
+@utility copy-16 {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+@utility copy-14 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+@utility label-16 {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+}
+@utility label-14 {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+@utility label-13 {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 16px;
+}
+@utility label-12 {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
 }
 
-.space-mono-bold-italic {
-  font-family: 'Space Mono', monospace;
-  font-weight: 700;
-  font-style: italic;
+/* Tabular figures for data / numbers that need to align. */
+@utility tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Geist focus ring: a gap in the surface color, then a blue-700 ring. */
+/* box-shadow ring follows each element's own border-radius — don't override it. */
+:where(a, button, summary, input, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+::selection {
+  background: var(--selection-bg);
+  color: var(--selection-fg);
 }
 
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
-  transition: background 0.2s ease;
+  background: var(--border-hover);
+  border-radius: var(--radius-full);
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--text-tertiary);
 }
-
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-color: var(--border-hover) transparent;
 }
 
-/* Utility classes for animations */
-.spinning-border {
-  background: conic-gradient(
-    var(--accent) 0deg,
-    var(--accent) 252deg,
-    transparent 252deg,
-    transparent 360deg
-  );
-  animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Selection color */
-::selection {
-  background: var(--accent);
-  color: var(--bg-primary);
-}
-
-/* Disable View Transitions animations for instant page changes */
+/* Instant page changes; no looping decoration (Geist motion). */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
-
 ::view-transition-group(root) {
   animation-duration: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
