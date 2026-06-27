@@ -22,10 +22,10 @@ function formatDate(dateString: string): string {
 <section>
   <div class="max-w-[1100px] mx-auto px-6">
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-lg md:text-xl font-bold">Writing</h2>
+      <h2 class="heading-24">Writing</h2>
       <a
         href="/blog"
-        class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1"
+        class="label-13 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1"
       >
         View All
         <svg
@@ -33,6 +33,7 @@ function formatDate(dateString: string): string {
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             stroke-linecap="round"
@@ -49,14 +50,14 @@ function formatDate(dateString: string): string {
           <div class="group">
             <a href={post.url} class="block">
               <div class="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8">
-                <span class="text-xs text-[var(--text-secondary)] font-mono whitespace-nowrap w-[100px]">
+                <span class="label-13 tabular text-[var(--text-secondary)] whitespace-nowrap w-[100px]">
                   {formatDate(post.frontmatter.date)}
                 </span>
                 <div class="flex-1">
-                  <h3 class="text-base font-medium group-hover:text-[var(--accent)] transition-colors mb-1">
+                  <h3 class="heading-16 group-hover:text-[var(--accent)] transition-colors mb-1">
                     {post.frontmatter.title}
                   </h3>
-                  <p class="text-xs text-[var(--text-secondary)] line-clamp-2 leading-relaxed max-w-2xl">
+                  <p class="copy-14 text-[var(--text-secondary)] line-clamp-2 max-w-2xl">
                     {post.frontmatter.description}
                   </p>
                 </div>

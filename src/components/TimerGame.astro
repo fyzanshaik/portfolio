@@ -1,20 +1,25 @@
 ---
-const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
+import { env } from 'cloudflare:workers';
+const key = (env as Record<string, unknown>).TIMER_GAME_API_KEY;
+const apiKey = typeof key === 'string' ? key : '';
 ---
 
-<div class="timer-game-container w-full max-w-[280px] lg:max-w-sm relative">
+<div
+  class="timer-game-container w-full max-w-[min(280px,90vw)] lg:max-w-sm relative"
+>
   <div class="flex items-center justify-between mb-3">
     <div class="flex items-center gap-1">
       <input
         type="text"
         id="player-name"
-        placeholder="your name"
+        placeholder="Your name"
         maxlength="12"
-        class="w-20 px-2 py-1 text-xs bg-transparent border-b border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--accent)] transition-colors font-mono"
+        class="w-28 bg-[var(--bg-primary)] border border-[var(--border)] rounded-sm h-10 px-3 label-14 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none transition-colors"
       />
       <button
         id="save-name-btn"
-        class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors opacity-0"
+        aria-label="Save name"
+        class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors opacity-0"
         title="Save name"
       >
         <svg
@@ -22,6 +27,7 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             stroke-linecap="round"
@@ -36,7 +42,7 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         <button
           id="game-info-button"
           aria-label="Game instructions"
-          class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+          class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -45,6 +51,7 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
             viewBox="0 0 24 24"
             stroke="currentColor"
             stroke-width="2"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"
@@ -55,19 +62,19 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         </button>
         <div
           id="game-info-tooltip"
-          class="absolute hidden bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-2 text-xs text-left text-[var(--text-primary)] bg-[var(--bg-surface)] border border-[var(--border)] rounded-md shadow-lg z-10"
+          class="absolute hidden bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-2 copy-14 text-left text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border)] rounded-md shadow-lg z-10"
         >
-          <p class="font-bold">How to Play:</p>
+          <p class="font-medium text-[var(--text-primary)]">How to play</p>
           <p>1. Click the box to start.</p>
           <p>2. Click again to stop.</p>
-          <p>3. Get as close to the target time as possible!</p>
+          <p>3. Get as close to the target time as you can.</p>
         </div>
       </div>
       <button
         id="open-leaderboard"
-        class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors font-mono"
+        class="label-13 text-[var(--text-secondary)] px-2.5 h-8 rounded-sm hover:bg-[var(--bg-fill)] hover:text-[var(--text-primary)] transition-colors"
       >
-        leaderboard ↗
+        Leaderboard ↗
       </button>
     </div>
   </div>
@@ -76,18 +83,18 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
     <div class="flex-1">
       <div
         id="game-box"
-        class="relative aspect-square border border-[var(--border)] rounded-lg cursor-pointer select-none overflow-hidden transition-all hover:border-[var(--accent)]"
+        class="relative aspect-square border border-[var(--border)] rounded-lg cursor-pointer select-none overflow-hidden transition-colors hover:border-[var(--border-hover)]"
       >
         <div
           id="state-idle"
           class="absolute inset-0 flex flex-col items-center justify-center"
         >
           <span
-            class="text-3xl font-mono text-[var(--accent)]"
+            class="text-3xl tabular text-[var(--accent)]"
             id="target-time-display">1s</span
           >
-          <span class="text-xs text-[var(--text-secondary)] mt-2"
-            >click to start</span
+          <span class="label-13 text-[var(--text-secondary)] mt-2"
+            >Click to start</span
           >
         </div>
 
@@ -97,8 +104,7 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         >
           <span
             id="random-display"
-            class="text-4xl font-mono text-[var(--text-secondary)] tabular-nums"
-            >0.000</span
+            class="text-4xl tabular text-[var(--text-secondary)]">0.000</span
           >
         </div>
 
@@ -106,20 +112,20 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
           id="state-result"
           class="absolute inset-0 flex flex-col items-center justify-center hidden"
         >
-          <span class="text-xs text-[var(--text-secondary)] mb-1"
-            >your time</span
+          <span class="label-13 text-[var(--text-secondary)] mb-1"
+            >Your time</span
           >
           <span
             id="result-time"
-            class="text-3xl font-mono text-[var(--text-primary)]">0.000s</span
+            class="text-3xl tabular text-[var(--text-primary)]">0.000s</span
           >
-          <span id="result-diff" class="text-sm font-mono mt-1"></span>
+          <span id="result-diff" class="text-sm tabular mt-1"></span>
           <span
             id="new-best-indicator"
-            class="text-xs text-[var(--accent)] mt-1 hidden">NEW BEST!</span
+            class="label-13 text-[var(--accent)] mt-1 hidden">New best!</span
           >
-          <span class="text-xs text-[var(--text-secondary)] mt-3"
-            >click to retry</span
+          <span class="label-13 text-[var(--text-secondary)] mt-3"
+            >Click to retry</span
           >
         </div>
       </div>
@@ -127,13 +133,15 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
       <div class="flex items-center justify-center gap-2 mt-3">
         <button
           id="mode-prev"
-          class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+          aria-label="Previous mode"
+          class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors"
         >
           <svg
             class="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"
@@ -145,34 +153,36 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         <div class="flex gap-1">
           <button
             data-mode="1"
-            class="mode-btn text-xs px-2 py-0.5 rounded font-mono text-[var(--accent)] bg-[var(--accent)]/10"
+            class="mode-btn label-13 px-2.5 h-8 rounded-sm tabular text-[var(--accent)] bg-[var(--accent)]/10 transition-colors"
             >1s</button
           >
           <button
             data-mode="5"
-            class="mode-btn text-xs px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] hover:text-[var(--accent)]"
+            class="mode-btn label-13 px-2.5 h-8 rounded-sm tabular text-[var(--text-secondary)] hover:bg-[var(--bg-fill)] transition-colors"
             >5s</button
           >
           <button
             data-mode="10"
-            class="mode-btn text-xs px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] hover:text-[var(--accent)]"
+            class="mode-btn label-13 px-2.5 h-8 rounded-sm tabular text-[var(--text-secondary)] hover:bg-[var(--bg-fill)] transition-colors"
             >10s</button
           >
           <button
             data-mode="15"
-            class="mode-btn text-xs px-2 py-0.5 rounded font-mono text-[var(--text-secondary)] hover:text-[var(--accent)]"
+            class="mode-btn label-13 px-2.5 h-8 rounded-sm tabular text-[var(--text-secondary)] hover:bg-[var(--bg-fill)] transition-colors"
             >15s</button
           >
         </div>
         <button
           id="mode-next"
-          class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+          aria-label="Next mode"
+          class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors"
         >
           <svg
             class="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"
@@ -186,18 +196,18 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
 
     <div class="w-20 flex flex-col justify-center text-right">
       <div class="mb-3">
-        <span class="text-xs text-[var(--text-secondary)] block">your best</span
+        <span class="label-13 text-[var(--text-secondary)] block"
+          >Your best</span
         >
-        <span
-          id="your-score"
-          class="text-sm font-mono text-[var(--text-primary)]">—</span
+        <span id="your-score" class="text-sm tabular text-[var(--text-primary)]"
+          >—</span
         >
       </div>
       <div>
-        <span class="text-xs text-[var(--text-secondary)] block"
-          >high score</span
+        <span class="label-13 text-[var(--text-secondary)] block"
+          >High score</span
         >
-        <span id="high-score" class="text-sm font-mono text-[var(--accent)]"
+        <span id="high-score" class="text-sm tabular text-[var(--accent)]"
           >—</span
         >
       </div>
@@ -210,28 +220,28 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
   <!-- Leaderboard Modal -->
   <div id="leaderboard-modal" class="fixed inset-0 z-50 hidden">
     <div
-      class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+      class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-[var(--ease-geist)]"
       id="modal-backdrop"
     >
     </div>
     <div
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 max-h-[80vh] bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg shadow-xl overflow-hidden"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 max-h-[80vh] bg-[var(--bg-primary)] border border-[var(--border)] rounded-md shadow-xl overflow-hidden"
     >
       <div
         class="p-4 border-b border-[var(--border)] flex items-center justify-between"
       >
-        <h3 class="text-base font-bold text-[var(--text-primary)]">
-          Leaderboard
-        </h3>
+        <h3 class="heading-16 text-[var(--text-primary)]">Leaderboard</h3>
         <button
           id="close-modal"
-          class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+          aria-label="Close"
+          class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors"
         >
           <svg
             class="w-4 h-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               stroke-linecap="round"
@@ -246,13 +256,15 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         <div class="flex items-center justify-center gap-3 mb-4">
           <button
             id="modal-mode-prev"
-            class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+            aria-label="Previous mode"
+            class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors"
           >
             <svg
               class="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 stroke-linecap="round"
@@ -263,17 +275,19 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
           </button>
           <span
             id="modal-mode-display"
-            class="text-lg font-mono text-[var(--accent)] font-bold">1s</span
+            class="text-lg tabular text-[var(--accent)]">1s</span
           >
           <button
             id="modal-mode-next"
-            class="p-1 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors"
+            aria-label="Next mode"
+            class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors"
           >
             <svg
               class="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 stroke-linecap="round"
@@ -285,8 +299,8 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         </div>
 
         <div id="modal-leaderboard" class="space-y-2 max-h-60 overflow-y-auto">
-          <div class="text-sm text-[var(--text-secondary)] text-center">
-            loading...
+          <div class="copy-14 text-[var(--text-secondary)] text-center">
+            Loading…
           </div>
         </div>
       </div>
@@ -386,10 +400,10 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
 
   function updateWelcomeMessage(name, isNew) {
     if (name && isNew) {
-      welcomeMsg.textContent = `hi ${name}!`;
+      welcomeMsg.textContent = `Hi ${name}!`;
       welcomeMsg.classList.add('text-[var(--accent)]');
     } else {
-      welcomeMsg.textContent = 'leaderboard';
+      welcomeMsg.textContent = 'Leaderboard';
       welcomeMsg.classList.remove('text-[var(--accent)]');
     }
   }
@@ -421,7 +435,7 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
   async function fetchModalLeaderboard() {
     const mode = modes[modalModeIndex];
     modalLeaderboard.innerHTML =
-      '<div class="text-xs text-[var(--text-secondary)] text-center">loading...</div>';
+      '<div class="copy-14 text-[var(--text-secondary)] text-center">Loading…</div>';
 
     try {
       const response = await fetch(`/api/timer-game?mode=${mode}`, {
@@ -438,7 +452,7 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
     } catch (error) {
       console.error('Failed to fetch leaderboard:', error);
       modalLeaderboard.innerHTML =
-        '<div class="text-xs text-[var(--text-secondary)] text-center">failed to load</div>';
+        '<div class="copy-14 text-[var(--text-secondary)] text-center">Could not load scores. Try again.</div>';
     }
   }
 
@@ -449,7 +463,7 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
 
     if (entries.length === 0) {
       modalLeaderboard.innerHTML =
-        '<div class="text-sm text-[var(--text-secondary)] text-center py-4">no scores yet</div>';
+        '<div class="copy-14 text-[var(--text-secondary)] text-center py-4">No scores yet. Play a round to set one.</div>';
       return;
     }
 
@@ -467,12 +481,12 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
         const bgClass = isCurrentUser ? 'bg-[var(--accent)]/10' : '';
 
         return `
-        <div class="flex items-center justify-between py-2 px-3 rounded ${bgClass}">
+        <div class="flex items-center justify-between py-2 px-3 rounded-sm ${bgClass}">
           <div class="flex items-center gap-3">
-            <span class="text-sm font-mono ${rankColor} w-5">#${i + 1}</span>
-            <span class="text-sm font-mono ${isCurrentUser ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}">${entry.name}</span>
+            <span class="text-sm tabular ${rankColor} w-5">#${i + 1}</span>
+            <span class="text-sm ${isCurrentUser ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}">${entry.name}</span>
           </div>
-          <span class="text-sm font-mono text-[var(--text-secondary)]">${entry.score.toFixed(3)}s</span>
+          <span class="text-sm tabular text-[var(--text-secondary)]">${entry.score.toFixed(3)}s</span>
         </div>
       `;
       })
@@ -628,13 +642,13 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
 
     if (diff > 0) {
       resultDiff.textContent = `+${diff.toFixed(3)}s`;
-      resultDiff.className = 'text-sm font-mono mt-1 text-red-400';
+      resultDiff.className = 'text-sm tabular mt-1 text-red-400';
     } else if (diff < 0) {
       resultDiff.textContent = `${diff.toFixed(3)}s`;
-      resultDiff.className = 'text-sm font-mono mt-1 text-yellow-400';
+      resultDiff.className = 'text-sm tabular mt-1 text-yellow-400';
     } else {
-      resultDiff.textContent = 'PERFECT!';
-      resultDiff.className = 'text-sm font-mono mt-1 text-[var(--accent)]';
+      resultDiff.textContent = 'Perfect!';
+      resultDiff.className = 'text-sm tabular mt-1 text-[var(--accent)]';
     }
 
     switchState('result');
@@ -733,7 +747,7 @@ const apiKey = Astro.locals.runtime?.env.TIMER_GAME_API_KEY;
           .join('');
       } else {
         leaderboard.innerHTML =
-          '<div class="text-[var(--text-secondary)]">no scores yet</div>';
+          '<div class="text-[var(--text-secondary)]">No scores yet. Play a round to set one.</div>';
       }
     } catch (error) {
       console.error('Failed to fetch scores:', error);

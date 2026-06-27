@@ -5,11 +5,12 @@
 <button
   id="theme-toggle"
   aria-label="Toggle theme"
-  class="p-1.5 rounded text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-surface)] transition-all"
+  class="p-1.5 rounded-sm text-[var(--text-secondary)] hover:text-[var(--accent)] hover:bg-[var(--bg-fill-hover)] transition-[color,background-color,border-color,transform] duration-150 ease-[var(--ease-geist)]"
 >
   <svg
     id="theme-icon-light"
     class="w-4 h-4"
+    aria-hidden="true"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -24,6 +25,7 @@
   <svg
     id="theme-icon-dark"
     class="w-4 h-4 hidden"
+    aria-hidden="true"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
