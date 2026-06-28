@@ -8,7 +8,7 @@ declare namespace App {
       env: {
         TIMER_GAME_DB: D1Database;
         TIMER_GAME_KV: KVNamespace;
-        TURNSTILE_SECRET_KEY: string;
+        TIMER_GAME_API_KEY: string;
       };
     };
     user?: {

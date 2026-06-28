@@ -1,5 +1,7 @@
 ---
-
+import { env } from 'cloudflare:workers';
+const key = (env as Record<string, unknown>).TIMER_GAME_API_KEY;
+const apiKey = typeof key === 'string' ? key : '';
 ---
 
 <div
@@ -304,57 +306,9 @@
       </div>
     </div>
   </div>
-  <div id="turnstile-container" aria-hidden="true"></div>
 </div>
 
-<script
-  is:inline
-  async
-  defer
-  src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
-
-<script is:inline>
-  const TURNSTILE_SITE_KEY = '0x4AAAAAADsaqWqOxXfaeSBC';
-  let turnstileWidgetId = null;
-
-  async function getTurnstileToken() {
-    if (typeof window.turnstile === 'undefined') {
-      let waited = 0;
-      while (typeof window.turnstile === 'undefined' && waited < 5000) {
-        await new Promise(r => setTimeout(r, 100));
-        waited += 100;
-      }
-      if (typeof window.turnstile === 'undefined') {
-        console.warn('Turnstile API failed to load');
-        return null;
-      }
-    }
-    const container = document.getElementById('turnstile-container');
-    if (!container) return null;
-    if (turnstileWidgetId === null) {
-      turnstileWidgetId = window.turnstile.render(container, {
-        sitekey: TURNSTILE_SITE_KEY,
-        action: 'timer-game-save',
-        appearance: 'execute',
-      });
-    } else {
-      window.turnstile.reset(turnstileWidgetId);
-    }
-    try {
-      const token = await window.turnstile.execute(turnstileWidgetId);
-      return token;
-    } catch (err) {
-      console.error('Turnstile execute failed:', err);
-      return null;
-    }
-  }
-
-  function resetTurnstile() {
-    if (turnstileWidgetId !== null && typeof window.turnstile !== 'undefined') {
-      window.turnstile.reset(turnstileWidgetId);
-    }
-  }
-
+<script define:vars={{ apiKey }}>
   function generateAnonName() {
     const num = Math.floor(Math.random() * 99999)
       .toString()
@@ -484,7 +438,11 @@
       '<div class="copy-14 text-[var(--text-secondary)] text-center">Loading…</div>';
 
     try {
-      const response = await fetch(`/api/timer-game?mode=${mode}`);
+      const response = await fetch(`/api/timer-game?mode=${mode}`, {
+        headers: {
+          'X-API-Key': apiKey,
+        },
+      });
       if (!response.ok) return;
 
       const data = await response.json();
@@ -710,18 +668,12 @@
     const needsAnonName = !name;
     if (!name) name = generateAnonName();
 
-    const turnstileToken = await getTurnstileToken();
-    if (!turnstileToken) {
-      console.warn('Bot check failed; score not submitted');
-      return;
-    }
-
     try {
       const response = await fetch('/api/timer-game', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'cf-turnstile-response': turnstileToken,
+          'X-API-Key': apiKey,
         },
         body: JSON.stringify({
           name,
@@ -745,7 +697,6 @@
         updateWelcomeMessage(finalName, false);
         await fetchScores();
       }
-      resetTurnstile();
     } catch (error) {
       console.error('Failed to save score:', error);
     }
@@ -761,7 +712,11 @@
     }
 
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        headers: {
+          'X-API-Key': apiKey,
+        },
+      });
       if (!response.ok) return;
 
       const data = await response.json();

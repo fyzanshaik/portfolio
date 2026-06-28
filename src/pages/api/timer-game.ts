@@ -5,38 +5,31 @@ export const prerender = false;
 interface Env {
   TIMER_GAME_DB: D1Database;
   TIMER_GAME_KV: KVNamespace;
-  TURNSTILE_SECRET_KEY: string;
+  TIMER_GAME_API_KEY: string;
 }
 
 const env = cfEnv as unknown as Env;
 
-const createForbiddenResponse = (message: string) =>
-  new Response(message, {
-    status: 403,
+const createUnauthorizedResponse = () =>
+  new Response('Nice try nerd!', {
+    status: 401,
     headers: { 'Content-Type': 'text/plain' },
   });
 
-async function verifyTurnstile(token: string | null): Promise<boolean> {
-  const secret = env.TURNSTILE_SECRET_KEY;
-  if (!secret) {
-    console.error('TURNSTILE_SECRET_KEY not configured.');
-    return false;
+function checkAuth(request: Request, env: Env | undefined): Response | null {
+  const serverKey = env?.TIMER_GAME_API_KEY;
+
+  if (!serverKey) {
+    console.error('API Key not configured.');
+    return createUnauthorizedResponse();
   }
-  if (!token) return false;
-  try {
-    const formData = new FormData();
-    formData.set('secret', secret);
-    formData.set('response', token);
-    const result = await fetch(
-      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-      { method: 'POST', body: formData }
-    );
-    const data = (await result.json()) as { success: boolean };
-    return data.success === true;
-  } catch (err) {
-    console.error('Turnstile verification failed:', err);
-    return false;
+
+  const clientKey = request.headers.get('X-API-Key');
+  if (clientKey !== serverKey) {
+    return createUnauthorizedResponse();
   }
+
+  return null;
 }
 
 interface ScoreEntry {
@@ -51,6 +44,11 @@ interface UserScores {
 }
 
 export async function GET({ request }: { request: Request }) {
+  const authResult = checkAuth(request, env);
+  if (authResult) {
+    return authResult;
+  }
+
   const url = new URL(request.url);
   const mode = parseInt(url.searchParams.get('mode') || '1');
   const username = url.searchParams.get('user');
@@ -202,10 +200,9 @@ async function findUniqueAnonName(
 }
 
 export async function POST({ request }: { request: Request }) {
-  const turnstileToken = request.headers.get('cf-turnstile-response');
-  const ok = await verifyTurnstile(turnstileToken);
-  if (!ok) {
-    return createForbiddenResponse('Bot check failed');
+  const authResult = checkAuth(request, env);
+  if (authResult) {
+    return authResult;
   }
 
   try {
