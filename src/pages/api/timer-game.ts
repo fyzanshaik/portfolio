@@ -10,26 +10,19 @@ interface Env {
 
 const env = cfEnv as unknown as Env;
 
-const createUnauthorizedResponse = () =>
-  new Response('Nice try nerd!', {
-    status: 401,
-    headers: { 'Content-Type': 'text/plain' },
+const ALLOWED_MODES = [1, 5, 10, 15];
+const MIN_SCORE = 0.02;
+const MAX_SCORE = 30;
+const SCORE_LIMIT = 20;
+const SCORE_LIMIT_TTL = 60 * 60;
+const SCORE_TOKEN_LIMIT = 10;
+const BLOCKED_NAME_PARTS = ['fuck', 'shit', 'bitch', 'cunt', 'nigger', 'nigga'];
+
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
   });
-
-function checkAuth(request: Request, env: Env | undefined): Response | null {
-  const serverKey = env?.TIMER_GAME_API_KEY;
-
-  if (!serverKey) {
-    console.error('API Key not configured.');
-    return createUnauthorizedResponse();
-  }
-
-  const clientKey = request.headers.get('X-API-Key');
-  if (clientKey !== serverKey) {
-    return createUnauthorizedResponse();
-  }
-
-  return null;
 }
 
 interface ScoreEntry {
@@ -44,36 +37,22 @@ interface UserScores {
 }
 
 export async function GET({ request }: { request: Request }) {
-  const authResult = checkAuth(request, env);
-  if (authResult) {
-    return authResult;
-  }
-
   const url = new URL(request.url);
   const mode = parseInt(url.searchParams.get('mode') || '1');
   const username = url.searchParams.get('user');
 
-  if (![1, 5, 10, 15].includes(mode)) {
-    return new Response(JSON.stringify({ error: 'Invalid mode' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+  if (!ALLOWED_MODES.includes(mode)) {
+    return jsonResponse({ error: 'Invalid mode' }, 400);
   }
 
   if (!env?.TIMER_GAME_KV && !env?.TIMER_GAME_DB) {
-    return new Response(
-      JSON.stringify({
-        highScore: null,
-        leaderboard: [],
-        userScore: null,
-        userScores: {},
-        isNewUser: true,
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return jsonResponse({
+      highScore: null,
+      leaderboard: [],
+      userScore: null,
+      userScores: {},
+      isNewUser: true,
+    });
   }
 
   let leaderboard: ScoreEntry[] = [];
@@ -160,19 +139,13 @@ export async function GET({ request }: { request: Request }) {
     console.error('D1 error:', dbError);
   }
 
-  return new Response(
-    JSON.stringify({
-      highScore,
-      leaderboard: leaderboard.slice(0, 10),
-      userScore,
-      userScores,
-      isNewUser: username ? isNewUser : true,
-    }),
-    {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    }
-  );
+  return jsonResponse({
+    highScore,
+    leaderboard: leaderboard.slice(0, 10),
+    userScore,
+    userScores,
+    isNewUser: username ? isNewUser : true,
+  });
 }
 
 function generateAnonName(): string {
@@ -199,48 +172,152 @@ async function findUniqueAnonName(
   return name;
 }
 
-export async function POST({ request }: { request: Request }) {
-  const authResult = checkAuth(request, env);
-  if (authResult) {
-    return authResult;
+function isBlockedName(name: string): boolean {
+  const normalizedName = name.toLowerCase();
+  return BLOCKED_NAME_PARTS.some(part => normalizedName.includes(part));
+}
+
+function base64UrlEncode(bytes: ArrayBuffer): string {
+  const binary = String.fromCharCode(...new Uint8Array(bytes));
+  return btoa(binary)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+async function signToken(payload: string, secret: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign(
+    'HMAC',
+    key,
+    new TextEncoder().encode(payload)
+  );
+
+  return base64UrlEncode(signature);
+}
+
+async function verifyScoreToken(
+  token: string,
+  env: Env | undefined
+): Promise<boolean> {
+  const secret = env?.TIMER_GAME_API_KEY;
+  if (!secret) return false;
+
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+
+  const [expiresAt, nonce, signature] = parts;
+  const expiry = Number(expiresAt);
+  if (!Number.isFinite(expiry) || expiry < Date.now() || !nonce || !signature) {
+    return false;
   }
 
+  const expectedSignature = await signToken(`${expiresAt}.${nonce}`, secret);
+  return signature === expectedSignature;
+}
+
+async function checkScoreToken(
+  token: string,
+  env: Env | undefined
+): Promise<Response | null> {
+  if (!(await verifyScoreToken(token, env))) {
+    return jsonResponse({ error: 'Invalid score token' }, 403);
+  }
+
+  if (!env?.TIMER_GAME_KV) return null;
+
+  const nonce = token.split('.')[1];
+  const key = `score-token:${nonce}`;
+  const count = parseInt((await env.TIMER_GAME_KV.get(key)) || '0');
+
+  if (count >= SCORE_TOKEN_LIMIT) {
+    return jsonResponse({ error: 'Score token expired' }, 403);
+  }
+
+  await env.TIMER_GAME_KV.put(key, String(count + 1), {
+    expirationTtl: SCORE_LIMIT_TTL,
+  });
+
+  return null;
+}
+
+function getRateLimitKey(request: Request): string {
+  const ip =
+    request.headers.get('CF-Connecting-IP') ||
+    request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() ||
+    'unknown';
+
+  return `score-limit:${ip}`;
+}
+
+async function checkRateLimit(
+  request: Request,
+  kv: KVNamespace | undefined
+): Promise<Response | null> {
+  if (!kv) return null;
+
+  const key = getRateLimitKey(request);
+  const count = parseInt((await kv.get(key)) || '0');
+
+  if (count >= SCORE_LIMIT) {
+    return jsonResponse({ error: 'Too many attempts. Try again later.' }, 429);
+  }
+
+  await kv.put(key, String(count + 1), { expirationTtl: SCORE_LIMIT_TTL });
+  return null;
+}
+
+export async function POST({ request }: { request: Request }) {
   try {
     const body = (await request.json()) as {
       name: string;
       score: number;
       mode: number;
       generateUnique?: boolean;
+      scoreToken: string;
     };
-    const { name, score, mode, generateUnique } = body;
+    const { name, score, mode, generateUnique, scoreToken } = body;
 
-    if (!name || typeof score !== 'number' || ![1, 5, 10, 15].includes(mode)) {
-      return new Response(JSON.stringify({ error: 'Invalid input' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (
+      !name ||
+      typeof score !== 'number' ||
+      !ALLOWED_MODES.includes(mode) ||
+      typeof scoreToken !== 'string'
+    ) {
+      return jsonResponse({ error: 'Invalid input' }, 400);
     }
 
     let sanitizedName = name.slice(0, 12).replace(/[^a-zA-Z0-9_-]/g, '');
     if (!sanitizedName) {
-      return new Response(JSON.stringify({ error: 'Invalid name' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({ error: 'Invalid name' }, 400);
     }
 
-    if (score < 0 || score > 30) {
-      return new Response(JSON.stringify({ error: 'Invalid score' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    if (isBlockedName(sanitizedName)) {
+      return jsonResponse({ error: 'Invalid name' }, 400);
+    }
+
+    if (!Number.isFinite(score) || score < MIN_SCORE || score > MAX_SCORE) {
+      return jsonResponse({ error: 'Invalid score' }, 400);
+    }
+
+    const scoreTokenResult = await checkScoreToken(scoreToken, env);
+    if (scoreTokenResult) {
+      return scoreTokenResult;
+    }
+
+    const rateLimitResult = await checkRateLimit(request, env?.TIMER_GAME_KV);
+    if (rateLimitResult) {
+      return rateLimitResult;
     }
 
     if (!env?.TIMER_GAME_DB) {
-      return new Response(JSON.stringify({ success: true, saved: false }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return jsonResponse({ success: true, saved: false });
     }
 
     if (generateUnique && sanitizedName.startsWith('anon')) {
@@ -257,19 +334,13 @@ export async function POST({ request }: { request: Request }) {
       .first<{ score: number }>();
 
     if (existing && existing.score <= score) {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          saved: false,
-          reason: 'existing_better',
-          currentBest: existing.score,
-          assignedName: sanitizedName,
-        }),
-        {
-          status: 200,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      return jsonResponse({
+        success: true,
+        saved: false,
+        reason: 'existing_better',
+        currentBest: existing.score,
+        assignedName: sanitizedName,
+      });
     }
 
     if (existing) {
@@ -293,23 +364,14 @@ export async function POST({ request }: { request: Request }) {
       ]).catch(() => {});
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        saved: true,
-        newBest: score,
-        assignedName: sanitizedName,
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return jsonResponse({
+      success: true,
+      saved: true,
+      newBest: score,
+      assignedName: sanitizedName,
+    });
   } catch (error) {
     console.error('Timer game POST error:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ error: 'Internal server error' }, 500);
   }
 }

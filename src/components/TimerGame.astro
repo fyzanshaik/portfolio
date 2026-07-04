@@ -1,7 +1,44 @@
 ---
 import { env } from 'cloudflare:workers';
-const key = (env as Record<string, unknown>).TIMER_GAME_API_KEY;
-const apiKey = typeof key === 'string' ? key : '';
+
+const TOKEN_TTL_MS = 60 * 60 * 1000;
+
+function base64UrlEncode(bytes: ArrayBuffer): string {
+  const binary = String.fromCharCode(...new Uint8Array(bytes));
+  return btoa(binary)
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+async function signToken(payload: string, secret: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign(
+    'HMAC',
+    key,
+    new TextEncoder().encode(payload)
+  );
+
+  return `${payload}.${base64UrlEncode(signature)}`;
+}
+
+async function createScoreToken(): Promise<string> {
+  const secret = (env as Record<string, unknown>).TIMER_GAME_API_KEY;
+  if (typeof secret !== 'string') return '';
+
+  const expiresAt = Date.now() + TOKEN_TTL_MS;
+  const nonce = crypto.randomUUID();
+
+  return signToken(`${expiresAt}.${nonce}`, secret);
+}
+
+const scoreToken = await createScoreToken();
 ---
 
 <div
@@ -308,7 +345,7 @@ const apiKey = typeof key === 'string' ? key : '';
   </div>
 </div>
 
-<script define:vars={{ apiKey }}>
+<script define:vars={{ scoreToken }}>
   function generateAnonName() {
     const num = Math.floor(Math.random() * 99999)
       .toString()
@@ -438,11 +475,7 @@ const apiKey = typeof key === 'string' ? key : '';
       '<div class="copy-14 text-[var(--text-secondary)] text-center">Loading…</div>';
 
     try {
-      const response = await fetch(`/api/timer-game?mode=${mode}`, {
-        headers: {
-          'X-API-Key': apiKey,
-        },
-      });
+      const response = await fetch(`/api/timer-game?mode=${mode}`);
       if (!response.ok) return;
 
       const data = await response.json();
@@ -673,13 +706,13 @@ const apiKey = typeof key === 'string' ? key : '';
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-API-Key': apiKey,
         },
         body: JSON.stringify({
           name,
           score,
           mode: targetSeconds,
           generateUnique: needsAnonName,
+          scoreToken,
         }),
       });
 
@@ -712,11 +745,7 @@ const apiKey = typeof key === 'string' ? key : '';
     }
 
     try {
-      const response = await fetch(url, {
-        headers: {
-          'X-API-Key': apiKey,
-        },
-      });
+      const response = await fetch(url);
       if (!response.ok) return;
 
       const data = await response.json();
