@@ -1,6 +1,24 @@
 ---
 const experiences = [
   {
+    company: 'Atlan',
+    role: 'Software Engineer',
+    period: 'Jan 2026 – Present',
+    location: 'Hyderabad, India',
+    highlight:
+      'Building connector infrastructure, Temporal-native apps, and open-source SDK tooling for metadata extraction at scale',
+    details: [
+      "Owned 6 connector migrations end to end in Atlan's company-wide kill-argo migration, moving Monte Carlo, Trino, Presto, Mode, ClickHouse, and Matillion off Argo workflows to a Temporal-based platform; co-own DocumentDB and shipped the migration to enterprise customers with no disruption.",
+      "Enabled high-scale extraction with 500k+ assets per run, cut one connector's full crawl from roughly 90 minutes to under a minute, and added customer self-hosted extraction.",
+      "Created the native-app contract system in Atlan's open-source Application SDK: one declarative file defines a connector's setup UI, credentials, and workflow, then auto-generates running config. It is now the standard across connectors; I am a top contributor and code owner. github.com/atlanhq/application-sdk/tree/main/contract-toolkit",
+      'Core contributor to the open-source Application SDK all connectors run on, improving reliability, performance, and security of metadata extraction at scale, and building a pre-run validation layer that catches source/config issues before jobs start. github.com/atlanhq/application-sdk/commits?author=fyzanshaik-atlan',
+      'Worked on connector templates and CLI/local dev tooling so engineers can scaffold, run, and test connectors locally before deployment.',
+      "Contributed core features and fixes to Atlan's Go backend for Temporal-native apps: native app routing, credential resolution, a pre-extraction validation endpoint, and publish reliability.",
+      'Built tooling and reusable skill packs that let AI coding agents such as Claude Code and Codex scaffold, run, and debug apps end to end, plus automated incident triage for faster RCA.',
+      'Owned production incident response for migrations affecting enterprise customers and improved org-wide engineering automation across security scanning, CI, and AI-assisted code review.',
+    ],
+  },
+  {
     company: 'Rare Labs',
     role: 'Software Developer Intern',
     period: 'Oct 2024 – Apr 2025',
@@ -83,7 +101,10 @@ const experiences = [
             <div class="mt-3 ml-4 pl-4 border-l-2 border-[var(--border)]">
               <ul class="space-y-2">
                 {exp.details.map(detail => (
-                  <li class="copy-14 text-[var(--text-secondary)]">{detail}</li>
+                  <li class="flex gap-2 break-words copy-14 text-[var(--text-secondary)]">
+                    <span class="mt-0.5 shrink-0 text-[var(--accent)]">→</span>
+                    <span>{detail}</span>
+                  </li>
                 ))}
               </ul>
             </div>

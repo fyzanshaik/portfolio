@@ -1,12 +1,12 @@
 ---
 layout: ../../layouts/BlogPost.astro
 title: 'Atlan interview experience'
-description: 'Encapsulating & sharing my experience getting intern role at Atlan'
+description: 'Encapsulating & sharing my experience getting into Atlan'
 date: 2026-01-01
 tags: ['interview', 'internship']
 ---
 
-In this post I want to share my full experience from being rejected initially to being part of Atlan as an Intern.
+In this post I want to share my full experience from being rejected initially to becoming part of Atlan.
 
 ## Why I Applied
 
@@ -55,7 +55,7 @@ I made sure to understand everything I missed ASAP and brush myself up. All in a
 
 This was the best interview I have ever had. I made sure to prepare myself well this time. Atlan does reject candidates after cultural rounds. It's a test to see if you fit in their teams or not and match their values. The core Atlan values are amazing: they emphasize growing you+team. [Atlan core values](https://blog.atlan.com/team/how-we-live-our-cultural-values-every-day/). I did my research well. My interview was with the director of AI engineering @Atlan. Since they were living in the USA, the interview was scheduled a bit late at night for me. The interviewer asked me to introduce myself. Then I was asked about my childhood, what I used to do in tech, why I am pursuing tech as a career, and my goals. We discussed games/DIY projects I used to do, my embedded system projects and everything I did in my previous intern. This was in-depth. Every single question had value and insight and I had a lot of fun doing it. At the end of the interview, which lasted longer than the scheduled time, I was pretty confident that I did well and got pretty good feedback from the interviewer himself.
 
-After waiting for 2 weeks I got my mail that I was in! This was a pretty amazing feeling. I failed or was ignored by other MNC roles. I wasn't keen on relying on college placements (which I still got in). This was a huge roller coaster. I had to handle quite a lot of negative feelings while doing this but I am glad I'll be joining Atlan from Jan 2026!
+After waiting for 2 weeks I got my mail that I was in! This was a pretty amazing feeling. I failed or was ignored by other MNC roles. I wasn't keen on relying on college placements (which I still got in). This was a huge roller coaster. I had to handle quite a lot of negative feelings while doing this, but I am glad I joined Atlan in Jan 2026 and later converted to a software engineer role.
 
 Hopefully this was a nice read for you. There's still a lot to learn, the people here are all cracked af but I am excited to start my path!
 

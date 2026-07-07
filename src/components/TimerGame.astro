@@ -42,95 +42,113 @@ const scoreToken = await createScoreToken();
 ---
 
 <div
-  class="timer-game-container w-full max-w-[min(280px,90vw)] lg:max-w-sm relative"
+  class="timer-game-container relative w-full max-w-[min(252px,calc(100vw-2.5rem))] sm:max-w-[280px] md:max-w-[300px] lg:max-w-[280px]"
 >
-  <div class="flex items-center justify-between mb-3">
-    <div class="flex items-center gap-1">
-      <input
-        type="text"
-        id="player-name"
-        placeholder="Your name"
-        maxlength="12"
-        class="w-28 bg-[var(--bg-primary)] border border-[var(--border)] rounded-sm h-10 px-3 label-14 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none transition-colors"
-      />
-      <button
-        id="save-name-btn"
-        aria-label="Save name"
-        class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors opacity-0"
-        title="Save name"
+  <div class="flex flex-col gap-2">
+    <div class="min-w-0 flex-1">
+      <div
+        class="mb-2 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2"
       >
-        <svg
-          class="w-3.5 h-3.5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M5 13l4 4L19 7"></path>
-        </svg>
-      </button>
-    </div>
-    <div class="flex items-center gap-2">
-      <div class="relative">
-        <button
-          id="game-info-button"
-          aria-label="Game instructions"
-          class="p-1.5 text-[var(--text-secondary)] rounded-sm hover:bg-[var(--bg-fill)] transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-            aria-hidden="true"
+        <div class="relative">
+          <button
+            id="game-info-button"
+            aria-label="Game instructions"
+            class="flex h-8 w-8 items-center justify-center rounded-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-fill)] hover:text-[var(--text-primary)]"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-        </button>
-        <div
-          id="game-info-tooltip"
-          class="absolute hidden bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs px-3 py-2 copy-14 text-left text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border)] rounded-md shadow-lg z-10"
-        >
-          <p class="font-medium text-[var(--text-primary)]">How to play</p>
-          <p>1. Click the box to start.</p>
-          <p>2. Click again to stop.</p>
-          <p>3. Get as close to the target time as you can.</p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </button>
+          <div
+            id="game-info-tooltip"
+            class="absolute bottom-full left-0 z-10 mb-2 hidden w-[min(280px,calc(100vw-3rem))] rounded-md border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-left copy-14 text-[var(--text-secondary)] shadow-lg"
+          >
+            <p class="font-medium text-[var(--text-primary)]">How to play</p>
+            <p>1. Click the box to start.</p>
+            <p>2. Click again to stop.</p>
+            <p>3. Get as close to the target time as you can.</p>
+          </div>
         </div>
+        <div class="relative min-w-0">
+          <input
+            type="text"
+            id="player-name"
+            placeholder="Your name"
+            maxlength="12"
+            class="h-8 w-full rounded-sm border border-[var(--border)] bg-transparent px-2.5 pr-8 label-13 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] transition-colors focus:border-[var(--accent)] focus:outline-none"
+          />
+          <button
+            id="save-name-btn"
+            aria-label="Save name"
+            class="pointer-events-none absolute right-0.5 top-1/2 -translate-y-1/2 rounded-sm p-1.5 text-[var(--text-secondary)] opacity-0 transition-colors hover:bg-[var(--bg-fill)]"
+            title="Save name"
+          >
+            <svg
+              class="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"></path>
+            </svg>
+          </button>
+        </div>
+        <button
+          id="open-leaderboard"
+          class="h-8 whitespace-nowrap rounded-sm px-2 label-13 text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-fill)] hover:text-[var(--text-primary)]"
+        >
+          Leaderboard ↗
+        </button>
       </div>
-      <button
-        id="open-leaderboard"
-        class="label-13 text-[var(--text-secondary)] px-2.5 h-8 rounded-sm hover:bg-[var(--bg-fill)] hover:text-[var(--text-primary)] transition-colors"
-      >
-        Leaderboard ↗
-      </button>
-    </div>
-  </div>
 
-  <div class="flex gap-4">
-    <div class="flex-1">
       <div
         id="game-box"
-        class="relative aspect-square border border-[var(--border)] rounded-lg cursor-pointer select-none overflow-hidden transition-colors hover:border-[var(--border-hover)]"
+        class="relative h-36 cursor-pointer select-none overflow-hidden rounded-lg border border-[var(--border)] transition-colors hover:border-[var(--border-hover)] sm:aspect-square sm:h-auto"
       >
+        <div
+          class="pointer-events-none absolute left-3 top-3 z-[1] text-left label-12 text-[var(--text-tertiary)]"
+        >
+          <span class="block">Best</span>
+          <span
+            id="your-score"
+            class="block tabular text-[var(--text-secondary)]">—</span
+          >
+        </div>
+        <div
+          class="pointer-events-none absolute right-3 top-3 z-[1] text-right label-12 text-[var(--text-tertiary)]"
+        >
+          <span class="block">High</span>
+          <span id="high-score" class="block tabular text-[var(--accent)]"
+            >—</span
+          >
+        </div>
+
         <div
           id="state-idle"
           class="absolute inset-0 flex flex-col items-center justify-center"
         >
           <span
-            class="text-3xl tabular text-[var(--accent)]"
+            class="text-2xl tabular text-[var(--accent)] sm:text-3xl"
             id="target-time-display">1s</span
           >
-          <span class="label-13 text-[var(--text-secondary)] mt-2"
+          <span class="mt-1.5 label-13 text-[var(--text-secondary)] sm:mt-2"
             >Click to start</span
           >
         </div>
@@ -141,7 +159,8 @@ const scoreToken = await createScoreToken();
         >
           <span
             id="random-display"
-            class="text-4xl tabular text-[var(--text-secondary)]">0.000</span
+            class="text-3xl tabular text-[var(--text-secondary)] sm:text-4xl"
+            >0.000</span
           >
         </div>
 
@@ -154,7 +173,8 @@ const scoreToken = await createScoreToken();
           >
           <span
             id="result-time"
-            class="text-3xl tabular text-[var(--text-primary)]">0.000s</span
+            class="text-2xl tabular text-[var(--text-primary)] sm:text-3xl"
+            >0.000s</span
           >
           <span id="result-diff" class="text-sm tabular mt-1"></span>
           <span
@@ -167,7 +187,9 @@ const scoreToken = await createScoreToken();
         </div>
       </div>
 
-      <div class="flex items-center justify-center gap-2 mt-3">
+      <div
+        class="mt-1.5 flex items-center justify-center gap-1.5 sm:mt-2 sm:gap-2"
+      >
         <button
           id="mode-prev"
           aria-label="Previous mode"
@@ -190,22 +212,22 @@ const scoreToken = await createScoreToken();
         <div class="flex gap-1">
           <button
             data-mode="1"
-            class="mode-btn label-13 px-2.5 h-8 rounded-sm tabular text-[var(--accent)] bg-[var(--accent)]/10 transition-colors"
+            class="mode-btn h-8 rounded-sm bg-[var(--accent)]/10 px-2.5 label-13 tabular text-[var(--accent)] transition-colors"
             >1s</button
           >
           <button
             data-mode="5"
-            class="mode-btn label-13 px-2.5 h-8 rounded-sm tabular text-[var(--text-secondary)] hover:bg-[var(--bg-fill)] transition-colors"
+            class="mode-btn h-8 rounded-sm px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-fill)]"
             >5s</button
           >
           <button
             data-mode="10"
-            class="mode-btn label-13 px-2.5 h-8 rounded-sm tabular text-[var(--text-secondary)] hover:bg-[var(--bg-fill)] transition-colors"
+            class="mode-btn h-8 rounded-sm px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-fill)]"
             >10s</button
           >
           <button
             data-mode="15"
-            class="mode-btn label-13 px-2.5 h-8 rounded-sm tabular text-[var(--text-secondary)] hover:bg-[var(--bg-fill)] transition-colors"
+            class="mode-btn h-8 rounded-sm px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-fill)]"
             >15s</button
           >
         </div>
@@ -228,25 +250,6 @@ const scoreToken = await createScoreToken();
               d="M9 5l7 7-7 7"></path>
           </svg>
         </button>
-      </div>
-    </div>
-
-    <div class="w-20 flex flex-col justify-center text-right">
-      <div class="mb-3">
-        <span class="label-13 text-[var(--text-secondary)] block"
-          >Your best</span
-        >
-        <span id="your-score" class="text-sm tabular text-[var(--text-primary)]"
-          >—</span
-        >
-      </div>
-      <div>
-        <span class="label-13 text-[var(--text-secondary)] block"
-          >High score</span
-        >
-        <span id="high-score" class="text-sm tabular text-[var(--accent)]"
-          >—</span
-        >
       </div>
     </div>
   </div>
@@ -410,9 +413,13 @@ const scoreToken = await createScoreToken();
     if (name && name !== 'anon') {
       localStorage.setItem('timer-game-username', name);
       saveNameBtn.classList.remove('opacity-0');
+      saveNameBtn.classList.remove('pointer-events-none');
+      saveNameBtn.classList.add('pointer-events-auto');
       saveNameBtn.classList.add('text-[var(--accent)]');
       setTimeout(() => {
         saveNameBtn.classList.add('opacity-0');
+        saveNameBtn.classList.add('pointer-events-none');
+        saveNameBtn.classList.remove('pointer-events-auto');
         saveNameBtn.classList.remove('text-[var(--accent)]');
       }, 1500);
       return true;
@@ -429,10 +436,14 @@ const scoreToken = await createScoreToken();
 
   function showSaveButton() {
     saveNameBtn.classList.remove('opacity-0');
+    saveNameBtn.classList.remove('pointer-events-none');
+    saveNameBtn.classList.add('pointer-events-auto');
   }
 
   function hideSaveButton() {
     saveNameBtn.classList.add('opacity-0');
+    saveNameBtn.classList.add('pointer-events-none');
+    saveNameBtn.classList.remove('pointer-events-auto');
   }
 
   function updateWelcomeMessage(name, isNew) {

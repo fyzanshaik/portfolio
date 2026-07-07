@@ -22,7 +22,7 @@ I’m good at learning new things and implementing features for products, but I 
 
 Starting today, I’ll (hopefully) be publishing new blogs on computer science foundations, backend systems, and a lot of math!
 
-I have a summer 2026 internship lined up at **Atlan** as a Backend Intern! Algorithms and math are the areas I’m _bad_ at—but they’re also the ones that excite me the most. The world of computing is changing fast—we’re on the brink of redefining computing and accessibility for everyone.
+I’m now a software engineer at **Atlan**, building data + AI products after first joining through the intern path. Algorithms and math are the areas I’m _bad_ at—but they’re also the ones that excite me the most. The world of computing is changing fast—we’re on the brink of redefining computing and accessibility for everyone.
 
 Currently running **Omarchy**, my opinionated Arch Linux setup.
 

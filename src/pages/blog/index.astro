@@ -10,7 +10,6 @@ const sortedPosts = allPosts.sort(
     new Date(b.frontmatter.date).getTime() -
     new Date(a.frontmatter.date).getTime()
 );
-
 const ogImage = 'https://fyzanshaik.in/favicon.png';
 
 function formatDate(dateString: string): string {
@@ -32,24 +31,28 @@ function formatDate(dateString: string): string {
   ogImageAlt="Blog | Faizan Shaik"
 >
   <NavBar />
-  <main class="pt-12 pb-20 md:pl-24">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="mb-12">
-        <h1 class="heading-40 mb-3 text-[var(--text-primary)]">./blogs</h1>
-        <p class="copy-16 text-[var(--text-secondary)] mb-6">
-          Writing about systems, performance, and the craft of building software
-        </p>
+  <main class="overflow-x-hidden pt-10 pb-20 md:pl-24 lg:pt-14">
+    <div class="mx-auto w-full max-w-[1480px] min-w-0 px-5 sm:px-8 lg:px-10">
+      <header class="mb-8 pb-2 lg:mb-9">
+        <div class="mb-6">
+          <div>
+            <p class="mb-2 label-13 tabular text-[var(--text-tertiary)]">
+              {sortedPosts.length} posts
+            </p>
+            <h1 class="heading-48 text-[var(--text-primary)]">Writing</h1>
+          </div>
+        </div>
 
-        <div class="relative">
+        <div class="relative max-w-xl">
           <input
             type="text"
             id="search-input"
-            placeholder="Search posts…"
-            class="w-full h-12 px-4 bg-[var(--bg-primary)] border border-[var(--border)] rounded-sm label-16 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)] transition-colors"
+            placeholder="Search posts..."
+            class="h-11 w-full rounded-sm border border-[var(--border)] bg-transparent px-3 pr-10 label-14 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] transition-colors focus:border-[var(--accent)]"
           />
           <svg
             aria-hidden="true"
-            class="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
+            class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -61,50 +64,71 @@ function formatDate(dateString: string): string {
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </div>
-      </div>
+      </header>
 
       {
         sortedPosts.length > 0 ? (
-          <div id="posts-container" class="space-y-12">
-            {sortedPosts.map(post => (
+          <div
+            id="posts-container"
+            class="min-w-0 divide-y divide-[var(--border)] border-t border-[var(--border)]"
+          >
+            {sortedPosts.map((post, index) => (
               <article
-                class="post-item rounded-md hover:border-[var(--accent)] transition-colors"
+                class="post-item group transition-colors"
                 data-search-text={`${post.frontmatter.title.toLowerCase()} ${post.frontmatter.description.toLowerCase()} ${post.frontmatter.tags?.join(' ').toLowerCase() || ''}`}
               >
-                <a href={post.url} class="block group">
-                  <div class="flex items-baseline justify-between gap-4 mb-2">
-                    <h2 class="heading-24 text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
-                      {post.frontmatter.title}
-                    </h2>
-                    <time class="label-14 tabular text-[var(--text-tertiary)] whitespace-nowrap">
+                <a
+                  href={post.url}
+                  class="grid min-w-0 gap-4 py-6 outline-none transition-colors hover:bg-[var(--bg-surface)] sm:px-3 lg:grid-cols-[104px_minmax(0,1fr)_40px] lg:gap-7 lg:py-6"
+                >
+                  <div class="flex items-center gap-3 lg:flex-col lg:items-start lg:gap-2">
+                    <span class="label-13 tabular text-[var(--text-tertiary)]">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <time class="label-13 tabular text-[var(--text-tertiary)]">
                       {formatDate(post.frontmatter.date)}
                     </time>
                   </div>
-                  <p class="copy-16 text-[var(--text-secondary)] mb-3">
-                    {post.frontmatter.description}
-                  </p>
-                  {post.frontmatter.tags &&
-                    post.frontmatter.tags.length > 0 && (
-                      <div class="flex flex-wrap gap-2">
-                        {post.frontmatter.tags.map((tag: string) => (
-                          <span class="label-12 font-mono px-2 py-1 rounded-sm bg-[var(--bg-fill)] text-[var(--text-secondary)] border border-[var(--border)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)] transition-colors">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+
+                  <div class="min-w-0">
+                    <div class="mb-2">
+                      <h2 class="max-w-5xl break-words heading-24 text-[var(--text-primary)] transition-colors group-hover:text-[var(--accent)]">
+                        {post.frontmatter.title}
+                      </h2>
+                    </div>
+                    <p class="mb-4 max-w-4xl break-words copy-16 text-[var(--text-secondary)]">
+                      {post.frontmatter.description}
+                    </p>
+                    {post.frontmatter.tags &&
+                      post.frontmatter.tags.length > 0 && (
+                        <div class="flex flex-wrap gap-2">
+                          {post.frontmatter.tags.map((tag: string) => (
+                            <span class="rounded-sm border border-[var(--border)] bg-[var(--bg-fill)] px-2 py-1 font-mono label-12 text-[var(--text-secondary)] transition-colors group-hover:border-[var(--accent)] group-hover:text-[var(--accent)]">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                  </div>
+
+                  <span
+                    aria-hidden="true"
+                    class="hidden h-9 w-9 items-center justify-center rounded-sm border border-transparent text-[var(--text-tertiary)] transition-colors group-hover:border-[var(--border)] group-hover:bg-[var(--bg-primary)] group-hover:text-[var(--accent)] lg:flex"
+                  >
+                    →
+                  </span>
                 </a>
               </article>
             ))}
           </div>
         ) : (
-          <div class="text-center py-16">
+          <div class="py-16 text-center">
             <p class="copy-16 text-[var(--text-secondary)]">No posts yet.</p>
           </div>
         )
       }
 
-      <div id="no-results" class="hidden text-center py-16">
+      <div id="no-results" class="hidden py-16 text-center">
         <p class="copy-16 text-[var(--text-secondary)]">
           No posts match your search.
         </p>
