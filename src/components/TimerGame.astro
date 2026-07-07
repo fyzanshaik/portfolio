@@ -361,11 +361,15 @@ const scoreToken = await createScoreToken();
   let modalModeIndex = 0;
   let gameState = 'idle';
   let startTime = 0;
+  let activeMode = modes[currentModeIndex];
+  let activeRoundId = 0;
   let randomInterval = null;
   let userScoresCache = {};
   let nameTypingTimeout = null;
   let isNewUser = true;
   let fullLeaderboardCache = {};
+  let scoresRequestId = 0;
+  let modalRequestId = 0;
 
   const gameBox = document.getElementById('game-box');
   const stateIdle = document.getElementById('state-idle');
@@ -482,6 +486,7 @@ const scoreToken = await createScoreToken();
 
   async function fetchModalLeaderboard() {
     const mode = modes[modalModeIndex];
+    const requestId = ++modalRequestId;
     modalLeaderboard.innerHTML =
       '<div class="copy-14 text-[var(--text-secondary)] text-center">Loading…</div>';
 
@@ -490,10 +495,16 @@ const scoreToken = await createScoreToken();
       if (!response.ok) return;
 
       const data = await response.json();
+      if (requestId !== modalRequestId || mode !== modes[modalModeIndex])
+        return;
+
       fullLeaderboardCache[mode.toString()] = data.leaderboard || [];
 
       renderModalLeaderboard();
     } catch (error) {
+      if (requestId !== modalRequestId || mode !== modes[modalModeIndex])
+        return;
+
       console.error('Failed to fetch leaderboard:', error);
       modalLeaderboard.innerHTML =
         '<div class="copy-14 text-[var(--text-secondary)] text-center">Could not load scores. Try again.</div>';
@@ -664,6 +675,8 @@ const scoreToken = await createScoreToken();
   function startGame() {
     playGameSound();
     startTime = performance.now();
+    activeMode = modes[currentModeIndex];
+    activeRoundId += 1;
     switchState('running');
     randomInterval = setInterval(generateRandomDisplay, 50);
   }
@@ -676,7 +689,8 @@ const scoreToken = await createScoreToken();
 
     const endTime = performance.now();
     const elapsedSeconds = (endTime - startTime) / 1000;
-    const targetSeconds = modes[currentModeIndex];
+    const targetSeconds = activeMode;
+    const roundId = activeRoundId;
     const diff = elapsedSeconds - targetSeconds;
     const absDiff = Math.abs(diff);
 
@@ -701,13 +715,11 @@ const scoreToken = await createScoreToken();
     const isBetter = currentBest === undefined || absDiff < currentBest;
 
     if (isBetter) {
-      newBestIndicator.classList.remove('hidden');
-      await submitScore(absDiff);
+      await submitScore(absDiff, targetSeconds, roundId);
     }
   }
 
-  async function submitScore(score) {
-    const targetSeconds = modes[currentModeIndex];
+  async function submitScore(score, targetSeconds, roundId) {
     let name = getUsername();
     const needsAnonName = !name;
     if (!name) name = generateAnonName();
@@ -730,7 +742,10 @@ const scoreToken = await createScoreToken();
       const data = await response.json();
 
       if (data.saved) {
+        if (roundId !== activeRoundId || gameState !== 'result') return;
+
         const finalName = data.assignedName || name;
+        newBestIndicator.classList.remove('hidden');
         if (needsAnonName) {
           saveUsername(finalName);
           playerNameInput.value = finalName;
@@ -748,6 +763,7 @@ const scoreToken = await createScoreToken();
 
   async function fetchScores() {
     const targetSeconds = modes[currentModeIndex];
+    const requestId = ++scoresRequestId;
     const username = getUsername();
 
     let url = `/api/timer-game?mode=${targetSeconds}`;
@@ -760,6 +776,12 @@ const scoreToken = await createScoreToken();
       if (!response.ok) return;
 
       const data = await response.json();
+      if (
+        requestId !== scoresRequestId ||
+        targetSeconds !== modes[currentModeIndex]
+      ) {
+        return;
+      }
 
       if (data.highScore !== null && data.highScore !== undefined) {
         highScore.textContent = `${data.highScore.toFixed(3)}s`;
@@ -790,6 +812,13 @@ const scoreToken = await createScoreToken();
           '<div class="text-[var(--text-secondary)]">No scores yet. Play a round to set one.</div>';
       }
     } catch (error) {
+      if (
+        requestId !== scoresRequestId ||
+        targetSeconds !== modes[currentModeIndex]
+      ) {
+        return;
+      }
+
       console.error('Failed to fetch scores:', error);
       leaderboard.innerHTML =
         '<div class="text-[var(--text-secondary)]">—</div>';
@@ -804,12 +833,14 @@ const scoreToken = await createScoreToken();
     } else if (gameState === 'running') {
       stopGame();
     } else if (gameState === 'result') {
+      activeRoundId += 1;
       switchState('idle');
     }
   });
 
   modePrev.addEventListener('click', e => {
     e.stopPropagation();
+    if (gameState === 'running') return;
     currentModeIndex = (currentModeIndex - 1 + modes.length) % modes.length;
     updateModeDisplay();
     fetchScores();
@@ -818,6 +849,7 @@ const scoreToken = await createScoreToken();
 
   modeNext.addEventListener('click', e => {
     e.stopPropagation();
+    if (gameState === 'running') return;
     currentModeIndex = (currentModeIndex + 1) % modes.length;
     updateModeDisplay();
     fetchScores();
@@ -827,6 +859,7 @@ const scoreToken = await createScoreToken();
   modeBtns.forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
+      if (gameState === 'running') return;
       const mode = parseInt(btn.dataset.mode || '0');
       currentModeIndex = modes.indexOf(mode);
       updateModeDisplay();

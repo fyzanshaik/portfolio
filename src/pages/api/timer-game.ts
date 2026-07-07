@@ -327,34 +327,31 @@ export async function POST({ request }: { request: Request }) {
       );
     }
 
-    const existing = await env.TIMER_GAME_DB.prepare(
-      `SELECT score FROM timer_scores WHERE name = ? AND mode = ?`
+    const saveResult = await env.TIMER_GAME_DB.prepare(
+      `INSERT INTO timer_scores (name, score, mode, created_at)
+       VALUES (?, ?, ?, datetime('now'))
+       ON CONFLICT(name, mode) DO UPDATE SET
+         score = excluded.score,
+         created_at = datetime('now')
+       WHERE excluded.score < timer_scores.score`
     )
-      .bind(sanitizedName, mode)
-      .first<{ score: number }>();
+      .bind(sanitizedName, score, mode)
+      .run();
 
-    if (existing && existing.score <= score) {
+    if (saveResult.meta.changes === 0) {
+      const existing = await env.TIMER_GAME_DB.prepare(
+        `SELECT score FROM timer_scores WHERE name = ? AND mode = ?`
+      )
+        .bind(sanitizedName, mode)
+        .first<{ score: number }>();
+
       return jsonResponse({
         success: true,
         saved: false,
         reason: 'existing_better',
-        currentBest: existing.score,
+        currentBest: existing?.score ?? null,
         assignedName: sanitizedName,
       });
-    }
-
-    if (existing) {
-      await env.TIMER_GAME_DB.prepare(
-        `UPDATE timer_scores SET score = ?, created_at = datetime('now') WHERE name = ? AND mode = ?`
-      )
-        .bind(score, sanitizedName, mode)
-        .run();
-    } else {
-      await env.TIMER_GAME_DB.prepare(
-        `INSERT INTO timer_scores (name, score, mode, created_at) VALUES (?, ?, ?, datetime('now'))`
-      )
-        .bind(sanitizedName, score, mode)
-        .run();
     }
 
     if (env?.TIMER_GAME_KV) {
