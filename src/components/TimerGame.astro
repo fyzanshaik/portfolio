@@ -131,7 +131,7 @@ const scoreToken = await createScoreToken();
           <span class="block">Best error</span>
           <span
             id="your-score"
-            class="block tabular text-[var(--text-secondary)]">—</span
+            class="block tabular text-[var(--text-secondary)]">-</span
           >
         </div>
         <div
@@ -139,7 +139,7 @@ const scoreToken = await createScoreToken();
         >
           <span class="block">Global best</span>
           <span id="high-score" class="block tabular text-[var(--accent)]"
-            >—</span
+            >-</span
           >
         </div>
 
@@ -152,7 +152,7 @@ const scoreToken = await createScoreToken();
             id="target-time-display">1s</span
           >
           <span class="mt-1.5 label-13 text-[var(--text-secondary)] sm:mt-2"
-            >Click to start</span
+            >Stop as close to the target as you can</span
           >
         </div>
 
@@ -266,7 +266,7 @@ const scoreToken = await createScoreToken();
     id="player-count"
     class="mt-2 text-center label-12 text-[var(--text-tertiary)]"
   >
-    — players
+    Loading players...
   </p>
   <span id="welcome-msg" class="hidden"></span>
 
@@ -713,7 +713,7 @@ const scoreToken = await createScoreToken();
   function updateYourScoreDisplay() {
     const mode = modes[currentModeIndex].toString();
     const score = userScoresCache[mode];
-    yourScore.textContent = score !== undefined ? formatDuration(score) : '—';
+    yourScore.textContent = score !== undefined ? formatDuration(score) : '-';
   }
 
   function switchState(newState) {
@@ -858,7 +858,7 @@ const scoreToken = await createScoreToken();
       if (data.highScore !== null && data.highScore !== undefined) {
         highScore.textContent = formatDuration(data.highScore);
       } else {
-        highScore.textContent = '—';
+        highScore.textContent = '-';
       }
 
       if (data.userScores && Object.keys(data.userScores).length > 0) {
@@ -894,7 +894,7 @@ const scoreToken = await createScoreToken();
 
       console.error('Failed to fetch scores:', error);
       leaderboard.innerHTML =
-        '<div class="text-[var(--text-secondary)]">—</div>';
+        '<div class="text-[var(--text-secondary)]">-</div>';
     }
   }
 

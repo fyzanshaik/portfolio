@@ -44,29 +44,29 @@
   --ease-geist: cubic-bezier(0.175, 0.885, 0.32, 1.1);
 }
 
-/* Light theme — Geist tokens. */
+/* Light theme, warm editorial tokens. */
 :root {
-  --bg-primary: #ffffff; /* background-100 */
-  --bg-surface: #fafafa; /* background-200, subtle separation */
-  --bg-fill: #f2f2f2; /* gray-100, chips / hover fill */
-  --bg-fill-hover: #ebebeb; /* gray-200 */
+  --bg-primary: #fffefb;
+  --bg-surface: #f8f7f4;
+  --bg-fill: #f0efeb;
+  --bg-fill-hover: #e8e6e0;
 
-  --border: #00000014; /* gray-alpha-400, default border */
-  --border-hover: #00000036; /* gray-alpha-500 */
+  --border: #e3e1db;
+  --border-hover: #c5c1b8;
 
-  --text-primary: #171717; /* gray-1000 */
-  --text-secondary: #4d4d4d; /* gray-900 */
-  --text-tertiary: #6b6b6b; /* darkened past gray-700 to clear WCAG AA on white */
+  --text-primary: #171717;
+  --text-secondary: #3f3f3a;
+  --text-tertiary: #686860;
 
-  --accent: #15803d; /* green, deep enough for AA link text on white */
-  --accent-hover: #166534;
+  --accent: #147a3c; /* readable green on light surfaces */
+  --accent-hover: #0f5f2e;
   --accent-fg: #ffffff;
 
   --primary-fill: #171717; /* gray-1000 */
   --primary-fill-fg: #ffffff;
 
-  --selection-bg: #bbf7d0; /* green-200 */
-  --selection-fg: #14532d;
+  --selection-bg: #d8efde;
+  --selection-fg: #123d22;
 
   --focus-ring: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent);
 
@@ -76,7 +76,7 @@
     0 16px 24px -8px rgba(0, 0, 0, 0.06);
 }
 
-/* Dark theme — derived from the canonical Geist dark palette. */
+/* Dark theme, derived from the canonical Geist dark palette. */
 .dark {
   --bg-primary: #0a0a0a; /* background-100 */
   --bg-surface: #1a1a1a; /* elevated surface */
@@ -222,8 +222,7 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Geist focus ring: a gap in the surface color, then a blue-700 ring. */
-/* box-shadow ring follows each element's own border-radius — don't override it. */
+/* Focus ring follows each element's own border-radius. */
 :where(a, button, summary, input, [tabindex]):focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);

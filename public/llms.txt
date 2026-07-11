@@ -26,17 +26,17 @@
 ## Content Structure
 
 ### Work Experience
-1. Rare Labs - Software Developer Intern (Oct 2024 – Apr 2025)
+1. Rare Labs - Software Developer Intern (Oct 2024 - Apr 2025)
    - Built AI-powered Legal Research Platform with 98% accuracy
    - Reduced query time by 90% using GPT and search optimization
    - Technologies: Next.js, TypeScript, Firebase, Python
 
-2. Encapz Technologies - Full Stack Intern (Apr 2024 – Aug 2024)
+2. Encapz Technologies - Full Stack Intern (Apr 2024 - Aug 2024)
    - Optimized backend services with Spring Boot and JPA
    - Implemented Redis caching, reduced latency by 60%
    - Technologies: Java, Spring Boot, Redis, PostgreSQL
 
-3. United Network Of Professionals - Software Engineer Intern (Sep 2023 – Apr 2024)
+3. United Network Of Professionals - Software Engineer Intern (Sep 2023 - Apr 2024)
    - Built RESTful APIs and Quiz UI
    - Technologies: React, Node.js, Express, MongoDB
 

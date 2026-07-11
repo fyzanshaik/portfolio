@@ -21,8 +21,16 @@ function formatDate(dateString: string): string {
 
 <section>
   <div class="max-w-[1100px] mx-auto px-6">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="heading-24">Writing</h2>
+    <div class="mb-6 flex items-end justify-between gap-4">
+      <div>
+        <p class="mb-1 label-13 tabular text-[var(--text-tertiary)]">
+          Engineering notebook
+        </p>
+        <h2 class="heading-24">Writing</h2>
+        <p class="mt-2 max-w-xl copy-14 text-[var(--text-secondary)]">
+          Notes on systems, performance, and the craft of building software.
+        </p>
+      </div>
       <a
         href="/blog"
         class="label-13 text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors flex items-center gap-1"
@@ -44,7 +52,7 @@ function formatDate(dateString: string): string {
       </a>
     </div>
 
-    <div class="space-y-4">
+    <div class="space-y-5">
       {
         recentPosts.map(post => (
           <div class="group">
@@ -60,6 +68,15 @@ function formatDate(dateString: string): string {
                   <p class="copy-14 text-[var(--text-secondary)] line-clamp-2 max-w-2xl">
                     {post.frontmatter.description}
                   </p>
+                  {post.frontmatter.tags?.length > 0 && (
+                    <div class="mt-2 flex flex-wrap gap-1.5">
+                      {post.frontmatter.tags.slice(0, 3).map((tag: string) => (
+                        <span class="rounded-sm border border-[var(--border)] bg-[var(--bg-fill)] px-1.5 py-0.5 font-mono label-12 text-[var(--text-tertiary)] transition-colors group-hover:border-[var(--border-hover)] group-hover:text-[var(--accent)]">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </a>
