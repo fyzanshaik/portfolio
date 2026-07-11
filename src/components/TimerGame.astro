@@ -120,12 +120,15 @@ const scoreToken = await createScoreToken();
 
       <div
         id="game-box"
+        role="button"
+        tabindex="0"
+        aria-label="Start timer game"
         class="relative h-36 cursor-pointer select-none overflow-hidden rounded-lg border border-[var(--border)] transition-colors hover:border-[var(--border-hover)] sm:aspect-square sm:h-auto"
       >
         <div
           class="pointer-events-none absolute left-3 top-3 z-[1] text-left label-12 text-[var(--text-tertiary)]"
         >
-          <span class="block">Best</span>
+          <span class="block">Best error</span>
           <span
             id="your-score"
             class="block tabular text-[var(--text-secondary)]">—</span
@@ -134,7 +137,7 @@ const scoreToken = await createScoreToken();
         <div
           class="pointer-events-none absolute right-3 top-3 z-[1] text-right label-12 text-[var(--text-tertiary)]"
         >
-          <span class="block">High</span>
+          <span class="block">Global best</span>
           <span id="high-score" class="block tabular text-[var(--accent)]"
             >—</span
           >
@@ -177,6 +180,10 @@ const scoreToken = await createScoreToken();
             >0.000s</span
           >
           <span id="result-diff" class="text-sm tabular mt-1"></span>
+          <span
+            id="game-status"
+            class="label-13 text-[var(--text-secondary)] mt-1"
+            aria-live="polite"></span>
           <span
             id="new-best-indicator"
             class="label-13 text-[var(--accent)] mt-1 hidden">New best!</span
@@ -255,10 +262,22 @@ const scoreToken = await createScoreToken();
   </div>
 
   <div id="leaderboard" class="hidden"></div>
+  <p
+    id="player-count"
+    class="mt-2 text-center label-12 text-[var(--text-tertiary)]"
+  >
+    — players
+  </p>
   <span id="welcome-msg" class="hidden"></span>
 
   <!-- Leaderboard Modal -->
-  <div id="leaderboard-modal" class="fixed inset-0 z-50 hidden">
+  <div
+    id="leaderboard-modal"
+    class="fixed inset-0 z-50 hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="leaderboard-title"
+  >
     <div
       class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-[var(--ease-geist)]"
       id="modal-backdrop"
@@ -270,7 +289,12 @@ const scoreToken = await createScoreToken();
       <div
         class="p-4 border-b border-[var(--border)] flex items-center justify-between"
       >
-        <h3 class="heading-16 text-[var(--text-primary)]">Leaderboard</h3>
+        <h3
+          id="leaderboard-title"
+          class="heading-16 text-[var(--text-primary)]"
+        >
+          Leaderboard
+        </h3>
         <button
           id="close-modal"
           aria-label="Close"
@@ -364,6 +388,9 @@ const scoreToken = await createScoreToken();
   let activeMode = modes[currentModeIndex];
   let activeRoundId = 0;
   let randomInterval = null;
+  let isSaving = false;
+  let activeScoreToken = scoreToken;
+  let lastFocusedElement = null;
   let userScoresCache = {};
   let nameTypingTimeout = null;
   let isNewUser = true;
@@ -383,6 +410,8 @@ const scoreToken = await createScoreToken();
   const yourScore = document.getElementById('your-score');
   const highScore = document.getElementById('high-score');
   const leaderboard = document.getElementById('leaderboard');
+  const playerCount = document.getElementById('player-count');
+  const gameStatus = document.getElementById('game-status');
   const playerNameInput = document.getElementById('player-name');
   const saveNameBtn = document.getElementById('save-name-btn');
   const welcomeMsg = document.getElementById('welcome-msg');
@@ -399,6 +428,26 @@ const scoreToken = await createScoreToken();
   const modalModeNext = document.getElementById('modal-mode-next');
   const modalLeaderboard = document.getElementById('modal-leaderboard');
 
+  const playerId = (() => {
+    const key = 'timer-game-player-id';
+    let id = localStorage.getItem(key);
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem(key, id);
+    }
+    return id;
+  })();
+
+  function formatDuration(milliseconds) {
+    return `${(milliseconds / 1000).toFixed(3)}s`;
+  }
+
+  function escapeHtml(value) {
+    const element = document.createElement('span');
+    element.textContent = value;
+    return element.innerHTML;
+  }
+
   function playGameSound() {
     if (window.AudioUX && !window.AudioUX.isMuted()) {
       window.AudioUX.playTheme();
@@ -414,7 +463,9 @@ const scoreToken = await createScoreToken();
   }
 
   function saveUsername(name) {
+    name = name.slice(0, 12).replace(/[^a-zA-Z0-9_-]/g, '');
     if (name && name !== 'anon') {
+      playerNameInput.value = name;
       localStorage.setItem('timer-game-username', name);
       saveNameBtn.classList.remove('opacity-0');
       saveNameBtn.classList.remove('pointer-events-none');
@@ -468,15 +519,18 @@ const scoreToken = await createScoreToken();
   }
 
   function openModal() {
+    lastFocusedElement = document.activeElement;
     modalModeIndex = currentModeIndex;
     updateModalModeDisplay();
     fetchModalLeaderboard();
     leaderboardModal.classList.remove('hidden');
+    closeModalBtn.focus();
     playGameSound();
   }
 
   function closeModal() {
     leaderboardModal.classList.add('hidden');
+    lastFocusedElement?.focus();
     playGameSound();
   }
 
@@ -491,14 +545,19 @@ const scoreToken = await createScoreToken();
       '<div class="copy-14 text-[var(--text-secondary)] text-center">Loading…</div>';
 
     try {
-      const response = await fetch(`/api/timer-game?mode=${mode}`);
+      const response = await fetch(
+        `/api/timer-game?mode=${mode}&playerId=${encodeURIComponent(playerId)}`
+      );
       if (!response.ok) return;
 
       const data = await response.json();
       if (requestId !== modalRequestId || mode !== modes[modalModeIndex])
         return;
 
-      fullLeaderboardCache[mode.toString()] = data.leaderboard || [];
+      fullLeaderboardCache[mode.toString()] = [
+        ...(data.leaderboard || []),
+        ...(data.legacyEntries || []),
+      ];
 
       renderModalLeaderboard();
     } catch (error) {
@@ -539,9 +598,9 @@ const scoreToken = await createScoreToken();
         <div class="flex items-center justify-between py-2 px-3 rounded-sm ${bgClass}">
           <div class="flex items-center gap-3">
             <span class="text-sm tabular ${rankColor} w-5">#${i + 1}</span>
-            <span class="text-sm ${isCurrentUser ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}">${entry.name}</span>
+            <span class="text-sm ${isCurrentUser ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}">${escapeHtml(entry.name)}${entry.isFlaggedLegacy ? ' <span class="ml-1 text-xs text-red-400">Cheater</span>' : ''}</span>
           </div>
-          <span class="text-sm tabular text-[var(--text-secondary)]">${entry.score.toFixed(3)}s</span>
+          <span class="text-sm tabular text-[var(--text-secondary)]">${formatDuration(entry.errorMs)}</span>
         </div>
       `;
       })
@@ -654,7 +713,7 @@ const scoreToken = await createScoreToken();
   function updateYourScoreDisplay() {
     const mode = modes[currentModeIndex].toString();
     const score = userScoresCache[mode];
-    yourScore.textContent = score !== undefined ? `${score.toFixed(3)}s` : '—';
+    yourScore.textContent = score !== undefined ? formatDuration(score) : '—';
   }
 
   function switchState(newState) {
@@ -668,8 +727,9 @@ const scoreToken = await createScoreToken();
   }
 
   function generateRandomDisplay() {
-    const random = (Math.random() * 99).toFixed(3);
-    randomDisplay.textContent = random;
+    randomDisplay.textContent = formatDuration(
+      Math.round(performance.now() - startTime)
+    );
   }
 
   function startGame() {
@@ -688,21 +748,21 @@ const scoreToken = await createScoreToken();
     }
 
     const endTime = performance.now();
-    const elapsedSeconds = (endTime - startTime) / 1000;
+    const elapsedMs = Math.round(endTime - startTime);
     const targetSeconds = activeMode;
     const roundId = activeRoundId;
-    const diff = elapsedSeconds - targetSeconds;
-    const absDiff = Math.abs(diff);
+    const diffMs = elapsedMs - targetSeconds * 1000;
+    const absDiff = Math.abs(diffMs);
 
     playGameSound();
 
-    resultTime.textContent = `${elapsedSeconds.toFixed(3)}s`;
+    resultTime.textContent = formatDuration(elapsedMs);
 
-    if (diff > 0) {
-      resultDiff.textContent = `+${diff.toFixed(3)}s`;
+    if (diffMs > 0) {
+      resultDiff.textContent = `${formatDuration(absDiff)} late`;
       resultDiff.className = 'text-sm tabular mt-1 text-red-400';
-    } else if (diff < 0) {
-      resultDiff.textContent = `${diff.toFixed(3)}s`;
+    } else if (diffMs < 0) {
+      resultDiff.textContent = `${formatDuration(absDiff)} early`;
       resultDiff.className = 'text-sm tabular mt-1 text-yellow-400';
     } else {
       resultDiff.textContent = 'Perfect!';
@@ -715,7 +775,10 @@ const scoreToken = await createScoreToken();
     const isBetter = currentBest === undefined || absDiff < currentBest;
 
     if (isBetter) {
+      isSaving = true;
+      gameStatus.textContent = 'Saving…';
       await submitScore(absDiff, targetSeconds, roundId);
+      isSaving = false;
     }
   }
 
@@ -732,16 +795,24 @@ const scoreToken = await createScoreToken();
         },
         body: JSON.stringify({
           name,
-          score,
+          errorMs: score,
           mode: targetSeconds,
-          generateUnique: needsAnonName,
-          scoreToken,
+          playerId,
+          scoreToken: activeScoreToken,
         }),
       });
 
-      const data = await response.json();
+      let data = await response.json();
+      if (response.status === 403) {
+        const tokenResponse = await fetch('/api/timer-game?token=1');
+        const tokenData = await tokenResponse.json();
+        if (tokenData.scoreToken) {
+          activeScoreToken = tokenData.scoreToken;
+          return submitScore(score, targetSeconds, roundId);
+        }
+      }
 
-      if (data.saved) {
+      if (response.ok && data.saved) {
         if (roundId !== activeRoundId || gameState !== 'result') return;
 
         const finalName = data.assignedName || name;
@@ -750,14 +821,18 @@ const scoreToken = await createScoreToken();
           saveUsername(finalName);
           playerNameInput.value = finalName;
         }
-        userScoresCache[targetSeconds.toString()] = score;
+        userScoresCache[targetSeconds.toString()] = data.currentBest;
         isNewUser = false;
         updateYourScoreDisplay();
         updateWelcomeMessage(finalName, false);
         await fetchScores();
+        gameStatus.textContent = 'Saved.';
+      } else if (roundId === activeRoundId && gameState === 'result') {
+        gameStatus.textContent = data.error || 'Your score was not saved.';
       }
     } catch (error) {
       console.error('Failed to save score:', error);
+      gameStatus.textContent = 'Could not save your score. Try again.';
     }
   }
 
@@ -766,10 +841,7 @@ const scoreToken = await createScoreToken();
     const requestId = ++scoresRequestId;
     const username = getUsername();
 
-    let url = `/api/timer-game?mode=${targetSeconds}`;
-    if (username) {
-      url += `&user=${encodeURIComponent(username)}`;
-    }
+    const url = `/api/timer-game?mode=${targetSeconds}&playerId=${encodeURIComponent(playerId)}`;
 
     try {
       const response = await fetch(url);
@@ -784,7 +856,7 @@ const scoreToken = await createScoreToken();
       }
 
       if (data.highScore !== null && data.highScore !== undefined) {
-        highScore.textContent = `${data.highScore.toFixed(3)}s`;
+        highScore.textContent = formatDuration(data.highScore);
       } else {
         highScore.textContent = '—';
       }
@@ -794,17 +866,18 @@ const scoreToken = await createScoreToken();
         updateYourScoreDisplay();
       }
 
-      isNewUser = data.isNewUser ?? true;
+      isNewUser = Object.keys(data.userScores || {}).length === 0;
       updateWelcomeMessage(username, isNewUser);
 
       fullLeaderboardCache[targetSeconds.toString()] = data.leaderboard || [];
+      playerCount.textContent = `${data.playerCount || 0} players`;
 
       if (data.leaderboard && data.leaderboard.length > 0) {
         leaderboard.innerHTML = data.leaderboard
           .slice(0, 3)
           .map(
             (entry, i) =>
-              `<div class="${i === 0 ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}">${entry.name}: ${entry.score.toFixed(3)}s</div>`
+              `<div class="${i === 0 ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}">${escapeHtml(entry.name)}: ${formatDuration(entry.errorMs)}</div>`
           )
           .join('');
       } else {
@@ -828,6 +901,8 @@ const scoreToken = await createScoreToken();
   gameBox.addEventListener('click', e => {
     e.stopPropagation();
 
+    if (isSaving) return;
+
     if (gameState === 'idle') {
       startGame();
     } else if (gameState === 'running') {
@@ -838,9 +913,44 @@ const scoreToken = await createScoreToken();
     }
   });
 
+  gameBox.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      gameBox.click();
+    }
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && gameState === 'running') {
+      clearInterval(randomInterval);
+      randomInterval = null;
+      switchState('idle');
+      gameStatus.textContent = 'Round cancelled because the tab was inactive.';
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Tab' && !leaderboardModal.classList.contains('hidden')) {
+      const focusable = leaderboardModal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+    if (e.key === 'Escape' && !leaderboardModal.classList.contains('hidden'))
+      closeModal();
+  });
+
   modePrev.addEventListener('click', e => {
     e.stopPropagation();
-    if (gameState === 'running') return;
+    if (gameState !== 'idle') return;
     currentModeIndex = (currentModeIndex - 1 + modes.length) % modes.length;
     updateModeDisplay();
     fetchScores();
@@ -849,7 +959,7 @@ const scoreToken = await createScoreToken();
 
   modeNext.addEventListener('click', e => {
     e.stopPropagation();
-    if (gameState === 'running') return;
+    if (gameState !== 'idle') return;
     currentModeIndex = (currentModeIndex + 1) % modes.length;
     updateModeDisplay();
     fetchScores();
@@ -859,7 +969,7 @@ const scoreToken = await createScoreToken();
   modeBtns.forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      if (gameState === 'running') return;
+      if (gameState !== 'idle') return;
       const mode = parseInt(btn.dataset.mode || '0');
       currentModeIndex = modes.indexOf(mode);
       updateModeDisplay();

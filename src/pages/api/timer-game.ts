@@ -1,4 +1,10 @@
 import { env as cfEnv } from 'cloudflare:workers';
+import {
+  ALLOWED_MODES,
+  formatDuration,
+  isValidErrorMs,
+  sanitizePlayerName,
+} from '../../lib/timer-game';
 
 export const prerender = false;
 
@@ -8,184 +14,41 @@ interface Env {
   TIMER_GAME_API_KEY: string;
 }
 
-const env = cfEnv as unknown as Env;
+interface ScoreEntry {
+  name: string;
+  errorMs: number;
+  isFlaggedLegacy: boolean;
+}
 
-const ALLOWED_MODES = [1, 5, 10, 15];
-const MIN_SCORE = 0.02;
-const MAX_SCORE = 30;
-const SCORE_LIMIT = 20;
+const env = cfEnv as unknown as Env;
+const SCORE_LIMIT = 100;
 const SCORE_LIMIT_TTL = 60 * 60;
-const SCORE_TOKEN_LIMIT = 10;
 const BLOCKED_NAME_PARTS = ['fuck', 'shit', 'bitch', 'cunt', 'nigger', 'nigga'];
 
-function jsonResponse(body: unknown, status = 200): Response {
+function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { 'Content-Type': 'application/json' },
   });
 }
 
-interface ScoreEntry {
-  name: string;
-  score: number;
-  mode: number;
-  created_at?: string;
-}
-
-interface UserScores {
-  [mode: string]: number;
-}
-
-export async function GET({ request }: { request: Request }) {
-  const url = new URL(request.url);
-  const mode = parseInt(url.searchParams.get('mode') || '1');
-  const username = url.searchParams.get('user');
-
-  if (!ALLOWED_MODES.includes(mode)) {
-    return jsonResponse({ error: 'Invalid mode' }, 400);
-  }
-
-  if (!env?.TIMER_GAME_KV && !env?.TIMER_GAME_DB) {
-    return jsonResponse({
-      highScore: null,
-      leaderboard: [],
-      userScore: null,
-      userScores: {},
-      isNewUser: true,
-    });
-  }
-
-  let leaderboard: ScoreEntry[] = [];
-  let highScore: number | null = null;
-  let userScore: number | null = null;
-  let userScores: UserScores = {};
-  let isNewUser = true;
-
-  try {
-    if (env?.TIMER_GAME_KV) {
-      const cachedLeaderboard = await env.TIMER_GAME_KV.get(
-        `leaderboard:${mode}`,
-        'json'
-      );
-      if (cachedLeaderboard) {
-        leaderboard = cachedLeaderboard as ScoreEntry[];
-        highScore = leaderboard.length > 0 ? leaderboard[0].score : null;
-      }
-
-      if (username) {
-        const cachedUserScores = await env.TIMER_GAME_KV.get(
-          `user:${username}`,
-          'json'
-        );
-        if (cachedUserScores) {
-          userScores = cachedUserScores as UserScores;
-          userScore = userScores[mode.toString()] ?? null;
-          isNewUser = false;
-        }
-      }
-    }
-  } catch (kvError) {
-    console.error('KV error:', kvError);
-  }
-
-  try {
-    if (leaderboard.length === 0 && env?.TIMER_GAME_DB) {
-      const result = await env.TIMER_GAME_DB.prepare(
-        `SELECT name, score, mode, created_at FROM timer_scores WHERE mode = ? ORDER BY score ASC LIMIT 10`
-      )
-        .bind(mode)
-        .all<ScoreEntry>();
-
-      leaderboard = result.results || [];
-      highScore = leaderboard.length > 0 ? leaderboard[0].score : null;
-
-      if (env?.TIMER_GAME_KV && leaderboard.length > 0) {
-        await env.TIMER_GAME_KV.put(
-          `leaderboard:${mode}`,
-          JSON.stringify(leaderboard),
-          { expirationTtl: 300 }
-        ).catch(() => {});
-      }
-    }
-
-    if (
-      username &&
-      Object.keys(userScores).length === 0 &&
-      env?.TIMER_GAME_DB
-    ) {
-      const userResults = await env.TIMER_GAME_DB.prepare(
-        `SELECT mode, score FROM timer_scores WHERE name = ?`
-      )
-        .bind(username)
-        .all<{ mode: number; score: number }>();
-
-      if (userResults.results && userResults.results.length > 0) {
-        for (const row of userResults.results) {
-          userScores[row.mode.toString()] = row.score;
-        }
-        userScore = userScores[mode.toString()] ?? null;
-        isNewUser = false;
-
-        if (env?.TIMER_GAME_KV) {
-          await env.TIMER_GAME_KV.put(
-            `user:${username}`,
-            JSON.stringify(userScores),
-            { expirationTtl: 600 }
-          ).catch(() => {});
-        }
-      }
-    }
-  } catch (dbError) {
-    console.error('D1 error:', dbError);
-  }
-
-  return jsonResponse({
-    highScore,
-    leaderboard: leaderboard.slice(0, 10),
-    userScore,
-    userScores,
-    isNewUser: username ? isNewUser : true,
-  });
-}
-
-function generateAnonName(): string {
-  const num = Math.floor(Math.random() * 99999)
-    .toString()
-    .padStart(5, '0');
-  return `anon${num}`;
-}
-
-async function findUniqueAnonName(
-  db: D1Database,
-  baseName: string,
-  maxAttempts = 10
-): Promise<string> {
-  let name = baseName;
-  for (let i = 0; i < maxAttempts; i++) {
-    const exists = await db
-      .prepare(`SELECT 1 FROM timer_scores WHERE name = ? LIMIT 1`)
-      .bind(name)
-      .first();
-    if (!exists) return name;
-    name = generateAnonName();
-  }
-  return name;
+function validPlayerId(playerId: unknown): playerId is string {
+  return typeof playerId === 'string' && /^[a-zA-Z0-9-]{16,64}$/.test(playerId);
 }
 
 function isBlockedName(name: string): boolean {
-  const normalizedName = name.toLowerCase();
-  return BLOCKED_NAME_PARTS.some(part => normalizedName.includes(part));
+  const normalized = name.toLowerCase();
+  return BLOCKED_NAME_PARTS.some(part => normalized.includes(part));
 }
 
 function base64UrlEncode(bytes: ArrayBuffer): string {
-  const binary = String.fromCharCode(...new Uint8Array(bytes));
-  return btoa(binary)
+  return btoa(String.fromCharCode(...new Uint8Array(bytes)))
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');
 }
 
-async function signToken(payload: string, secret: string): Promise<string> {
+async function sign(payload: string, secret: string): Promise<string> {
   const key = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(secret),
@@ -193,182 +56,183 @@ async function signToken(payload: string, secret: string): Promise<string> {
     false,
     ['sign']
   );
-  const signature = await crypto.subtle.sign(
-    'HMAC',
-    key,
-    new TextEncoder().encode(payload)
+  return base64UrlEncode(
+    await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(payload))
   );
-
-  return base64UrlEncode(signature);
 }
 
-async function verifyScoreToken(
-  token: string,
-  env: Env | undefined
-): Promise<boolean> {
-  const secret = env?.TIMER_GAME_API_KEY;
-  if (!secret) return false;
+async function createScoreToken(): Promise<string> {
+  if (!env?.TIMER_GAME_API_KEY) return '';
+  const payload = `${Date.now() + SCORE_LIMIT_TTL * 1000}.${crypto.randomUUID()}`;
+  return `${payload}.${await sign(payload, env.TIMER_GAME_API_KEY)}`;
+}
 
-  const parts = token.split('.');
-  if (parts.length !== 3) return false;
-
-  const [expiresAt, nonce, signature] = parts;
-  const expiry = Number(expiresAt);
-  if (!Number.isFinite(expiry) || expiry < Date.now() || !nonce || !signature) {
+async function verifyScoreToken(token: string): Promise<boolean> {
+  if (!env?.TIMER_GAME_API_KEY) return false;
+  const [expiresAt, nonce, signature, ...extra] = token.split('.');
+  if (
+    extra.length ||
+    !expiresAt ||
+    !nonce ||
+    !signature ||
+    Number(expiresAt) < Date.now()
+  )
     return false;
-  }
-
-  const expectedSignature = await signToken(`${expiresAt}.${nonce}`, secret);
-  return signature === expectedSignature;
+  return (
+    signature === (await sign(`${expiresAt}.${nonce}`, env.TIMER_GAME_API_KEY))
+  );
 }
 
-async function checkScoreToken(
-  token: string,
-  env: Env | undefined
-): Promise<Response | null> {
-  if (!(await verifyScoreToken(token, env))) {
-    return jsonResponse({ error: 'Invalid score token' }, 403);
-  }
-
+async function checkRateLimit(request: Request): Promise<Response | null> {
   if (!env?.TIMER_GAME_KV) return null;
-
-  const nonce = token.split('.')[1];
-  const key = `score-token:${nonce}`;
-  const count = parseInt((await env.TIMER_GAME_KV.get(key)) || '0');
-
-  if (count >= SCORE_TOKEN_LIMIT) {
-    return jsonResponse({ error: 'Score token expired' }, 403);
-  }
-
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const key = `score-limit:${ip}`;
+  const count = Number((await env.TIMER_GAME_KV.get(key)) || '0');
+  if (count >= SCORE_LIMIT)
+    return json({ error: 'Too many attempts. Try again later.' }, 429);
   await env.TIMER_GAME_KV.put(key, String(count + 1), {
     expirationTtl: SCORE_LIMIT_TTL,
   });
-
   return null;
 }
 
-function getRateLimitKey(request: Request): string {
-  const ip =
-    request.headers.get('CF-Connecting-IP') ||
-    request.headers.get('X-Forwarded-For')?.split(',')[0]?.trim() ||
-    'unknown';
-
-  return `score-limit:${ip}`;
+function serialize(entry: {
+  name: string;
+  error_ms: number;
+  is_flagged_legacy: number;
+}): ScoreEntry {
+  return {
+    name: entry.name,
+    errorMs: entry.error_ms,
+    isFlaggedLegacy: Boolean(entry.is_flagged_legacy),
+  };
 }
 
-async function checkRateLimit(
-  request: Request,
-  kv: KVNamespace | undefined
-): Promise<Response | null> {
-  if (!kv) return null;
-
-  const key = getRateLimitKey(request);
-  const count = parseInt((await kv.get(key)) || '0');
-
-  if (count >= SCORE_LIMIT) {
-    return jsonResponse({ error: 'Too many attempts. Try again later.' }, 429);
+async function hasPlayerIdentitySchema(): Promise<boolean> {
+  try {
+    const marker = await env.TIMER_GAME_DB.prepare(
+      "SELECT value FROM timer_game_metadata WHERE key = 'player_identity_schema'"
+    ).first();
+    return Boolean(marker);
+  } catch {
+    return false;
   }
+}
 
-  await kv.put(key, String(count + 1), { expirationTtl: SCORE_LIMIT_TTL });
-  return null;
+export async function GET({ request }: { request: Request }) {
+  const url = new URL(request.url);
+  if (url.searchParams.get('token') === '1')
+    return json({ scoreToken: await createScoreToken() });
+
+  const mode = Number(url.searchParams.get('mode') || '1');
+  const playerId = url.searchParams.get('playerId');
+  if (!ALLOWED_MODES.includes(mode as (typeof ALLOWED_MODES)[number]))
+    return json({ error: 'Invalid mode' }, 400);
+  if (!env?.TIMER_GAME_DB)
+    return json({
+      leaderboard: [],
+      legacyEntries: [],
+      userScores: {},
+      playerCount: 0,
+    });
+
+  const [validResult, legacyResult, countResult, userResult] =
+    await Promise.all([
+      env.TIMER_GAME_DB.prepare(
+        'SELECT name, error_ms, is_flagged_legacy FROM timer_scores WHERE mode = ? AND is_flagged_legacy = 0 ORDER BY error_ms ASC LIMIT 10'
+      )
+        .bind(mode)
+        .all<{ name: string; error_ms: number; is_flagged_legacy: number }>(),
+      env.TIMER_GAME_DB.prepare(
+        'SELECT name, error_ms, is_flagged_legacy FROM timer_scores WHERE mode = ? AND is_flagged_legacy = 1 ORDER BY error_ms ASC LIMIT 10'
+      )
+        .bind(mode)
+        .all<{ name: string; error_ms: number; is_flagged_legacy: number }>(),
+      env.TIMER_GAME_DB.prepare(
+        'SELECT COUNT(DISTINCT player_id) AS count FROM timer_scores'
+      ).first<{ count: number }>(),
+      validPlayerId(playerId)
+        ? env.TIMER_GAME_DB.prepare(
+            'SELECT mode, error_ms FROM timer_scores WHERE player_id = ?'
+          )
+            .bind(playerId)
+            .all<{ mode: number; error_ms: number }>()
+        : Promise.resolve({ results: [] }),
+    ]);
+  const userScores: Record<string, number> = {};
+  for (const row of userResult.results || [])
+    userScores[row.mode] = row.error_ms;
+  const leaderboard = (validResult.results || []).map(serialize);
+  return json({
+    leaderboard,
+    legacyEntries: (legacyResult.results || []).map(serialize),
+    highScore: leaderboard[0]?.errorMs ?? null,
+    userScores,
+    playerCount: countResult?.count ?? 0,
+  });
 }
 
 export async function POST({ request }: { request: Request }) {
   try {
     const body = (await request.json()) as {
-      name: string;
-      score: number;
-      mode: number;
-      generateUnique?: boolean;
-      scoreToken: string;
+      name?: string;
+      playerId?: string;
+      errorMs?: unknown;
+      mode?: number;
+      scoreToken?: string;
     };
-    const { name, score, mode, generateUnique, scoreToken } = body;
-
     if (
-      !name ||
-      typeof score !== 'number' ||
-      !ALLOWED_MODES.includes(mode) ||
-      typeof scoreToken !== 'string'
-    ) {
-      return jsonResponse({ error: 'Invalid input' }, 400);
-    }
-
-    let sanitizedName = name.slice(0, 12).replace(/[^a-zA-Z0-9_-]/g, '');
-    if (!sanitizedName) {
-      return jsonResponse({ error: 'Invalid name' }, 400);
-    }
-
-    if (isBlockedName(sanitizedName)) {
-      return jsonResponse({ error: 'Invalid name' }, 400);
-    }
-
-    if (!Number.isFinite(score) || score < MIN_SCORE || score > MAX_SCORE) {
-      return jsonResponse({ error: 'Invalid score' }, 400);
-    }
-
-    const scoreTokenResult = await checkScoreToken(scoreToken, env);
-    if (scoreTokenResult) {
-      return scoreTokenResult;
-    }
-
-    const rateLimitResult = await checkRateLimit(request, env?.TIMER_GAME_KV);
-    if (rateLimitResult) {
-      return rateLimitResult;
-    }
-
-    if (!env?.TIMER_GAME_DB) {
-      return jsonResponse({ success: true, saved: false });
-    }
-
-    if (generateUnique && sanitizedName.startsWith('anon')) {
-      sanitizedName = await findUniqueAnonName(
-        env.TIMER_GAME_DB,
-        sanitizedName
-      );
-    }
-
-    const saveResult = await env.TIMER_GAME_DB.prepare(
-      `INSERT INTO timer_scores (name, score, mode, created_at)
-       VALUES (?, ?, ?, datetime('now'))
-       ON CONFLICT(name, mode) DO UPDATE SET
-         score = excluded.score,
-         created_at = datetime('now')
-       WHERE excluded.score < timer_scores.score`
+      !validPlayerId(body.playerId) ||
+      !ALLOWED_MODES.includes(body.mode as (typeof ALLOWED_MODES)[number]) ||
+      !isValidErrorMs(body.errorMs) ||
+      typeof body.scoreToken !== 'string'
     )
-      .bind(sanitizedName, score, mode)
-      .run();
+      return json({ error: 'Invalid input' }, 400);
+    const name = sanitizePlayerName(body.name || '');
+    if (!name || isBlockedName(name))
+      return json({ error: 'Invalid name' }, 400);
+    if (!(await verifyScoreToken(body.scoreToken)))
+      return json({ error: 'Invalid score token' }, 403);
+    const limited = await checkRateLimit(request);
+    if (limited) return limited;
+    if (!env?.TIMER_GAME_DB)
+      return json({ saved: false, error: 'Score storage is unavailable' }, 503);
 
-    if (saveResult.meta.changes === 0) {
-      const existing = await env.TIMER_GAME_DB.prepare(
-        `SELECT score FROM timer_scores WHERE name = ? AND mode = ?`
+    if (!(await hasPlayerIdentitySchema())) {
+      const nameOwner = await env.TIMER_GAME_DB.prepare(
+        'SELECT player_id FROM timer_scores WHERE name = ? AND mode = ?'
       )
-        .bind(sanitizedName, mode)
-        .first<{ score: number }>();
-
-      return jsonResponse({
-        success: true,
-        saved: false,
-        reason: 'existing_better',
-        currentBest: existing?.score ?? null,
-        assignedName: sanitizedName,
-      });
+        .bind(name, body.mode)
+        .first<{ player_id: string }>();
+      if (nameOwner && nameOwner.player_id !== body.playerId) {
+        return json(
+          { error: 'That display name is temporarily unavailable.' },
+          409
+        );
+      }
     }
 
-    if (env?.TIMER_GAME_KV) {
-      await Promise.all([
-        env.TIMER_GAME_KV.delete(`leaderboard:${mode}`),
-        env.TIMER_GAME_KV.delete(`user:${sanitizedName}`),
-      ]).catch(() => {});
-    }
-
-    return jsonResponse({
-      success: true,
-      saved: true,
-      newBest: score,
-      assignedName: sanitizedName,
+    const result = await env.TIMER_GAME_DB.prepare(
+      `INSERT INTO timer_scores (player_id, name, score, error_ms, mode, is_flagged_legacy, created_at)
+       VALUES (?, ?, ?, ?, ?, 0, datetime('now'))
+       ON CONFLICT DO UPDATE SET name = excluded.name, score = excluded.score, error_ms = excluded.error_ms, created_at = excluded.created_at
+       WHERE excluded.error_ms < timer_scores.error_ms`
+    )
+      .bind(body.playerId, name, body.errorMs / 1000, body.errorMs, body.mode)
+      .run();
+    const current = await env.TIMER_GAME_DB.prepare(
+      'SELECT error_ms FROM timer_scores WHERE player_id = ? AND mode = ?'
+    )
+      .bind(body.playerId, body.mode)
+      .first<{ error_ms: number }>();
+    return json({
+      saved: result.meta.changes > 0,
+      assignedName: name,
+      currentBest: current?.error_ms ?? null,
+      currentBestLabel: current ? formatDuration(current.error_ms) : null,
     });
   } catch (error) {
     console.error('Timer game POST error:', error);
-    return jsonResponse({ error: 'Internal server error' }, 500);
+    return json({ error: 'Internal server error' }, 500);
   }
 }
