@@ -1,5 +1,3 @@
-BEGIN TRANSACTION;
-
 CREATE TABLE timer_scores_new (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   player_id TEXT NOT NULL,
@@ -21,5 +19,3 @@ ALTER TABLE timer_scores_new RENAME TO timer_scores;
 CREATE INDEX idx_timer_scores_mode_error ON timer_scores(mode, is_flagged_legacy, error_ms ASC);
 CREATE TABLE timer_game_metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 INSERT INTO timer_game_metadata (key, value) VALUES ('player_identity_schema', '1');
-
-COMMIT;
