@@ -73,7 +73,7 @@ const scoreToken = await createScoreToken();
           </button>
           <div
             id="game-info-tooltip"
-            class="absolute bottom-full left-0 z-10 mb-2 hidden w-[min(280px,calc(100vw-3rem))] rounded-md border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-left copy-14 text-[var(--text-secondary)] shadow-lg"
+            class="absolute bottom-full left-0 z-10 mb-2 hidden w-[min(280px,calc(100vw-3rem))] rounded-md border border-[var(--timer-border)] bg-[var(--bg-surface)] px-3 py-2 text-left copy-14 text-[var(--text-secondary)] shadow-lg"
           >
             <p class="font-medium text-[var(--text-primary)]">How to play</p>
             <p>1. Click the box to start.</p>
@@ -87,7 +87,7 @@ const scoreToken = await createScoreToken();
             id="player-name"
             placeholder="Your name"
             maxlength="12"
-            class="h-8 w-full rounded-sm border border-[var(--border)] bg-transparent px-2.5 pr-8 label-13 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] transition-colors focus:border-[var(--accent)] focus:outline-none"
+            class="h-8 w-full rounded-sm border border-[var(--timer-border)] bg-transparent px-2.5 pr-8 label-13 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] transition-colors focus:border-[var(--accent)] focus:outline-none"
           />
           <button
             id="save-name-btn"
@@ -123,7 +123,7 @@ const scoreToken = await createScoreToken();
         role="button"
         tabindex="0"
         aria-label="Start timer game"
-        class="relative h-36 cursor-pointer select-none overflow-hidden rounded-lg border border-[var(--border)] transition-colors hover:border-[var(--border-hover)] sm:aspect-square sm:h-auto"
+        class="relative h-36 cursor-pointer select-none overflow-hidden rounded-lg border border-[var(--timer-border)] transition-colors hover:border-[var(--timer-border-hover)] sm:aspect-square sm:h-auto"
       >
         <div
           class="pointer-events-none absolute left-3 top-3 z-[1] text-left label-12 text-[var(--text-tertiary)]"
@@ -219,22 +219,22 @@ const scoreToken = await createScoreToken();
         <div class="flex gap-1">
           <button
             data-mode="1"
-            class="mode-btn h-8 rounded-sm bg-[var(--accent)]/10 px-2.5 label-13 tabular text-[var(--accent)] transition-colors"
+            class="mode-btn h-8 rounded-sm border border-[var(--timer-border)] bg-[var(--accent)]/10 px-2.5 label-13 tabular text-[var(--accent)] transition-colors"
             >1s</button
           >
           <button
             data-mode="5"
-            class="mode-btn h-8 rounded-sm px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-fill)]"
+            class="mode-btn h-8 rounded-sm border border-transparent px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:border-[var(--timer-border)] hover:bg-[var(--bg-fill)]"
             >5s</button
           >
           <button
             data-mode="10"
-            class="mode-btn h-8 rounded-sm px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-fill)]"
+            class="mode-btn h-8 rounded-sm border border-transparent px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:border-[var(--timer-border)] hover:bg-[var(--bg-fill)]"
             >10s</button
           >
           <button
             data-mode="15"
-            class="mode-btn h-8 rounded-sm px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-fill)]"
+            class="mode-btn h-8 rounded-sm border border-transparent px-2.5 label-13 tabular text-[var(--text-secondary)] transition-colors hover:border-[var(--timer-border)] hover:bg-[var(--bg-fill)]"
             >15s</button
           >
         </div>
@@ -284,10 +284,10 @@ const scoreToken = await createScoreToken();
     >
     </div>
     <div
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 max-h-[80vh] bg-[var(--bg-primary)] border border-[var(--border)] rounded-md shadow-xl overflow-hidden"
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 max-h-[80vh] bg-[var(--bg-primary)] border border-[var(--timer-border)] rounded-md shadow-xl overflow-hidden"
     >
       <div
-        class="p-4 border-b border-[var(--border)] flex items-center justify-between"
+        class="flex items-center justify-between border-b border-[var(--timer-border)] p-4"
       >
         <h3
           id="leaderboard-title"
@@ -699,11 +699,22 @@ const scoreToken = await createScoreToken();
     modeBtns.forEach(btn => {
       const mode = parseInt(btn.dataset.mode || '0');
       if (mode === targetSeconds) {
-        btn.classList.add('text-[var(--accent)]', 'bg-[var(--accent)]/10');
-        btn.classList.remove('text-[var(--text-secondary)]');
+        btn.classList.add(
+          'text-[var(--accent)]',
+          'bg-[var(--accent)]/10',
+          'border-[var(--timer-border)]'
+        );
+        btn.classList.remove(
+          'text-[var(--text-secondary)]',
+          'border-transparent'
+        );
       } else {
-        btn.classList.remove('text-[var(--accent)]', 'bg-[var(--accent)]/10');
-        btn.classList.add('text-[var(--text-secondary)]');
+        btn.classList.remove(
+          'text-[var(--accent)]',
+          'bg-[var(--accent)]/10',
+          'border-[var(--timer-border)]'
+        );
+        btn.classList.add('text-[var(--text-secondary)]', 'border-transparent');
       }
     });
 

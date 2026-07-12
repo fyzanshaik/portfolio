@@ -46,17 +46,17 @@
 
 /* Light theme, warm editorial tokens. */
 :root {
-  --bg-primary: #fffefb;
-  --bg-surface: #f8f7f4;
-  --bg-fill: #f0efeb;
-  --bg-fill-hover: #e8e6e0;
+  --bg-primary: #f6f1e8;
+  --bg-surface: #fcfaf5;
+  --bg-fill: #ebe4d8;
+  --bg-fill-hover: #e1d7c8;
 
-  --border: #e3e1db;
-  --border-hover: #c5c1b8;
+  --border: #d9cfbf;
+  --border-hover: #b9a993;
 
-  --text-primary: #171717;
-  --text-secondary: #3f3f3a;
-  --text-tertiary: #686860;
+  --text-primary: #1c1914;
+  --text-secondary: #413c34;
+  --text-tertiary: #6b645a;
 
   --accent: #147a3c; /* readable green on light surfaces */
   --accent-hover: #0f5f2e;
@@ -65,8 +65,11 @@
   --primary-fill: #171717; /* gray-1000 */
   --primary-fill-fg: #ffffff;
 
-  --selection-bg: #d8efde;
+  --selection-bg: #d9ead9;
   --selection-fg: #123d22;
+
+  --timer-border: #b4aca0;
+  --timer-border-hover: #8c8376;
 
   --focus-ring: 0 0 0 2px var(--bg-primary), 0 0 0 4px var(--accent);
 
@@ -99,6 +102,9 @@
 
   --selection-bg: #14532d; /* deep green */
   --selection-fg: #dcfce7;
+
+  --timer-border: #4f4b44;
+  --timer-border-hover: #716a5f;
 
   --shadow-card: 0 2px 2px rgba(0, 0, 0, 0.25);
   --shadow-popover:
@@ -260,6 +266,16 @@ body {
 }
 ::view-transition-group(root) {
   animation-duration: 0s;
+}
+
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition-duration: 220ms !important;
+  transition-property:
+    background-color, border-color, color, fill, stroke, box-shadow !important;
+  transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

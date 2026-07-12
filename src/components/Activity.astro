@@ -29,6 +29,13 @@ const GITHUB_USERNAME = 'fyzanshaik';
       </a>
     </div>
 
+    <div id="github-contributions" class="hidden mb-7">
+      <p class="mb-2 label-13 tabular text-[var(--text-tertiary)]">
+        Open-source contributions
+      </p>
+      <div id="github-contribution-badges" class="flex flex-wrap gap-2"></div>
+    </div>
+
     <div id="github-activity-list" class="space-y-4">
       <div class="animate-pulse space-y-4">
         <div class="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8">
@@ -50,9 +57,79 @@ const GITHUB_USERNAME = 'fyzanshaik';
   </div>
 </section>
 
-<script define:vars={{ GITHUB_USERNAME }}>
-  const CACHE_KEY = 'github-activity-cache';
+<script is:inline>
+  const CACHE_KEY = 'github-pr-activity-cache-v11';
   const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  const PERSONAL_GITHUB_USERNAME = 'fyzanshaik';
+  const WORK_GITHUB_USERNAME = 'fyzanshaik-atlan';
+  const WORK_GITHUB_ORGANIZATION = 'atlanhq';
+  const EXCLUDED_CONTRIBUTION_OWNERS = new Set([
+    'anuragts',
+    'g-aniketh',
+    'coxistai-team',
+  ]);
+  const FEATURED_CONTRIBUTION_ORGANIZATIONS = [
+    {
+      login: 'NousResearch',
+      html_url: 'https://github.com/NousResearch',
+    },
+    {
+      login: 'atlanhq',
+      html_url: 'https://github.com/atlanhq',
+    },
+  ];
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function getRepository(pr) {
+    try {
+      const parts = new URL(pr.repository_url).pathname
+        .split('/')
+        .filter(Boolean);
+      const [owner, name] = parts.slice(-2);
+      if (!owner || !name) return null;
+
+      return {
+        owner,
+        name,
+        fullName: `${owner}/${name}`,
+        url: `https://github.com/${owner}/${name}`,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  function getExternalPullRequests(items) {
+    return (items || []).filter(pr => {
+      const repository = getRepository(pr);
+      return (
+        repository &&
+        repository.owner.toLowerCase() !==
+          PERSONAL_GITHUB_USERNAME.toLowerCase()
+      );
+    });
+  }
+
+  function getWorkPullRequests(items) {
+    return (items || [])
+      .filter(pr => {
+        const repository = getRepository(pr);
+        return (
+          repository &&
+          repository.owner.toLowerCase() ===
+            WORK_GITHUB_ORGANIZATION.toLowerCase()
+        );
+      })
+      .map(pr => ({ ...pr, isWorkPullRequest: true }));
+  }
 
   function getCachedData() {
     try {
@@ -89,6 +166,7 @@ const GITHUB_USERNAME = 'fyzanshaik';
 
     if (items && items.length > 0) {
       listEl.innerHTML = items
+        .slice(0, 5)
         .map(pr => {
           const date = new Date(pr.closed_at).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -96,7 +174,8 @@ const GITHUB_USERNAME = 'fyzanshaik';
             day: 'numeric',
           });
 
-          const repoName = pr.repository_url.split('/').slice(-1)[0];
+          const repository = getRepository(pr);
+          if (!repository) return '';
 
           return `
           <div class="group">
@@ -105,8 +184,9 @@ const GITHUB_USERNAME = 'fyzanshaik';
                 <span class="label-13 tabular text-[var(--text-secondary)] whitespace-nowrap w-[100px]">${date}</span>
                 <div class="flex-1">
                   <div class="flex flex-wrap items-baseline gap-2 mb-1">
-                    <span class="heading-16 group-hover:text-[var(--accent)] transition-colors">${pr.title}</span>
-                    <span class="label-12 font-mono text-[var(--text-secondary)] px-1.5 py-0.5 rounded-sm bg-[var(--bg-fill)] border border-[var(--border)]">${repoName}</span>
+                    <span class="heading-16 group-hover:text-[var(--accent)] transition-colors">${escapeHtml(pr.title)}</span>
+                    <span class="label-12 font-mono text-[var(--text-secondary)] px-1.5 py-0.5 rounded-sm bg-[var(--bg-fill)] border border-[var(--border)]">${escapeHtml(repository.fullName)}</span>
+                    ${pr.isWorkPullRequest ? '<span class="label-12 font-mono text-[var(--accent)]">Work PR</span>' : ''}
                   </div>
                 </div>
               </div>
@@ -121,6 +201,58 @@ const GITHUB_USERNAME = 'fyzanshaik';
     }
   }
 
+  function renderContributionOrganizations(pullRequests) {
+    const section = document.getElementById('github-contributions');
+    const badgesEl = document.getElementById('github-contribution-badges');
+    if (!section || !badgesEl) return;
+
+    const repositories = (pullRequests || [])
+      .map(getRepository)
+      .filter(Boolean);
+
+    const contributionOrganizations = [
+      ...repositories.map(repository => ({
+        login: repository.owner,
+        html_url: `https://github.com/${repository.owner}`,
+      })),
+      ...FEATURED_CONTRIBUTION_ORGANIZATIONS,
+    ];
+
+    const organizations = [
+      ...new Map(
+        contributionOrganizations.map(organization => [
+          organization.login.toLowerCase(),
+          organization,
+        ])
+      ).values(),
+    ].filter(organization => {
+      const owner = organization.login.toLowerCase();
+      return (
+        owner !== PERSONAL_GITHUB_USERNAME.toLowerCase() &&
+        !EXCLUDED_CONTRIBUTION_OWNERS.has(owner)
+      );
+    });
+
+    if (!organizations?.length) {
+      section.classList.add('hidden');
+      badgesEl.replaceChildren();
+      return;
+    }
+
+    badgesEl.innerHTML = organizations
+      .sort((a, b) => a.login.localeCompare(b.login))
+      .map(
+        organization => `
+          <a href="${escapeHtml(organization.html_url)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--bg-surface)] px-2 py-1.5 font-mono label-12 text-[var(--text-secondary)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]">
+            <img src="https://github.com/${encodeURIComponent(organization.login)}.png?size=48" alt="" width="20" height="20" class="size-5 rounded-sm bg-[var(--bg-fill)]" loading="lazy" />
+            <span>@${escapeHtml(organization.login)}</span>
+          </a>
+        `
+      )
+      .join('');
+    section.classList.remove('hidden');
+  }
+
   async function loadGitHubActivity() {
     const listEl = document.getElementById('github-activity-list');
     if (!listEl) return;
@@ -128,23 +260,49 @@ const GITHUB_USERNAME = 'fyzanshaik';
     // Check cache first
     const cachedData = getCachedData();
     if (cachedData) {
-      renderActivity(cachedData);
+      renderActivity(cachedData.activityPullRequests);
+      renderContributionOrganizations(cachedData.contributionPullRequests);
       return;
     }
 
     try {
-      const response = await fetch(
-        `https://api.github.com/search/issues?q=author:${GITHUB_USERNAME}+type:pr+is:merged&sort=updated&per_page=5`
-      );
+      const [personalResponse, workResponse] = await Promise.all([
+        fetch(
+          `https://api.github.com/search/issues?q=author:${PERSONAL_GITHUB_USERNAME}+type:pr+is:merged&sort=updated&per_page=100`
+        ),
+        fetch(
+          `https://api.github.com/search/issues?q=author:${WORK_GITHUB_USERNAME}+type:pr+is:merged&sort=updated&per_page=100`
+        ),
+      ]);
 
-      if (!response.ok) throw new Error('Failed to fetch');
+      if (!personalResponse.ok) throw new Error('Failed to fetch activity');
 
-      const data = await response.json();
+      const personalData = await personalResponse.json();
+      const workData = workResponse.ok
+        ? await workResponse.json()
+        : { items: [] };
 
-      // Cache the results
-      setCachedData(data.items);
+      const externalPullRequests = getExternalPullRequests(personalData.items);
+      const workPullRequests = getWorkPullRequests(workData.items);
+      const byMostRecent = (a, b) =>
+        new Date(b.closed_at) - new Date(a.closed_at);
+      const activityPullRequests = [
+        ...workPullRequests.sort(byMostRecent).slice(0, 3),
+        ...externalPullRequests.sort(byMostRecent).slice(0, 2),
+      ].sort(byMostRecent);
+      const contributionPullRequests = [
+        ...externalPullRequests,
+        ...workPullRequests,
+      ];
 
-      renderActivity(data.items);
+      // The activity feed reserves three recent rows for work and two for
+      // personal open source, so either account cannot crowd out the other.
+      // NousResearch is included separately because its maintainer explicitly
+      // cherry-picked and credited the original PR.
+      setCachedData({ activityPullRequests, contributionPullRequests });
+
+      renderActivity(activityPullRequests);
+      renderContributionOrganizations(contributionPullRequests);
     } catch (error) {
       console.error(error);
       if (listEl) listEl.innerHTML = ''; // Silently fail

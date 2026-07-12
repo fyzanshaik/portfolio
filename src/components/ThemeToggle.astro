@@ -80,10 +80,27 @@
   updateIcons();
 
   document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
-    updateIcons();
-    (window as any).AudioUX?.playTheme?.();
+    const root = document.documentElement;
+    const applyTheme = () => {
+      const isDark = root.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      root.style.colorScheme = isDark ? 'dark' : 'light';
+      updateIcons();
+      (window as any).AudioUX?.playTheme?.();
+    };
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      applyTheme();
+      return;
+    }
+
+    root.classList.add('theme-transitioning');
+    requestAnimationFrame(() => {
+      applyTheme();
+      window.setTimeout(
+        () => root.classList.remove('theme-transitioning'),
+        260
+      );
+    });
   });
 </script>
